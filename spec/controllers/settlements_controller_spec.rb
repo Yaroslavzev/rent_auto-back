@@ -23,10 +23,10 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe RegionsController, type: :controller do
+RSpec.describe SettlementsController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
-  # Region. As you add validations to Region, be sure to
+  # Settlement. As you add validations to Settlement, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
@@ -38,12 +38,12 @@ RSpec.describe RegionsController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # RegionsController. Be sure to keep this updated too.
+  # SettlementsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET #index" do
     it "returns a success response" do
-      region = Region.create! valid_attributes
+      settlement = Settlement.create! valid_attributes
       get :index, params: {}, session: valid_session
       expect(response).to be_successful
     end
@@ -51,33 +51,33 @@ RSpec.describe RegionsController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      region = Region.create! valid_attributes
-      get :show, params: {id: region.to_param}, session: valid_session
+      settlement = Settlement.create! valid_attributes
+      get :show, params: {id: settlement.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new Region" do
+      it "creates a new Settlement" do
         expect {
-          post :create, params: {region: valid_attributes}, session: valid_session
-        }.to change(Region, :count).by(1)
+          post :create, params: {settlement: valid_attributes}, session: valid_session
+        }.to change(Settlement, :count).by(1)
       end
 
-      it "renders a JSON response with the new region" do
+      it "renders a JSON response with the new settlement" do
 
-        post :create, params: {region: valid_attributes}, session: valid_session
+        post :create, params: {settlement: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(region_url(Region.last))
+        expect(response.location).to eq(settlement_url(Settlement.last))
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new region" do
+      it "renders a JSON response with errors for the new settlement" do
 
-        post :create, params: {region: invalid_attributes}, session: valid_session
+        post :create, params: {settlement: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -90,27 +90,27 @@ RSpec.describe RegionsController, type: :controller do
         skip("Add a hash of attributes valid for your model")
       }
 
-      it "updates the requested region" do
-        region = Region.create! valid_attributes
-        put :update, params: {id: region.to_param, region: new_attributes}, session: valid_session
-        region.reload
+      it "updates the requested settlement" do
+        settlement = Settlement.create! valid_attributes
+        put :update, params: {id: settlement.to_param, settlement: new_attributes}, session: valid_session
+        settlement.reload
         skip("Add assertions for updated state")
       end
 
-      it "renders a JSON response with the region" do
-        region = Region.create! valid_attributes
+      it "renders a JSON response with the settlement" do
+        settlement = Settlement.create! valid_attributes
 
-        put :update, params: {id: region.to_param, region: valid_attributes}, session: valid_session
+        put :update, params: {id: settlement.to_param, settlement: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the region" do
-        region = Region.create! valid_attributes
+      it "renders a JSON response with errors for the settlement" do
+        settlement = Settlement.create! valid_attributes
 
-        put :update, params: {id: region.to_param, region: invalid_attributes}, session: valid_session
+        put :update, params: {id: settlement.to_param, settlement: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -118,11 +118,11 @@ RSpec.describe RegionsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested region" do
-      region = Region.create! valid_attributes
+    it "destroys the requested settlement" do
+      settlement = Settlement.create! valid_attributes
       expect {
-        delete :destroy, params: {id: region.to_param}, session: valid_session
-      }.to change(Region, :count).by(-1)
+        delete :destroy, params: {id: settlement.to_param}, session: valid_session
+      }.to change(Settlement, :count).by(-1)
     end
   end
 

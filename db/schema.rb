@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_14_094457) do
+ActiveRecord::Schema.define(version: 2018_11_14_195149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,30 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "addresses", comment: "Справочник адресов", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.boolean "checked", default: false
+    t.bigint "country_id"
+    t.bigint "region_id"
+    t.bigint "district_id"
+    t.bigint "settlement_id"
+    t.string "postcode"
+    t.string "street"
+    t.string "house"
+    t.string "flat"
+    t.string "address1"
+    t.string "address2"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_addresses_on_country_id"
+    t.index ["district_id"], name: "index_addresses_on_district_id"
+    t.index ["region_id"], name: "index_addresses_on_region_id"
+    t.index ["settlement_id"], name: "index_addresses_on_settlement_id"
   end
 
   create_table "body_types", comment: "Справочник типов кузовов автомобилей", force: :cascade do |t|
@@ -45,6 +69,7 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
   create_table "countries", comment: "Справочник стран", force: :cascade do |t|
     t.string "code"
     t.string "name"
+    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -60,20 +85,17 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "localities", comment: "Справочник населенных пунктов", force: :cascade do |t|
+  create_table "districts", comment: "Справочник административных районов", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.bigint "status_id"
+    t.boolean "active", default: true
     t.bigint "region_id"
-    t.bigint "state_id"
     t.bigint "country_id"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_localities_on_country_id"
-    t.index ["region_id"], name: "index_localities_on_region_id"
-    t.index ["state_id"], name: "index_localities_on_state_id"
-    t.index ["status_id"], name: "index_localities_on_status_id"
+    t.index ["country_id"], name: "index_districts_on_country_id"
+    t.index ["region_id"], name: "index_districts_on_region_id"
   end
 
   create_table "manufactures", comment: "Справочник производителей автомобилей", force: :cascade do |t|
@@ -123,6 +145,26 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.index ["model_class_id"], name: "index_models_on_model_class_id"
   end
 
+  create_table "passports", comment: "Справочник паспортов", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.boolean "checked", default: false
+    t.bigint "country_id"
+    t.string "serial"
+    t.string "number"
+    t.string "issued_by"
+    t.string "issued_code"
+    t.date "issued_date"
+    t.date "valid_to"
+    t.bigint "address_id"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_passports_on_address_id"
+    t.index ["country_id"], name: "index_passports_on_country_id"
+  end
+
   create_table "range_rates", comment: "Связка коэффициентов и диапазонов дней", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -136,16 +178,15 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.index ["rental_rate_id"], name: "index_range_rates_on_rental_rate_id"
   end
 
-  create_table "regions", comment: "Спраовчник областей", force: :cascade do |t|
+  create_table "regions", comment: "Справочник регионов (республика/край/область/округ)", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.bigint "state_id"
+    t.boolean "active", default: true
     t.bigint "country_id"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_regions_on_country_id"
-    t.index ["state_id"], name: "index_regions_on_state_id"
   end
 
   create_table "rental_plans", comment: "Справочник тарифных планов", force: :cascade do |t|
@@ -209,14 +250,21 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "states", comment: "Справочник округов", force: :cascade do |t|
+  create_table "settlements", comment: "Справочник населенных пунктов (город/деревня/село)", force: :cascade do |t|
     t.string "code"
     t.string "name"
+    t.boolean "active", default: true
+    t.bigint "status_id"
+    t.bigint "district_id"
+    t.bigint "region_id"
     t.bigint "country_id"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_states_on_country_id"
+    t.index ["country_id"], name: "index_settlements_on_country_id"
+    t.index ["district_id"], name: "index_settlements_on_district_id"
+    t.index ["region_id"], name: "index_settlements_on_region_id"
+    t.index ["status_id"], name: "index_settlements_on_status_id"
   end
 
   create_table "statuses", comment: "Справочник статусов нас.пунктов (город, село, деревня...)", force: :cascade do |t|
@@ -269,19 +317,22 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
     t.index ["trunk_id"], name: "index_vehicles_on_trunk_id"
   end
 
-  add_foreign_key "localities", "countries"
-  add_foreign_key "localities", "regions"
-  add_foreign_key "localities", "states"
-  add_foreign_key "localities", "statuses"
+  add_foreign_key "addresses", "countries"
+  add_foreign_key "addresses", "districts"
+  add_foreign_key "addresses", "regions"
+  add_foreign_key "addresses", "settlements"
+  add_foreign_key "districts", "countries"
+  add_foreign_key "districts", "regions"
   add_foreign_key "manufactures", "brands"
   add_foreign_key "manufactures", "countries"
   add_foreign_key "models", "body_types"
   add_foreign_key "models", "brands"
   add_foreign_key "models", "manufactures"
+  add_foreign_key "passports", "addresses"
+  add_foreign_key "passports", "countries"
   add_foreign_key "range_rates", "day_ranges"
   add_foreign_key "range_rates", "rental_rates"
   add_foreign_key "regions", "countries"
-  add_foreign_key "regions", "states"
   add_foreign_key "rental_plans", "model_classes"
   add_foreign_key "rental_plans", "models"
   add_foreign_key "rental_plans", "rental_prices"
@@ -291,7 +342,10 @@ ActiveRecord::Schema.define(version: 2018_11_14_094457) do
   add_foreign_key "rental_prices", "models"
   add_foreign_key "rental_rates", "models"
   add_foreign_key "rental_rates", "rental_types"
-  add_foreign_key "states", "countries"
+  add_foreign_key "settlements", "countries"
+  add_foreign_key "settlements", "districts"
+  add_foreign_key "settlements", "regions"
+  add_foreign_key "settlements", "statuses"
   add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"
   add_foreign_key "vehicles", "models"

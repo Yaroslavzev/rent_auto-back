@@ -1,5 +1,9 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :passports
+  resources :settlements
+  resources :districts
+  resources :addresses
   resources :additions
   resources :vehicles
   resources :rental_plans

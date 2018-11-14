@@ -64,10 +64,15 @@ def gen_code(name, vowel = false, *others)
   code
 end
 
-# Понеслась...
-puts 'Генерируем базу:'
+# Генерация числа заданной разрядности ввиде строки
+def gen_num_str(n)
+  n.times.inject('') { |s| s += rand(0..9).to_s }
+end
 
-# Заполняем справочник статусов населенных пунктов
+# Понеслась...
+puts 'Генерируется база:'
+
+# Заполнить справочник статусов населенных пунктов
 print ' • справочник статусов населенных пунктов'
 seeds = LOCALITY_STATUSES.inject([]) do |arr,stat|
   print '.'
@@ -82,7 +87,7 @@ end
 statuses = seeds.blank? ? Status.all : Status.create!(seeds)
 puts
 
-# Заполняем справочник классов моделей автомобилей
+# Заполнить справочник классов моделей автомобилей
 print ' • справочник классов моделей автомобилей'
 seeds = MODEL_CLASSES.inject([]) do |arr,klass|
   print '.'
@@ -96,7 +101,7 @@ end
 model_classes = seeds.blank? ? ModelClass.all : ModelClass.create!(seeds)
 puts
 
-# Заполняем справочник дополнительных услуг и снаряжения
+# Заполнить справочник дополнительных услуг и снаряжения
 print ' • справочник дополнительных услуг и снаряжения'
 seeds = ADDITIONS.inject([]) do |arr,addon|
   print '.'
@@ -113,7 +118,7 @@ end
 additions = seeds.blank? ? Addition.all : Addition.create!(seeds)
 puts
 
-# Заполняем справочник типов кузовов автомобилей
+# Заполнить справочник типов кузовов автомобилей
 print ' • справочник типов кузовов автомобилей'
 seeds = BODY_TYPES.inject([]) do |arr,type|
   print '.'
@@ -127,7 +132,7 @@ end
 body_types = seeds.blank? ? BodyType.all : BodyType.create!(seeds)
 puts
 
-# Заполняем справочник типов багажников автомобилей
+# Заполнить справочник типов багажников автомобилей
 print ' • справочник типов багажников автомобилей'
 seeds = TRUNK_TYPES.inject([]) do |arr,type|
   print '.'
@@ -142,7 +147,7 @@ end
 trunk_types = seeds.blank? ? TrunkType.all : TrunkType.create!(seeds)
 puts
 
-# Заполняем справочник типов тарифных планов
+# Заполнить справочник типов тарифных планов
 print ' • справочник типов тарифных планов'
 seeds = RENTAL_TYPES.inject([]) do |arr,type|
   print '.'
@@ -156,7 +161,7 @@ end
 rental_types = seeds.blank? ? RentalType.all : RentalType.create!(seeds)
 puts
 
-# Заполняем справочник диапазонов дней аренды
+# Заполнить справочник диапазонов дней аренды
 print ' • справочник диапазонов дней аренды'
 seeds = DAY_RANGES.inject([]) do |arr,range|
   print '.'
@@ -175,7 +180,7 @@ end
 day_ranges = seeds.blank? ? DayRange.all : DayRange.create!(seeds)
 puts
 
-# Заполняем данные для окружения разработки
+# Заполнить данные для окружения разработки
 if Rails.env.development?
   # Удаляем сгенерированные записи
   RentalPrice.destroy_all
@@ -188,12 +193,14 @@ if Rails.env.development?
   Manufacture.destroy_all
   Brand.destroy_all
 
-  Locality.destroy_all
+  Passport.destroy_all
+  Address.destroy_all
+  Settlement.destroy_all
+  District.destroy_all
   Region.destroy_all
-  State.destroy_all
   Country.destroy_all
 
-  # Заполняем справочник стран
+  # Заполнить справочник стран
   print ' • справочник стран'
   seeds = MAX_SEEDS.times.map do
     print '.'
@@ -207,30 +214,14 @@ if Rails.env.development?
   countries = Country.create! seeds
   puts
 
-  # Заполняем справочник округов
-  print ' • справочник округов'
-  seeds = MAX_SEEDS.times.map do
+  # Заполнить справочник регионов (республика/край/область/округ)
+  print ' • справочник регионов (республика/край/область/округ)'
+  seeds = (2*MAX_SEEDS).times.map do
     print '.'
     address = Faker::Address
     {
       code: address.state_abbr,
       name: address.state,
-      country: countries.sample,
-      note: address.community
-    }
-  end
-  states = State.create! seeds
-  puts
-
-  # Заполняем справочник областей
-  print ' • справочник областей'
-  seeds = MAX_SEEDS.times.map do
-    print '.'
-    address = Faker::Address
-    {
-      code: address.state_abbr,
-      name: address.state,
-      state: states.sample,
       country: countries.sample,
       note: address.community
     }
@@ -238,25 +229,96 @@ if Rails.env.development?
   regions = Region.create! seeds
   puts
 
-  # Заполняем справочник населенных пунктов
-  print ' • справочник населенных пунктов'
-  seeds = MAX_SEEDS.times.map do
+  # Заполнить справочник административных районов
+  print ' • справочник административных районов'
+  seeds = (4*MAX_SEEDS).times.map do
     print '.'
+    region = regions.sample
+    address = Faker::Address
+    {
+      code: address.state_abbr,
+      name: address.state,
+      region: region,
+      country: region.country,
+      note: address.community
+    }
+  end
+  districts = District.create! seeds
+  puts
+
+  # Заполнить справочник населенных пунктов (город/деревня/село)
+  print ' • справочник населенных пунктов (город/деревня/село)'
+  seeds = (8*MAX_SEEDS).times.map do
+    print '.'
+    district = districts.sample
+    region = district.region
+    country = region.country
     address = Faker::Address
     {
       code: address.state_abbr,
       name: address.city,
       status: statuses.sample,
-      region: regions.sample,
-      state: states.sample,
-      country: countries.sample,
+      district: district,
+      region: region,
+      country: country,
       note: address.community
     }
   end
-  localities = Locality.create! seeds
+  settlements = Settlement.create! seeds
   puts
 
-  # Заполняем справочник бредов
+  # Заполнить справочник адресов
+  print ' • справочник адресов'
+  seeds = (16*MAX_SEEDS).times.map do
+    print '.'
+    address = Faker::Address
+    settlement = settlements.sample
+    district = settlement.district
+    region = district.region
+    country = region.country
+    street = address.street_name
+    house = address.building_number
+    flat = address.secondary_address
+    {
+      # code: address.state_abbr,
+      name: "#{country.name}, #{region.name}, #{district.name}, #{settlement.name}, #{street}, #{house}, #{flat}",
+      country: country,
+      region: region,
+      district: district,
+      settlement: settlement,
+      postcode: address.postcode,
+      street: street,
+      house: house,
+      flat: flat,
+      note: address.community
+    }
+  end
+  addresses = Address.create! seeds
+  puts
+
+  # Заполнить справочник паспортов
+  print ' • справочник паспортов'
+  seeds = (2*MAX_SEEDS).times.map do
+    print '.'
+    address = addresses.sample
+    {
+      # code:
+      # name:
+      country: address.country,
+      serial: gen_num_str(4),
+      number: gen_num_str(6),
+      issued_by: "ПВО ОВД, #{address.region.name}, #{address.settlement.name}",
+      issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
+      issued_date: Faker::Date.between(20.year.ago, Date.today),
+      valid_to: Faker::Date.between(5.year.ago, 15.year.from_now),
+      address: address
+      # note:
+    }
+  end
+  passports = Passport.create! seeds
+  puts
+
+ # Заполнить справочник бредов
   print ' • справочник брендов'
   seeds = MAX_SEEDS.times.inject([]) do |arr|
     print '.'
@@ -273,7 +335,7 @@ if Rails.env.development?
   brands = Brand.create! seeds
   puts
 
-  # Заполняем справочник производителей
+  # Заполнить справочник производителей
   print ' • справочник производителей'
   seeds = MAX_SEEDS.times.map do
     print '.'
@@ -289,15 +351,16 @@ if Rails.env.development?
   manufactures = Manufacture.create! seeds
   puts
 
-  # Заполняем справочник моделей автомобилей
+  # Заполнить справочник моделей автомобилей
   print ' • справочник моделей автомобилей'
   seeds = MAX_SEEDS.times.map do
     print '.'
     model = Faker::Vehicle.model
+    brand = brands.sample
     {
-      code: model[0..2].downcase + rand(0..9).to_s,
+      code: "#{model[0..2].downcase}-#{brand.code}",
       name: model,
-      brand: brands.sample,
+      brand: brand,
       model_class: model_classes.sample,
       manufacture: manufactures.sample,
       body_type: body_types.sample,
@@ -317,7 +380,7 @@ if Rails.env.development?
   models = Model.create! seeds
   puts
 
-  # Заполняем справочник багажников автомобилей
+  # Заполнить справочник багажников автомобилей
   print ' • справочник багажников автомобилей'
   seeds = models.map do |model|
     rand(1..(trunk_types.size / 2)).times.inject([]) do |arr|
@@ -341,7 +404,7 @@ if Rails.env.development?
   trunks = Trunk.create! seeds.flatten
   puts
 
-  # Заполняем справочник коэффициентов тарифных планов
+  # Заполнить справочник коэффициентов тарифных планов
   print ' • справочник коэффициентов тарифных планов'
   seeds = models.map do |model|
     rental_types.map do |type|
@@ -362,7 +425,7 @@ if Rails.env.development?
   rental_rates = RentalRate.create! seeds.flatten
   puts
 
-  # Заполняем связки коэффициентов и диапазонов дней
+  # Заполнить связки коэффициентов и диапазонов дней
   print ' • связки коэффициентов и диапазонов дней'
   seeds = rental_rates.map do |rate|
     day_ranges.map do |range|
@@ -381,7 +444,7 @@ if Rails.env.development?
   range_rates = RangeRate.create! seeds.flatten
   puts
 
-  # Заполняем справочник базовых цен для моделей (классов?)
+  # Заполнить справочник базовых цен для моделей (классов?)
   print ' • справочник базовых цен для моделей (классов?)'
   seeds = models.map do |model|
     price_name = "#{model.name}(#{model.model_class.name})"
@@ -418,7 +481,7 @@ if Rails.env.development?
   rental_prices = RentalPrice.create! seeds
   puts
 
-  # Заполняем справочник автомобилей
+  # Заполнить справочник автомобилей
   print ' • справочник автомобилей'
   seeds = MAX_SEEDS.times.map do
     print '.'

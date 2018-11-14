@@ -1,9 +1,22 @@
 # options:  --no-stylesheets --no-scaffold-stylesheet --no-javascripts
-rails g scaffold status code:string name:string note:text -p
-rails g scaffold country code:string name:string note:text -p
-rails g scaffold state code:string name:string country:references note:text -p
-rails g scaffold region code:string name:string state:references country:references note:text -p
-rails g scaffold locality code:string name:string status:references region:references state:references country:references note:text -p
+
+# Address Format Information:
+#   Name of the street, number of the house and flat
+#   Name of the settlement (town, village and other)
+#   Name of the district
+#   Name of the republic, territory, region, autonomous district(region)
+#   Postcode
+#   Name of the country (for international items)
+# (умолтался искать более-менее унифицированный формат)
+rails g scaffold status code:string name:string active:boolean note:text -p
+rails g scaffold country code:string name:string active:boolean note:text -p
+rails g scaffold region code:string name:string active:boolean country:references note:text -p
+rails g scaffold district code:string name:string active:boolean region:references country:references note:text -p
+rails g scaffold settlement code:string name:string active:boolean status:references district:references region:references country:references note:text -p
+rails g scaffold address code:string name:string active:boolean country:references region:references district:references settlement:references postcode:string street:string house:string flat:string address1:string address2:string note:text -p
+
+rails g scaffold passport code:string name:string active:boolean checked:boolean country:references serial:string number:string issued_by:string issued_code:string issued_date:date valid_to:date address:references note:text -p
+
 
 rails g scaffold brand code:string name:string note:text -p
 rails g scaffold manufacture code:string name:string brand:references country:references note:text -p
@@ -28,4 +41,4 @@ rails g scaffold rental_plan code:string name:string model:references model_clas
 
 rails g scaffold vehicle code:string name:string model:references garage_no:string state_no:string vin:string release:date mileage:integer color:string specs:string:array options:string:array trunk:references note:text -p
 
-rails g scaffold addition code:string name:string active:boolean:default:true service:boolean price:decimal note:text -p
+rails g scaffold addition code:string name:string active:boolean service:boolean price:decimal note:text -p

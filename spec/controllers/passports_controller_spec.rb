@@ -23,9 +23,10 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe LocalitiesController, type: :controller do
+RSpec.describe PassportsController, type: :controller do
+
   # This should return the minimal set of attributes required to create a valid
-  # Locality. As you add validations to Locality, be sure to
+  # Passport. As you add validations to Passport, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
@@ -37,12 +38,12 @@ RSpec.describe LocalitiesController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # LocalitiesController. Be sure to keep this updated too.
+  # PassportsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET #index" do
     it "returns a success response" do
-      locality = Locality.create! valid_attributes
+      passport = Passport.create! valid_attributes
       get :index, params: {}, session: valid_session
       expect(response).to be_successful
     end
@@ -50,31 +51,33 @@ RSpec.describe LocalitiesController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      locality = Locality.create! valid_attributes
-      get :show, params: { id: locality.to_param }, session: valid_session
+      passport = Passport.create! valid_attributes
+      get :show, params: {id: passport.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new Locality" do
+      it "creates a new Passport" do
         expect {
-          post :create, params: { locality: valid_attributes }, session: valid_session
-        }.to change(Locality, :count).by(1)
+          post :create, params: {passport: valid_attributes}, session: valid_session
+        }.to change(Passport, :count).by(1)
       end
 
-      it "renders a JSON response with the new locality" do
-        post :create, params: { locality: valid_attributes }, session: valid_session
+      it "renders a JSON response with the new passport" do
+
+        post :create, params: {passport: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(locality_url(Locality.last))
+        expect(response.location).to eq(passport_url(Passport.last))
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new locality" do
-        post :create, params: { locality: invalid_attributes }, session: valid_session
+      it "renders a JSON response with errors for the new passport" do
+
+        post :create, params: {passport: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -87,27 +90,27 @@ RSpec.describe LocalitiesController, type: :controller do
         skip("Add a hash of attributes valid for your model")
       }
 
-      it "updates the requested locality" do
-        locality = Locality.create! valid_attributes
-        put :update, params: { id: locality.to_param, locality: new_attributes }, session: valid_session
-        locality.reload
+      it "updates the requested passport" do
+        passport = Passport.create! valid_attributes
+        put :update, params: {id: passport.to_param, passport: new_attributes}, session: valid_session
+        passport.reload
         skip("Add assertions for updated state")
       end
 
-      it "renders a JSON response with the locality" do
-        locality = Locality.create! valid_attributes
+      it "renders a JSON response with the passport" do
+        passport = Passport.create! valid_attributes
 
-        put :update, params: { id: locality.to_param, locality: valid_attributes }, session: valid_session
+        put :update, params: {id: passport.to_param, passport: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the locality" do
-        locality = Locality.create! valid_attributes
+      it "renders a JSON response with errors for the passport" do
+        passport = Passport.create! valid_attributes
 
-        put :update, params: { id: locality.to_param, locality: invalid_attributes }, session: valid_session
+        put :update, params: {id: passport.to_param, passport: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -115,11 +118,12 @@ RSpec.describe LocalitiesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested locality" do
-      locality = Locality.create! valid_attributes
+    it "destroys the requested passport" do
+      passport = Passport.create! valid_attributes
       expect {
-        delete :destroy, params: { id: locality.to_param }, session: valid_session
-      }.to change(Locality, :count).by(-1)
+        delete :destroy, params: {id: passport.to_param}, session: valid_session
+      }.to change(Passport, :count).by(-1)
     end
   end
+
 end

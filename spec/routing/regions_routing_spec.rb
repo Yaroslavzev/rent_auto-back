@@ -10,6 +10,7 @@ RSpec.describe RegionsController, type: :routing do
       expect(:get => "/regions/1").to route_to("regions#show", :id => "1")
     end
 
+
     it "routes to #create" do
       expect(:post => "/regions").to route_to("regions#create")
     end
