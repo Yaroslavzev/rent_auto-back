@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_13_113339) do
+ActiveRecord::Schema.define(version: 2018_11_14_094457) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "additions", comment: "Справочник дополнительных услуг и снаряжения", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.boolean "service", default: true
+    t.decimal "price", default: "0.0"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "body_types", comment: "Справочник типов кузовов автомобилей", force: :cascade do |t|
     t.string "code"

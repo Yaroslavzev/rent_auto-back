@@ -12,45 +12,72 @@ Faker::Config.locale = 'ru'
 Money.locale_backend = :i18n
 
 MAX_SEEDS = 10
-# выглядит по дурацки, но рубокоп цук злой
-LOCALITY_STATUSES = [%w[аул аул],
-                     %w[г. город],
-                     %w[дер. деревня],
-                     %w[ж/д\ ст. железнодорожная\ станция],
-                     %w[н.п. населенный\ пункт],
-                     %w[п. поселок],
-                     %w[п.г.т. поселок\ городского\ типа],
-                     %w[с. село],
-                     %w[сл. слобода],
-                     %w[ст. станица]].freeze
+
+LOCALITY_STATUSES = %w[аул город деревня железно-дорожная\ станция населенный\ пункт поселок
+                       поселок\ городского\ типа село слобода станица].freeze
+
 MODEL_CLASSES = %w[бизнес премиум эконом].freeze
 
 BODY_TYPES = %w[автобус внедорожник кабриолет кроссовер купе лимузин лифтбэк микроавтобус минивэн пикап
                 родстер седан стретч тарга универсал фургон хэтчбек].freeze
 
-TRUNK_TYPES = %w[жесткий\ бокс мягкий\ бокс велосипед корзина лодка лыжи/сноуборд специальный]
+TRUNK_TYPES = %w[бокс\ жесткий бокс\ мягкий велосипед корзина лодка лыжи/сноуборд специальный]
+
+ADDITIONS = %w[автокресло навигатор переходник\ в\ прикуриватель подача\ город возврат\ город
+               подача\ аэропорт возврат\ аэропорт услуги\ водителя]
 
 RENTAL_TYPES = %w[основной демисезон зимний летний].freeze
 
 DAY_RANGES = [[1,3],[3,7],[7,15],[15,30],[30,nil]].freeze
 
-# Удаляем базовые записи
-# DayRange.destroy_all
-# BodyType.destroy_all
-# ModelClass.destroy_all
-# Status.destroy_all
+# Генерация поля code по правилам зависимым от параметров:
+#   - если в 1м параметре 1 слово, то берем 3 первых буквы, исключая гласные, кроме первой,
+#     vowel = true и если согласных больше 2х (не считая 1й буквы),
+#     иначе исключает выбирает первые 3 буквы исключая гласные на конце
+#   - если слов больше 2х - берем первую букву от каждого слова и склеиваем
+#   - остальные параметры добавляются как есть через '-'
+def gen_code(name, vowel = false, *others)
+  code_size = 3 # 3х букв для кода достаточно(?)
+  code = ''
+  words = name.downcase.split(/[\s\/-]+/)
+  if words.size > 1
+    code = words.inject('') { |s,w| s += w[0] }
+    code = code.insert(code_size / 2, '/') if code.size < code_size
+  else
+    word = words[0]
+    if vowel or word.scan(/[^аеёийоуъыьэюя]/).size < code_size
+      i = code_size - 1
+      i +=1 while i < word.size and 'аеёийоуъыьэюя'.include? word[i]
+      code = word[0..i]
+      code = code.gsub(/(\W)[аеёийоуъыьэюя]/, '\1') if code.size > code_size
+    else
+      code = word.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..code_size-1]
+      # word.split('').each do |l|
+      #   code += l if code.blank? or not 'аеёийоуъыьэюя'.include? l
+      #   break if code.size >= CODE_SIZE
+      # end
+    end
+  end
+  if others.size > 0
+    code += others.inject('') { |s,c| s += "-#{c}" }
+  end
+  code
+end
 
+# Понеслась...
 puts 'Генерируем базу:'
 
 # Заполняем справочник статусов населенных пунктов
 print ' • справочник статусов населенных пунктов'
 seeds = LOCALITY_STATUSES.inject([]) do |arr,stat|
   print '.'
+  code = gen_code(stat, true)
   arr << {
-    code: stat[0],
-    name: stat[1],
-    note: stat[1].capitalize
-  } if Status.find_by_code(stat[0]).blank?
+    # code: stat[0],
+    code: code,
+    name: stat,
+    note: stat.capitalize
+  } if Status.find_by_code(code).blank?
 end
 statuses = seeds.blank? ? Status.all : Status.create!(seeds)
 puts
@@ -59,7 +86,7 @@ puts
 print ' • справочник классов моделей автомобилей'
 seeds = MODEL_CLASSES.inject([]) do |arr,klass|
   print '.'
-  code = klass.downcase.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..2]
+  code = gen_code(klass)
   arr << {
     code: code,
     name: klass,
@@ -69,11 +96,28 @@ end
 model_classes = seeds.blank? ? ModelClass.all : ModelClass.create!(seeds)
 puts
 
+# Заполняем справочник дополнительных услуг и снаряжения
+print ' • справочник дополнительных услуг и снаряжения'
+seeds = ADDITIONS.inject([]) do |arr,addon|
+  print '.'
+  code = gen_code(addon)
+  arr << {
+    code: code,
+    name: addon,
+    active: true,
+    service: rand(1) == 1,
+    price: rand(10..20) * 100,
+    note: addon.capitalize
+  } if Addition.find_by_code(code).blank?
+end
+additions = seeds.blank? ? Addition.all : Addition.create!(seeds)
+puts
+
 # Заполняем справочник типов кузовов автомобилей
 print ' • справочник типов кузовов автомобилей'
 seeds = BODY_TYPES.inject([]) do |arr,type|
   print '.'
-  code = type.downcase.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..2]
+  code = gen_code(type)
   arr << {
     code: code,
     name: type,
@@ -88,7 +132,7 @@ print ' • справочник типов багажников автомоб�
 seeds = TRUNK_TYPES.inject([]) do |arr,type|
   print '.'
   # объединить в один gsub не вышло, как экранировать '/' есть идеи?
-  code = type.downcase.gsub('/', '').gsub(/(\W)[аеёийоуъыьэюя-]/, '\1')[0..2]
+  code = gen_code(type)
   arr << {
     code: code,
     name: type,
@@ -102,7 +146,7 @@ puts
 print ' • справочник типов тарифных планов'
 seeds = RENTAL_TYPES.inject([]) do |arr,type|
   print '.'
-  code = type.downcase.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..2]
+  code = gen_code(type)
   arr << {
     code: code,
     name: type,
@@ -116,7 +160,7 @@ puts
 print ' • справочник диапазонов дней аренды'
 seeds = DAY_RANGES.inject([]) do |arr,range|
   print '.'
-  code = "days#{range[0]}" + (range[1].nil? ? '+' : "-#{range[1]}")
+  code = "д#{range[0]}" + (range[1].nil? ? '+' : "-#{range[1]}")
   range_name = "от #{range[0]}" 
   range_name += " до #{range[1]}" unless range[1].nil?
   range_name += ' дней'
@@ -138,6 +182,7 @@ if Rails.env.development?
   RangeRate.destroy_all
   RentalRate.destroy_all
 
+  Vehicle.destroy_all
   Trunk.destroy_all
   Model.destroy_all
   Manufacture.destroy_all
@@ -213,11 +258,14 @@ if Rails.env.development?
 
   # Заполняем справочник бредов
   print ' • справочник брендов'
-  seeds = MAX_SEEDS.times.map do
+  seeds = MAX_SEEDS.times.inject([]) do |arr|
     print '.'
-    make = Faker::Vehicle.make
-    {
-      code: make[0..2].downcase + rand(0..9).to_s,
+    begin
+      make = Faker::Vehicle.make
+      code = make[0..2].downcase
+    end while (arr.any? { |h| h[:code] == code })
+    arr << {
+      code: code,
       name: make,
       note: Faker::Company.catch_phrase
     }
@@ -278,7 +326,7 @@ if Rails.env.development?
       # выбираем еще неиспользованный тип
       begin
         type = trunk_types.sample
-      end while (arr.any? { |a| a[:trunk_type] == type })
+      end while (arr.any? { |h| h[:trunk_type] == type })
       trunk = "#{model.name}(#{type.name})"
       arr << {
         code: "#{model.code}-#{type.code}",
@@ -288,7 +336,6 @@ if Rails.env.development?
         price: nil,
         note: trunk
       }
-      # arr.tap { |a| ap a }
     end
   end
   trunks = Trunk.create! seeds.flatten
@@ -395,6 +442,5 @@ if Rails.env.development?
   end
   vehicles = Vehicle.create! seeds
   puts
-
 
 end

@@ -27,3 +27,5 @@ rails g scaffold rental_price code:string name:string model:references model_cla
 rails g scaffold rental_plan code:string name:string model:references model_class:references rental_type:references rental_rate:references rental_price:references note:text -p
 
 rails g scaffold vehicle code:string name:string model:references garage_no:string state_no:string vin:string release:date mileage:integer color:string specs:string:array options:string:array trunk:references note:text -p
+
+rails g scaffold addition code:string name:string active:boolean:default:true service:boolean price:decimal note:text -p

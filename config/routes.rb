@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :additions
   resources :vehicles
   resources :rental_plans
   resources :rental_prices
