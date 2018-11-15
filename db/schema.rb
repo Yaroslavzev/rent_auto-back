@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_080941) do
+ActiveRecord::Schema.define(version: 2018_11_14_195149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
-    t.boolean "verified", default: false
+    t.boolean "checked", default: false
     t.bigint "country_id"
     t.bigint "region_id"
     t.bigint "district_id"
@@ -53,7 +53,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "body_types", comment: "Справочник типов кузовов автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -62,7 +61,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "brands", comment: "Справочник марок автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -80,7 +78,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "day_ranges", comment: "Справочник диапазонов дней аренды", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.integer "day_from"
     t.integer "day_to"
     t.text "note"
@@ -101,29 +98,9 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
     t.index ["region_id"], name: "index_districts_on_region_id"
   end
 
-  create_table "driver_licenses", comment: "Справчник водительских прав", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.bigint "country_id"
-    t.string "serial"
-    t.string "number"
-    t.string "category"
-    t.string "issued_by"
-    t.string "issued_code"
-    t.date "issued_date"
-    t.date "valid_to"
-    t.text "note"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["country_id"], name: "index_driver_licenses_on_country_id"
-  end
-
   create_table "manufactures", comment: "Справочник производителей автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "brand_id"
     t.bigint "country_id"
     t.text "note"
@@ -136,7 +113,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "model_classes", comment: "Справочник классов моделей автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -145,11 +121,11 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "models", comment: "Справочник моделей автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_class_id"
     t.bigint "brand_id"
     t.bigint "manufacture_id"
     t.bigint "body_type_id"
+    t.boolean "active", default: true
     t.integer "door_count"
     t.integer "seat_count"
     t.string "style"
@@ -173,7 +149,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
-    t.boolean "verified", default: false
+    t.boolean "checked", default: false
     t.bigint "country_id"
     t.string "serial"
     t.string "number"
@@ -192,7 +168,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "range_rates", comment: "Связка коэффициентов и диапазонов дней", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "rental_rate_id"
     t.bigint "day_range_id"
     t.float "rate"
@@ -217,7 +192,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "rental_plans", comment: "Справочник тарифных планов", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "model_class_id"
     t.bigint "rental_type_id"
@@ -236,7 +210,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "rental_prices", comment: "Справчник базовых цен для моделей (классов?)", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "model_class_id"
     t.decimal "day"
@@ -257,7 +230,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "rental_rates", comment: "Справочник коэффициентов тарифов", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "rental_type_id"
     t.float "workweek"
@@ -273,7 +245,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "rental_types", comment: "Справочник типов тарифных планов", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -296,21 +267,9 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
     t.index ["status_id"], name: "index_settlements_on_status_id"
   end
 
-  create_table "spots", comment: "Справочник точек выдачи/возврата", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "address_id"
-    t.text "note"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["address_id"], name: "index_spots_on_address_id"
-  end
-
   create_table "statuses", comment: "Справочник статусов нас.пунктов (город, село, деревня...)", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -319,7 +278,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "trunk_types", comment: "Справочник типов багажников автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -328,7 +286,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "trunks", comment: "Справочник багажников автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "trunk_type_id"
     t.decimal "price"
@@ -342,8 +299,8 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   create_table "vehicles", comment: "Справочник автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
-    t.boolean "active", default: true
     t.bigint "model_id"
+    t.boolean "active", default: true
     t.string "garage_no"
     t.string "state_no"
     t.string "vin"
@@ -366,7 +323,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   add_foreign_key "addresses", "settlements"
   add_foreign_key "districts", "countries"
   add_foreign_key "districts", "regions"
-  add_foreign_key "driver_licenses", "countries"
   add_foreign_key "manufactures", "brands"
   add_foreign_key "manufactures", "countries"
   add_foreign_key "models", "body_types"
@@ -390,7 +346,6 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   add_foreign_key "settlements", "districts"
   add_foreign_key "settlements", "regions"
   add_foreign_key "settlements", "statuses"
-  add_foreign_key "spots", "addresses"
   add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"
   add_foreign_key "vehicles", "models"

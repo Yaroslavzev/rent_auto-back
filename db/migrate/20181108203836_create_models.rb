@@ -4,7 +4,6 @@ class CreateModels < ActiveRecord::Migration[5.2]
     create_table :models, comment: 'Справочник моделей автомобилей' do |t|
       t.string :code
       t.string :name
-      t.boolean :active, default: true
       t.references :model_class 
       t.references :brand, foreign_key: true
       t.references :manufacture, foreign_key: true

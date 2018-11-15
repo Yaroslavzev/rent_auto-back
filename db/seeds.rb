@@ -193,7 +193,6 @@ if Rails.env.development?
   Manufacture.destroy_all
   Brand.destroy_all
 
-  DriverLicense.destroy_all
   Passport.destroy_all
   Address.destroy_all
   Settlement.destroy_all
@@ -297,24 +296,6 @@ if Rails.env.development?
   addresses = Address.create! seeds
   puts
 
-  # Заполнить справочник точек выдачи/возврата
-  print ' • справочник точек выдачи/возврата'
-  seeds = MAX_SEEDS.times.map do |no|
-    print '.'
-    spot = 'гараж'
-    # no = rand(10).to_s
-    spot_name = "#{spot} ##{no}"
-    {
-      code: gen_code(spot) + no.to_s,
-      name: spot_name,
-      address: addresses.sample,
-      note: spot_name.capitalize
-    }
-  end
-  spots = Spot.create! seeds
-  puts
-
-
   # Заполнить справочник паспортов
   print ' • справочник паспортов'
   seeds = (2*MAX_SEEDS).times.map do
@@ -335,27 +316,6 @@ if Rails.env.development?
     }
   end
   passports = Passport.create! seeds
-  puts
-
-  # Заполнить справочник водительских прав
-  print ' • справочник водительских прав'
-  seeds = (2*MAX_SEEDS).times.map do
-    print '.'
-    address = addresses.sample
-    {
-      # code:
-      # name:
-      country: address.country,
-      serial: gen_num_str(4),
-      number: gen_num_str(6),
-      issued_by: "ГИБДД, #{address.region.name}, #{address.settlement.name}",
-      issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
-      issued_date: Faker::Date.between(20.year.ago, Date.today),
-      valid_to: Faker::Date.between(5.year.ago, 15.year.from_now),
-      # note:
-    }
-  end
-  driver_license = DriverLicense.create! seeds
   puts
 
  # Заполнить справочник бредов

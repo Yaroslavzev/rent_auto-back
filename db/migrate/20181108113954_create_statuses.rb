@@ -4,7 +4,6 @@ class CreateStatuses < ActiveRecord::Migration[5.2]
     create_table :statuses, comment: 'Справочник статусов нас.пунктов (город, село, деревня...)' do |t|
       t.string :code
       t.string :name
-      t.boolean :active, default: true
       t.text :note
 
       t.timestamps

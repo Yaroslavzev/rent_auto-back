@@ -15,11 +15,8 @@ rails g scaffold district code:string name:string active:boolean region:referenc
 rails g scaffold settlement code:string name:string active:boolean status:references district:references region:references country:references note:text -p
 rails g scaffold address code:string name:string active:boolean country:references region:references district:references settlement:references postcode:string street:string house:string flat:string address1:string address2:string note:text -p
 
-rails g scaffold spot code:string name:string active:boolean address:references note:text -p
+rails g scaffold passport code:string name:string active:boolean checked:boolean country:references serial:string number:string issued_by:string issued_code:string issued_date:date valid_to:date address:references note:text -p
 
-rails g scaffold passport code:string name:string active:boolean verified:boolean country:references serial:string number:string issued_by:string issued_code:string issued_date:date valid_to:date address:references note:text -p
-
-rails g scaffold driver_license code:string name:string active:boolean verified:boolean country:references serial:string number:string category:string issued_by:string issued_code:string issued_date:date valid_to:date note:text -p
 
 rails g scaffold brand code:string name:string note:text -p
 rails g scaffold manufacture code:string name:string brand:references country:references note:text -p

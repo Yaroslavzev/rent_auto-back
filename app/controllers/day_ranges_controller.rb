@@ -47,6 +47,6 @@ class DayRangesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def day_range_params
-      params.require(:day_range).permit(:code, :name, :active, :day_from, :day_to, :note)
+      params.require(:day_range).permit(:code, :name, :day_from, :day_to, :note)
     end
 end

@@ -47,6 +47,6 @@ class ModelClassesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def model_class_params
-      params.require(:model_class).permit(:code, :name, :active, :note)
+      params.require(:model_class).permit(:code, :name, :note)
     end
 end

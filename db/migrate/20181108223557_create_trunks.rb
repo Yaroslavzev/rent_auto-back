@@ -4,7 +4,6 @@ class CreateTrunks < ActiveRecord::Migration[5.2]
     create_table :trunks, comment: 'Справочник багажников автомобилей' do |t|
       t.string :code
       t.string :name
-      t.boolean :active, default: true
       t.references :model, foreign_key: true
       t.references :trunk_type, foreign_key: true
       t.decimal :price
