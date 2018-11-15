@@ -193,8 +193,11 @@ if Rails.env.development?
   Manufacture.destroy_all
   Brand.destroy_all
 
+  Client.destroy_all
   DriverLicense.destroy_all
   Passport.destroy_all
+
+  Spot.destroy_all
   Address.destroy_all
   Settlement.destroy_all
   District.destroy_all
@@ -354,7 +357,32 @@ if Rails.env.development?
       # note:
     }
   end
-  driver_license = DriverLicense.create! seeds
+  driver_licenses = DriverLicense.create! seeds
+  puts
+
+  # Заполнить справочник клиентов
+  print ' • справочник клиентов'
+  seeds = (2*MAX_SEEDS).times.map do
+    print '.'
+    first_name = Faker::Name.first_name
+    middle_name = Faker::Name.middle_name
+    last_name = Faker::Name.last_name
+    full_name = "#{last_name} #{first_name} #{middle_name}"
+    {
+      # code:
+      name: full_name,
+      first_name: first_name,
+      middle_name: middle_name,
+      last_name: last_name,
+      birthday: Faker::Date.between(60.year.ago, 20.year.ago),
+      phone: Faker::PhoneNumber.cell_phone,
+      address: addresses.sample,
+      passport: passports.sample,
+      driver_license: driver_licenses.sample,
+      note: full_name
+    }
+  end
+  clients = Client.create! seeds
   puts
 
  # Заполнить справочник бредов

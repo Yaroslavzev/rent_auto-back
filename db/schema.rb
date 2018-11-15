@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_080941) do
+ActiveRecord::Schema.define(version: 2018_11_15_092037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,26 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "clients", comment: "Справочник клиентов", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.string "first_name"
+    t.string "middle_name"
+    t.string "last_name"
+    t.date "birthday"
+    t.string "phone"
+    t.bigint "address_id"
+    t.bigint "passport_id"
+    t.bigint "driver_license_id"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_clients_on_address_id"
+    t.index ["driver_license_id"], name: "index_clients_on_driver_license_id"
+    t.index ["passport_id"], name: "index_clients_on_passport_id"
   end
 
   create_table "countries", comment: "Справочник стран", force: :cascade do |t|
@@ -364,6 +384,9 @@ ActiveRecord::Schema.define(version: 2018_11_15_080941) do
   add_foreign_key "addresses", "districts"
   add_foreign_key "addresses", "regions"
   add_foreign_key "addresses", "settlements"
+  add_foreign_key "clients", "addresses"
+  add_foreign_key "clients", "driver_licenses"
+  add_foreign_key "clients", "passports"
   add_foreign_key "districts", "countries"
   add_foreign_key "districts", "regions"
   add_foreign_key "driver_licenses", "countries"

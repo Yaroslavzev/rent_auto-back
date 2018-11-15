@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :clients
   resources :spots
   resources :driver_licenses
   resources :passports
