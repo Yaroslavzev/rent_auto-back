@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_092037) do
+ActiveRecord::Schema.define(version: 2018_11_15_101117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,9 +72,11 @@ ActiveRecord::Schema.define(version: 2018_11_15_092037) do
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
+    t.boolean "verified", default: false
     t.string "first_name"
     t.string "middle_name"
     t.string "last_name"
+    t.string "gender"
     t.date "birthday"
     t.string "phone"
     t.bigint "address_id"
@@ -359,6 +361,22 @@ ActiveRecord::Schema.define(version: 2018_11_15_092037) do
     t.index ["trunk_type_id"], name: "index_trunks_on_trunk_type_id"
   end
 
+  create_table "users", comment: "Справочник пользователей", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.boolean "verified", default: false
+    t.string "secret"
+    t.string "role", default: "user"
+    t.string "email"
+    t.string "image"
+    t.bigint "client_id"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_users_on_client_id"
+  end
+
   create_table "vehicles", comment: "Справочник автомобилей", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -416,6 +434,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_092037) do
   add_foreign_key "spots", "addresses"
   add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"
+  add_foreign_key "users", "clients"
   add_foreign_key "vehicles", "models"
   add_foreign_key "vehicles", "trunks"
 end

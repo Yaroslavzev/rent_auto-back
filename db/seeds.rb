@@ -193,6 +193,7 @@ if Rails.env.development?
   Manufacture.destroy_all
   Brand.destroy_all
 
+  User.destroy_all
   Client.destroy_all
   DriverLicense.destroy_all
   Passport.destroy_all
@@ -362,9 +363,10 @@ if Rails.env.development?
 
   # Заполнить справочник клиентов
   print ' • справочник клиентов'
-  seeds = (2*MAX_SEEDS).times.map do
+  seeds = MAX_SEEDS.times.map do
     print '.'
-    first_name = Faker::Name.first_name
+    gender = Faker::Gender.binary_type
+    first_name = gender == 'Male' ? Faker::Name.male_first_name : Faker::Name.female_first_name
     middle_name = Faker::Name.middle_name
     last_name = Faker::Name.last_name
     full_name = "#{last_name} #{first_name} #{middle_name}"
@@ -374,15 +376,33 @@ if Rails.env.development?
       first_name: first_name,
       middle_name: middle_name,
       last_name: last_name,
+      gender: gender,
       birthday: Faker::Date.between(60.year.ago, 20.year.ago),
       phone: Faker::PhoneNumber.cell_phone,
       address: addresses.sample,
       passport: passports.sample,
       driver_license: driver_licenses.sample,
-      note: full_name
+      note: Faker::Lorem.sentence
     }
   end
   clients = Client.create! seeds
+  puts
+
+  # Заполнить справочник пользователей
+  print ' • справочник пользователей'
+  seeds = clients.map do |client|
+    print '.'
+    username = Faker::Internet.username
+    {
+      code: username,
+      name: username,
+      email: Faker::Internet.safe_email(username),
+      image: Faker::Avatar.image,
+      client: client,
+      note: Faker::Lorem.sentence
+    }
+  end
+  users = User.create! seeds
   puts
 
  # Заполнить справочник бредов

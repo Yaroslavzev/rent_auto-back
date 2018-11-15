@@ -18,10 +18,11 @@ rails g scaffold address code:string name:string active:boolean country:referenc
 rails g scaffold spot code:string name:string active:boolean address:references note:text -p
 
 rails g scaffold passport code:string name:string active:boolean verified:boolean country:references serial:string number:string issued_by:string issued_code:string issued_date:date valid_to:date address:references note:text -p
-
 rails g scaffold driver_license code:string name:string active:boolean verified:boolean country:references serial:string number:string category:string issued_by:string issued_code:string issued_date:date valid_to:date note:text -p
 
-rails g scaffold client code:string name:string active:boolean first_name:string middle_name:string last_name:string birthday:date phone:string:array address:references passport:references driver_license:references note:text -p
+rails g scaffold client code:string name:string active:boolean verified:boolean first_name:string middle_name:string last_name:string gender:string birthday:date phone:string:array address:references passport:references driver_license:references note:text -p
+
+rails g scaffold user code:string name:string active:boolean verified:boolean secret:string role:string email:string image:string client:references note:text -p
 
 rails g scaffold brand code:string name:string note:text -p
 rails g scaffold manufacture code:string name:string brand:references country:references note:text -p
