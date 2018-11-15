@@ -16,7 +16,7 @@ MAX_SEEDS = 10
 LOCALITY_STATUSES = %w[аул город деревня железно-дорожная\ станция населенный\ пункт поселок
                        поселок\ городского\ типа село слобода станица].freeze
 
-MODEL_CLASSES = %w[бизнес премиум эконом].freeze
+MODEL_CLASSES = %w[стандарт бизнес премиум эконом].freeze
 
 BODY_TYPES = %w[автобус внедорожник кабриолет кроссовер купе лимузин лифтбэк микроавтобус минивэн пикап
                 родстер седан стретч тарга универсал фургон хэтчбек].freeze
@@ -566,9 +566,9 @@ if Rails.env.development?
       earnest: day * 3,
       km: km,
       km_over: km * 1.5,
-      # weekend: day * 2 * 1.5,
-      # workweek: day * 4,
-      # workday: day * 0.9,
+      weekend: day * 2 * 1.5,
+      workweek: day * 4,
+      workday: day * 0.9,
       note: price_name
     }
   end

@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :orders
   resources :pay_types
   resources :users
   resources :clients

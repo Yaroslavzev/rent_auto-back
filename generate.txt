@@ -51,4 +51,4 @@ rails g scaffold addition code:string name:string active:boolean service:boolean
 
 rails g scaffold pay_type code:string name:string active:boolean tax:float rebate:float discount:float note:text -p
 
-rails g scaffold order code:string name:string active:boolean note:text -p
+rails g scaffold order code:string name:string active:boolean status:string vehicle:references model:references client:references issue_spot:references:spot return_spot:references:spot date_from:date time_from:time date_to:date time_to:time days_count:integer days_over:integer rental_plan:references pay_type:references weekend_fee:decimal workweek_fee:decimal days_fee:decimal addons_fee:decimal forfeit_fee:decimal discouts:decimal total_fee:decimal total_paid:decimal paid_full:boolean note:text -p

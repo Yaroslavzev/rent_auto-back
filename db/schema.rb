@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_142843) do
+ActiveRecord::Schema.define(version: 2018_11_15_165405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -191,6 +191,45 @@ ActiveRecord::Schema.define(version: 2018_11_15_142843) do
     t.index ["model_class_id"], name: "index_models_on_model_class_id"
   end
 
+  create_table "orders", comment: "Справчоник заказов", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.string "status", default: "created", comment: "состояние заказа"
+    t.bigint "vehicle_id", comment: "конкретный автомобиль (может не быть)"
+    t.bigint "model_id", comment: "модель (если есть конкретный автомобиль то модель берем оттуда)"
+    t.bigint "client_id", comment: "клиент"
+    t.bigint "issue_spot_id", comment: "точка выдачи"
+    t.bigint "return_spot_id", comment: "точка возврата"
+    t.date "date_from", comment: "дата выдачи"
+    t.time "time_from", comment: "время выдачи"
+    t.date "date_to", comment: "дата возврата"
+    t.time "time_to", comment: "время возврата"
+    t.integer "days_count", comment: "кол-во дней аренды (наверно тех что не попали в другие тарифы)"
+    t.integer "days_over", comment: "кол-во просроченных дней"
+    t.bigint "rental_plan_id", comment: "тарифный план"
+    t.bigint "pay_type_id", comment: "форма оплаты"
+    t.decimal "weekend_fee", comment: "плата по тарифу выходных дней"
+    t.decimal "workweek_fee", comment: "плата по тарифу рабочих дней"
+    t.decimal "days_fee", comment: "плата по тарифу по дням"
+    t.decimal "addons_fee", comment: "плата за дополнительные услуги/снаряжение"
+    t.decimal "forfeit_fee", comment: "штрафы"
+    t.decimal "discouts", comment: "скидки"
+    t.decimal "total_fee", comment: "общая сумма к оплате"
+    t.decimal "total_paid", comment: "сколько уже оплачено от общей суммы (может быть частично/залог)"
+    t.boolean "paid_full", comment: "отметка о полной оплате"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_orders_on_client_id"
+    t.index ["issue_spot_id"], name: "index_orders_on_issue_spot_id"
+    t.index ["model_id"], name: "index_orders_on_model_id"
+    t.index ["pay_type_id"], name: "index_orders_on_pay_type_id"
+    t.index ["rental_plan_id"], name: "index_orders_on_rental_plan_id"
+    t.index ["return_spot_id"], name: "index_orders_on_return_spot_id"
+    t.index ["vehicle_id"], name: "index_orders_on_vehicle_id"
+  end
+
   create_table "passports", comment: "Справочник паспортов", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -279,6 +318,9 @@ ActiveRecord::Schema.define(version: 2018_11_15_142843) do
     t.decimal "earnest"
     t.decimal "km"
     t.decimal "km_over"
+    t.decimal "weekend"
+    t.decimal "workweek"
+    t.decimal "workday"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -424,6 +466,13 @@ ActiveRecord::Schema.define(version: 2018_11_15_142843) do
   add_foreign_key "models", "body_types"
   add_foreign_key "models", "brands"
   add_foreign_key "models", "manufactures"
+  add_foreign_key "orders", "clients"
+  add_foreign_key "orders", "models"
+  add_foreign_key "orders", "pay_types"
+  add_foreign_key "orders", "rental_plans"
+  add_foreign_key "orders", "spots", column: "issue_spot_id"
+  add_foreign_key "orders", "spots", column: "return_spot_id"
+  add_foreign_key "orders", "vehicles"
   add_foreign_key "passports", "addresses"
   add_foreign_key "passports", "countries"
   add_foreign_key "range_rates", "day_ranges"

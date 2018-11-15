@@ -13,9 +13,9 @@ class CreateRentalPrices < ActiveRecord::Migration[5.2]
       t.decimal :earnest
       t.decimal :km
       t.decimal :km_over
-      # t.decimal :weekend
-      # t.decimal :workweek
-      # t.decimal :workday
+      t.decimal :weekend
+      t.decimal :workweek
+      t.decimal :workday
       t.text :note
 
       t.timestamps
