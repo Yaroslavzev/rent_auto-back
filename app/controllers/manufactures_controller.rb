@@ -48,6 +48,6 @@ class ManufacturesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def manufacture_params
-    params.require(:manufacture).permit(:code, :name, :brand_id, :country_id, :note)
+    params.require(:manufacture).permit(:code, :name, :active, :brand_id, :country_id, :note)
   end
 end

@@ -47,6 +47,6 @@ class PassportsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def passport_params
-      params.require(:passport).permit(:code, :name, :active, :checked, :country_id, :serial, :number, :issued_by, :issued_code, :issued_date, :valid_to, :address_id, :note)
+      params.require(:passport).permit(:code, :name, :active, :verified, :country_id, :serial, :number, :issued_by, :issued_code, :issued_date, :valid_to, :address_id, :note)
     end
 end

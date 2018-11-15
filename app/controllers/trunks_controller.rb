@@ -48,6 +48,6 @@ class TrunksController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def trunk_params
-    params.require(:trunk).permit(:code, :name, :trunk_type_id, :model_id, :note)
+    params.require(:trunk).permit(:code, :name, :active, :trunk_type_id, :model_id, :note)
   end
 end

@@ -4,6 +4,7 @@ class CreateModelClasses < ActiveRecord::Migration[5.2]
     create_table :model_classes, comment: 'Справочник классов моделей автомобилей' do |t|
       t.string :code
       t.string :name
+      t.boolean :active, default: true
       t.text :note
 
       t.timestamps
