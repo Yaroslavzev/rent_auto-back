@@ -4,6 +4,7 @@ class CreateRentalRates < ActiveRecord::Migration[5.2]
     create_table :rental_rates, comment: 'Справочник коэффициентов тарифов' do |t|
       t.string :code
       t.string :name
+      t.boolean :active, default: true
       t.references :model, foreign_key: true
       t.references :rental_type, foreign_key: true
       t.float :workweek

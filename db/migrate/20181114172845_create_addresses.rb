@@ -5,7 +5,7 @@ class CreateAddresses < ActiveRecord::Migration[5.2]
       t.string :code, default: nil
       t.string :name, default: nil
       t.boolean :active, default: true
-      t.boolean :checked, default: false
+      t.boolean :verified, default: false
       t.references :country, foreign_key: true
       t.references :region, foreign_key: true
       t.references :district, foreign_key: true
