@@ -7,4 +7,6 @@ class Order < ApplicationRecord
   belongs_to :return_spot, class_name: 'Spot'
   belongs_to :rental_plan
   belongs_to :pay_type
+
+  has_many :order_addons
 end
