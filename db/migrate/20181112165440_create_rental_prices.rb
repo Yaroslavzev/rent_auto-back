@@ -7,14 +7,15 @@ class CreateRentalPrices < ActiveRecord::Migration[5.2]
       t.boolean :active, default: true
       t.references :model, foreign_key: true
       t.references :model_class, foreign_key: true
+      t.decimal :hour
       t.decimal :day
       t.decimal :forfeit
       t.decimal :earnest
       t.decimal :km
       t.decimal :km_over
-      t.decimal :weekend
-      t.decimal :workweek
-      t.decimal :workday
+      # t.decimal :weekend
+      # t.decimal :workweek
+      # t.decimal :workday
       t.text :note
 
       t.timestamps

@@ -44,8 +44,12 @@ gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  # An IRB alternative and runtime developer console
+  gem 'pry' #, '~> 0.10.3'
+  # Combine 'pry' with 'byebug'. Adds 'step', 'next', 'finish', 'continue' and 'break' commands to control execution.
+  gem 'pry-byebug' #, '~> 3.6'
   # BDD for Ruby
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails' #, '~> 3.8'
   # gem 'rspec', '~> 3.8'
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide.
   gem 'rubocop', require: false

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_101117) do
+ActiveRecord::Schema.define(version: 2018_11_15_142843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,6 +211,18 @@ ActiveRecord::Schema.define(version: 2018_11_15_101117) do
     t.index ["country_id"], name: "index_passports_on_country_id"
   end
 
+  create_table "pay_types", comment: "Справочник форм оплаты", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.float "tax", default: 0.0, comment: "коэффициент налога"
+    t.float "rebate", default: 0.0, comment: "коэффициент льготы"
+    t.float "discount", default: 0.0, comment: "коэффициент скидки"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "range_rates", comment: "Связка коэффициентов и диапазонов дней", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -261,14 +273,12 @@ ActiveRecord::Schema.define(version: 2018_11_15_101117) do
     t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "model_class_id"
+    t.decimal "hour"
     t.decimal "day"
     t.decimal "forfeit"
     t.decimal "earnest"
     t.decimal "km"
     t.decimal "km_over"
-    t.decimal "weekend"
-    t.decimal "workweek"
-    t.decimal "workday"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -282,9 +292,10 @@ ActiveRecord::Schema.define(version: 2018_11_15_101117) do
     t.boolean "active", default: true
     t.bigint "model_id"
     t.bigint "rental_type_id"
+    t.float "hour"
+    t.float "day"
     t.float "workweek"
     t.float "weekend"
-    t.float "hour"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

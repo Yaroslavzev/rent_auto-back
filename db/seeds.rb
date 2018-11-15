@@ -28,7 +28,9 @@ ADDITIONS = %w[автокресло навигатор переходник\ в\
 
 RENTAL_TYPES = %w[основной демисезон зимний летний].freeze
 
-DAY_RANGES = [[1,3],[3,7],[7,15],[15,30],[30,nil]].freeze
+PAY_TYPES = %w[наличный безналичный банковская\ карта натурой].freeze
+
+DAY_RANGES = [[1,6],[7,20],[21,nil]].freeze
 
 # Генерация поля code по правилам зависимым от параметров:
 #   - если в 1м параметре 1 слово, то берем 3 первых буквы, исключая гласные, кроме первой,
@@ -180,9 +182,24 @@ end
 day_ranges = seeds.blank? ? DayRange.all : DayRange.create!(seeds)
 puts
 
+# Заполнить справочник форм оплаты
+print ' • справочник форм оплаты'
+seeds = PAY_TYPES.inject([]) do |arr,type|
+  print '.'
+  code = gen_code(type)
+  arr << {
+    code: code,
+    name: type,
+    note: type.capitalize
+  } if PayType.find_by_code(code).blank?
+end
+pay_types = seeds.blank? ? PayType.all : PayType.create!(seeds)
+puts
+
 # Заполнить данные для окружения разработки
 if Rails.env.development?
-  # Удаляем сгенерированные записи
+  # Удалить сгенерированные записи
+  RentalPlan.destroy_all
   RentalPrice.destroy_all
   RangeRate.destroy_all
   RentalRate.destroy_all
@@ -445,7 +462,7 @@ if Rails.env.development?
     model = Faker::Vehicle.model
     brand = brands.sample
     {
-      code: "#{model[0..2].downcase}-#{brand.code}",
+      code: "#{brand.code}-#{model[0..2].downcase}",
       name: model,
       brand: brand,
       model_class: model_classes.sample,
@@ -535,9 +552,6 @@ if Rails.env.development?
   print ' • справочник базовых цен для моделей (классов?)'
   seeds = models.map do |model|
     price_name = "#{model.name}(#{model.model_class.name})"
-    # Money принимает значение в копейках (ну не дурость?)
-    # day_price = Money.new(rand(20..30) * 100 * 100)
-    # km_price = Money.new(rand(50..100) / 10 * 100)
     day = rand(20..30) * 100
     km = rand(50..100) / 10
     print '.'
@@ -546,26 +560,43 @@ if Rails.env.development?
       name: price_name,
       model: model,
       model_class: model.model_class,
-      # day_price: day_price.to_f,
-      # forfeit_price: (day_price * 1.5).to_f,
-      # earnest: (day_price * 3).to_f,
-      # km_price: km_price.to_f,
-      # km_over_price: (km_price * 1.5).to_f,
-      # weekend_price: (day_price * 2 * 1.5).to_f,
-      # workweek_price: (day_price * 4).to_f,
-      # workday_price: (day_price * 0.9).to_f,
+      hour: day / 20,
       day: day,
       forfeit: day * 1.5,
       earnest: day * 3,
       km: km,
       km_over: km * 1.5,
-      weekend: day * 2 * 1.5,
-      workweek: day * 4,
-      workday: day * 0.9,
+      # weekend: day * 2 * 1.5,
+      # workweek: day * 4,
+      # workday: day * 0.9,
       note: price_name
     }
   end
   rental_prices = RentalPrice.create! seeds
+  puts
+
+  # Заполнить справочник тарифных планов
+  print ' • справочник тарифных планов'
+  seeds = models.map do |model|
+    model_class = model.model_class
+    price = rental_prices.select { |h| h.model == model }.first # по идеи должен быть хотябы один
+    rates = rental_rates.select { |h| h.model == model } # а этих должно быть много
+    rates.map do |rate|
+      print '.'
+      rental_type = rate.rental_type
+      {
+        code: "#{price.code}-#{gen_code(rental_type.name)}",
+        name: "#{model.brand.name} #{price.name} (#{rental_type.name})",
+        model: model,
+        model_class: model_class,
+        rental_type: rental_type,
+        rental_rate: rate,
+        rental_price: price,
+        note: "#{price.name}(#{rental_type.name})",
+      }
+    end
+  end
+  rental_plans = RentalPlan.create! seeds.flatten
   puts
 
   # Заполнить справочник автомобилей

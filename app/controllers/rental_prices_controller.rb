@@ -47,6 +47,6 @@ class RentalPricesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def rental_price_params
-      params.require(:rental_price).permit(:code, :name, :active, :model_id, :model_class_id, :day, :forfeit, :earnest, :km, :km_over, :weekend, :workweek, :workday, :note)
+      params.require(:rental_price).permit(:code, :name, :active, :model_id, :model_class_id, :hour, :day, :forfeit, :earnest, :km, :km_over, :note)
     end
 end
