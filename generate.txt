@@ -38,8 +38,8 @@ rails g scaffold trunk code:string name:string trunk_type:references model:refer
 rails g scaffold rental_type code:string name:string note:text -p
 rails g scaffold rental_rate code:string name:string model:references rental_type:references workweek_rate:float  weekend_rate:float hour_rate:float note:text -p
 
-rails g scaffold day_range code:string name:string day_from:integer day_to:integer note:text -p
-rails g scaffold range_rate code:string name:string rental_rate:references day_range:references rate:float note:text -p
+rails g scaffold days_range code:string name:string days_from:integer days_to:integer note:text -p
+rails g scaffold range_rate code:string name:string rental_rate:references days_range:references rate:float note:text -p
 
 rails g scaffold rental_price code:string name:string model:references model_class:references day_price:money forfeit_price:money earnest:money km_price:money km_over_price:money weekend_price:money workweek_price:money workday_price:money note:text -p
 

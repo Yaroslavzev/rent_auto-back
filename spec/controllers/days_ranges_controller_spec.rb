@@ -23,10 +23,10 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe DayRangesController, type: :controller do
+RSpec.describe DaysRangesController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
-  # DayRange. As you add validations to DayRange, be sure to
+  # DaysRange. As you add validations to DaysRange, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
@@ -38,12 +38,12 @@ RSpec.describe DayRangesController, type: :controller do
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
-  # DayRangesController. Be sure to keep this updated too.
+  # DaysRangesController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
   describe "GET #index" do
     it "returns a success response" do
-      day_range = DayRange.create! valid_attributes
+      days_range = DaysRange.create! valid_attributes
       get :index, params: {}, session: valid_session
       expect(response).to be_successful
     end
@@ -51,33 +51,33 @@ RSpec.describe DayRangesController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      day_range = DayRange.create! valid_attributes
-      get :show, params: {id: day_range.to_param}, session: valid_session
+      days_range = DaysRange.create! valid_attributes
+      get :show, params: {id: days_range.to_param}, session: valid_session
       expect(response).to be_successful
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new DayRange" do
+      it "creates a new DaysRange" do
         expect {
-          post :create, params: {day_range: valid_attributes}, session: valid_session
-        }.to change(DayRange, :count).by(1)
+          post :create, params: {days_range: valid_attributes}, session: valid_session
+        }.to change(DaysRange, :count).by(1)
       end
 
-      it "renders a JSON response with the new day_range" do
+      it "renders a JSON response with the new days_range" do
 
-        post :create, params: {day_range: valid_attributes}, session: valid_session
+        post :create, params: {days_range: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(day_range_url(DayRange.last))
+        expect(response.location).to eq(days_range_url(DaysRange.last))
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new day_range" do
+      it "renders a JSON response with errors for the new days_range" do
 
-        post :create, params: {day_range: invalid_attributes}, session: valid_session
+        post :create, params: {days_range: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -90,27 +90,27 @@ RSpec.describe DayRangesController, type: :controller do
         skip("Add a hash of attributes valid for your model")
       }
 
-      it "updates the requested day_range" do
-        day_range = DayRange.create! valid_attributes
-        put :update, params: {id: day_range.to_param, day_range: new_attributes}, session: valid_session
-        day_range.reload
+      it "updates the requested days_range" do
+        days_range = DaysRange.create! valid_attributes
+        put :update, params: {id: days_range.to_param, days_range: new_attributes}, session: valid_session
+        days_range.reload
         skip("Add assertions for updated state")
       end
 
-      it "renders a JSON response with the day_range" do
-        day_range = DayRange.create! valid_attributes
+      it "renders a JSON response with the days_range" do
+        days_range = DaysRange.create! valid_attributes
 
-        put :update, params: {id: day_range.to_param, day_range: valid_attributes}, session: valid_session
+        put :update, params: {id: days_range.to_param, days_range: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the day_range" do
-        day_range = DayRange.create! valid_attributes
+      it "renders a JSON response with errors for the days_range" do
+        days_range = DaysRange.create! valid_attributes
 
-        put :update, params: {id: day_range.to_param, day_range: invalid_attributes}, session: valid_session
+        put :update, params: {id: days_range.to_param, days_range: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -118,11 +118,11 @@ RSpec.describe DayRangesController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested day_range" do
-      day_range = DayRange.create! valid_attributes
+    it "destroys the requested days_range" do
+      days_range = DaysRange.create! valid_attributes
       expect {
-        delete :destroy, params: {id: day_range.to_param}, session: valid_session
-      }.to change(DayRange, :count).by(-1)
+        delete :destroy, params: {id: days_range.to_param}, session: valid_session
+      }.to change(DaysRange, :count).by(-1)
     end
   end
 

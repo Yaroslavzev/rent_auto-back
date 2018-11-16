@@ -2,9 +2,9 @@
 class CreateOrders < ActiveRecord::Migration[5.2]
   def change
     create_table :orders, comment: 'Справочник заказов' do |t|
-      t.string :code, default: nil
-      t.string :name, default: nil
-      t.boolean :active, default: true
+      t.string :code, default: nil, comment: 'короткое название/аббревиатура/ключевое слово'
+      t.string :name, default: nil, comment: 'можно использовать для пометок (необязательное поле)'
+      t.boolean :active, default: true, comment: 'актуальность'
       t.string :status, default: 'created', comment: 'состояние заказа'
       t.references :vehicle, foreign_key: true, comment: 'конкретный автомобиль (может не быть)'
       t.references :model, foreign_key: true, comment: 'модель (если есть конкретный автомобиль то модель берем оттуда)'
@@ -28,7 +28,7 @@ class CreateOrders < ActiveRecord::Migration[5.2]
       t.decimal :total_fee, comment: 'общая сумма к оплате'
       t.decimal :total_paid, comment: 'сколько уже оплачено от общей суммы (может быть частично/залог)'
       t.boolean :paid_full, default: false, comment: 'отметка о полной оплате'
-      t.text :note, default: nil
+      t.text :note, default: nil, comment: 'заметки'
 
       t.timestamps
     end

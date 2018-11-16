@@ -30,7 +30,7 @@ RENTAL_TYPES = %w[основной демисезон зимний летний]
 
 PAY_TYPES = %w[наличный безналичный банковская\ карта натурой].freeze
 
-DAY_RANGES = [[1,6],[7,20],[21,nil]].freeze
+DAYS_RANGES = [[1,6],[7,20],[21,nil]].freeze
 
 # Генерация поля code по правилам зависимым от параметров:
 #   - если в 1м параметре 1 слово, то берем 3 первых буквы, исключая гласные, кроме первой,
@@ -165,7 +165,7 @@ puts
 
 # Заполнить справочник диапазонов дней аренды
 print ' • справочник диапазонов дней аренды'
-seeds = DAY_RANGES.inject([]) do |arr,range|
+seeds = DAYS_RANGES.inject([]) do |arr,range|
   print '.'
   code = "д#{range[0]}" + (range[1].nil? ? '+' : "-#{range[1]}")
   range_name = "от #{range[0]}" 
@@ -174,12 +174,12 @@ seeds = DAY_RANGES.inject([]) do |arr,range|
   arr << {
     code: code,
     name: range_name,
-    day_from: range[0],
-    day_to: range[1],
+    days_from: range[0],
+    days_to: range[1],
     note: range_name.capitalize
-  } if DayRange.find_by_code(code).blank?
+  } if DaysRange.find_by_code(code).blank?
 end
-day_ranges = seeds.blank? ? DayRange.all : DayRange.create!(seeds)
+days_ranges = seeds.blank? ? DaysRange.all : DaysRange.create!(seeds)
 puts
 
 # Заполнить справочник форм оплаты
@@ -535,14 +535,14 @@ if Rails.env.development?
   # Заполнить связки коэффициентов и диапазонов дней
   print ' • связки коэффициентов и диапазонов дней'
   seeds = rental_rates.map do |rate|
-    day_ranges.map do |range|
+    days_ranges.map do |range|
       print '.'
       rate_name = "#{rate.name}(#{range.name})"
       {
         code: "#{rate.code}-#{range.code}",
         name: rate_name,
         rental_rate: rate,
-        day_range: range,
+        days_range: range,
         rate: rand(80..100).to_f / 100,
         note: rate_name
       }

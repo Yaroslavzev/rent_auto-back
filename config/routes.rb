@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   resources :rental_prices
   resources :model_classes
   resources :range_rates
-  resources :day_ranges
+  resources :days_ranges
   resources :rental_rates
   resources :rental_types
   resources :rental_classes
