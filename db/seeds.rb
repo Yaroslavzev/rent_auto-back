@@ -510,19 +510,20 @@ if Rails.env.development?
 
   # Заполнить справочник коэффициентов тарифных планов
   print ' • справочник коэффициентов тарифных планов'
-  seeds = models.map do |model|
+  seeds = model_classes.map do |klass|
     rental_types.map do |type|
       print '.'
-      rate_name = "#{model.name}(#{type.name})"
+      rate_name = "#{klass.name}(#{type.name})"
       {
-        code: "#{model.code}-#{type.code}",
+        code: "#{klass.code}-#{type.code}",
         name: rate_name,
-        model: model,
+        model_class: klass,
         rental_type: type,
+        hour: rand(5..15).to_f / 10,
+        day:  rand(5..15).to_f / 10,
         workweek: rand(5..15).to_f / 10,
         weekend: rand(5..15).to_f / 10,
-        hour: rand(5..15).to_f / 10,
-        note: rate_name
+        note: rate_name.capitalize
       }
     end
   end
@@ -580,19 +581,19 @@ if Rails.env.development?
   seeds = models.map do |model|
     model_class = model.model_class
     price = rental_prices.select { |h| h.model == model }.first # по идеи должен быть хотябы один
-    rates = rental_rates.select { |h| h.model == model } # а этих должно быть много
+    rates = rental_rates.select { |h| h.model_class == model_class } # а этих должно быть много
     rates.map do |rate|
       print '.'
       rental_type = rate.rental_type
       {
         code: "#{price.code}-#{gen_code(rental_type.name)}",
-        name: "#{model.brand.name} #{price.name} (#{rental_type.name})",
+        name: "#{model.brand.name} #{price.name}(#{rental_type.name})",
         model: model,
         model_class: model_class,
         rental_type: rental_type,
         rental_rate: rate,
         rental_price: price,
-        note: "#{price.name}(#{rental_type.name})",
+        note: "#{model.brand.name} #{price.name}(#{rental_type.name})",
       }
     end
   end

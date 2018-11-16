@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_15_165405) do
+ActiveRecord::Schema.define(version: 2018_11_15_181035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "additions", comment: "Справочник дополнительных услуг и снаряжения", force: :cascade do |t|
+  create_table "additions", comment: "Справочник дополнений (услуг и снаряжения)", force: :cascade do |t|
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
@@ -191,6 +191,20 @@ ActiveRecord::Schema.define(version: 2018_11_15_165405) do
     t.index ["model_class_id"], name: "index_models_on_model_class_id"
   end
 
+  create_table "order_addons", comment: "Справочник дополнений для каждого заказа", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.boolean "active", default: true
+    t.bigint "order_id"
+    t.bigint "addition_id"
+    t.decimal "price"
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["addition_id"], name: "index_order_addons_on_addition_id"
+    t.index ["order_id"], name: "index_order_addons_on_order_id"
+  end
+
   create_table "orders", comment: "Справчоник заказов", force: :cascade do |t|
     t.string "code"
     t.string "name"
@@ -332,7 +346,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_165405) do
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
-    t.bigint "model_id"
+    t.bigint "model_class_id"
     t.bigint "rental_type_id"
     t.float "hour"
     t.float "day"
@@ -341,7 +355,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_165405) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["model_id"], name: "index_rental_rates_on_model_id"
+    t.index ["model_class_id"], name: "index_rental_rates_on_model_class_id"
     t.index ["rental_type_id"], name: "index_rental_rates_on_rental_type_id"
   end
 
@@ -466,6 +480,8 @@ ActiveRecord::Schema.define(version: 2018_11_15_165405) do
   add_foreign_key "models", "body_types"
   add_foreign_key "models", "brands"
   add_foreign_key "models", "manufactures"
+  add_foreign_key "order_addons", "additions"
+  add_foreign_key "order_addons", "orders"
   add_foreign_key "orders", "clients"
   add_foreign_key "orders", "models"
   add_foreign_key "orders", "pay_types"
@@ -485,7 +501,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_165405) do
   add_foreign_key "rental_plans", "rental_types"
   add_foreign_key "rental_prices", "model_classes"
   add_foreign_key "rental_prices", "models"
-  add_foreign_key "rental_rates", "models"
+  add_foreign_key "rental_rates", "model_classes"
   add_foreign_key "rental_rates", "rental_types"
   add_foreign_key "settlements", "countries"
   add_foreign_key "settlements", "districts"

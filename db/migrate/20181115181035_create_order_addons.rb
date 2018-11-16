@@ -4,7 +4,7 @@ class CreateOrderAddons < ActiveRecord::Migration[5.2]
     create_table :order_addons, comment: 'Справочник дополнений для каждого заказа' do |t|
       t.string :code
       t.string :name
-      t.boolean :active
+      t.boolean :active, default: true
       t.references :order, foreign_key: true
       t.references :addition, foreign_key: true
       t.decimal :price
