@@ -47,6 +47,6 @@ class DriverLicensesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def driver_license_params
-      params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :serial, :number, :category, :issued_by, :issued_code, :issued_date, :valid_to, :note)
+      params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :series, :number, :category, :issued_by, :issued_code, :issued_date, :valid_to, :note)
     end
 end

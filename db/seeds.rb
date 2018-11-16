@@ -346,7 +346,7 @@ if Rails.env.development?
       # code:
       # name:
       country: address.country,
-      serial: gen_num_str(4),
+      series: gen_num_str(4),
       number: gen_num_str(6),
       issued_by: "ПВО ОВД, #{address.region.name}, #{address.settlement.name}",
       issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
@@ -368,7 +368,7 @@ if Rails.env.development?
       # code:
       # name:
       country: address.country,
-      serial: gen_num_str(4),
+      series: gen_num_str(4),
       number: gen_num_str(6),
       issued_by: "ГИБДД, #{address.region.name}, #{address.settlement.name}",
       issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
