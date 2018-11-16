@@ -205,7 +205,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
     t.index ["order_id"], name: "index_order_addons_on_order_id"
   end
 
-  create_table "orders", comment: "Справчоник заказов", force: :cascade do |t|
+  create_table "orders", comment: "Справочник заказов", force: :cascade do |t|
     t.string "code"
     t.string "name"
     t.boolean "active", default: true
@@ -224,14 +224,14 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
     t.bigint "rental_plan_id", comment: "тарифный план"
     t.bigint "pay_type_id", comment: "форма оплаты"
     t.decimal "weekend_fee", comment: "плата по тарифу выходных дней"
-    t.decimal "workweek_fee", comment: "плата по тарифу рабочих дней"
+    t.decimal "workweek_fee", comment: "плата по тарифу рабочей недели"
     t.decimal "days_fee", comment: "плата по тарифу по дням"
     t.decimal "addons_fee", comment: "плата за дополнительные услуги/снаряжение"
     t.decimal "forfeit_fee", comment: "штрафы"
     t.decimal "discouts", comment: "скидки"
     t.decimal "total_fee", comment: "общая сумма к оплате"
     t.decimal "total_paid", comment: "сколько уже оплачено от общей суммы (может быть частично/залог)"
-    t.boolean "paid_full", comment: "отметка о полной оплате"
+    t.boolean "paid_full", default: false, comment: "отметка о полной оплате"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

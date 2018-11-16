@@ -18,6 +18,9 @@ gem 'rails-i18n'
 gem 'money'
 gem 'money-rails'
 
+# Supplies TimeOfDay class that includes parsing, strftime, comparison, and arithmetic.
+gem 'tod' #, '~> 2.2'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # ActiveModel::Serializers allows you to generate your JSON in an object-oriented and convention-driven manner.
@@ -54,7 +57,7 @@ group :development, :test do
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide.
   gem 'rubocop', require: false
   # Faker is used to easily generate fake data: names, addresses, phone numbers, etc.
-  gem 'faker', require: false
+  gem 'faker' #, require: false
   gem 'ffaker', require: false
   # Faker russian specific values. INN, OKPO, OGRN et.c.
   # (пока нет генерации паспортов он для нас беполезен)

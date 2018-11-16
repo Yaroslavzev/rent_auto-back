@@ -9,4 +9,10 @@ class Order < ApplicationRecord
   belongs_to :pay_type
 
   has_many :order_addons
+
+  # attribute :time_from, :time
+  # attribute :time_to, :time
+
+  # serialize :time_from, Tod::TimeOfDay
+  # serialize :time_to, Tod::TimeOfDay
 end

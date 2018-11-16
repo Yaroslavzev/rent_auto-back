@@ -104,7 +104,7 @@ model_classes = seeds.blank? ? ModelClass.all : ModelClass.create!(seeds)
 puts
 
 # Заполнить справочник дополнительных услуг и снаряжения
-print ' • справочник дополнительных услуг и снаряжения'
+print ' • справочник дополнительных услуг/снаряжения'
 seeds = ADDITIONS.inject([]) do |arr,addon|
   print '.'
   code = gen_code(addon)
@@ -112,8 +112,8 @@ seeds = ADDITIONS.inject([]) do |arr,addon|
     code: code,
     name: addon,
     active: true,
-    service: rand(1) == 1,
-    price: rand(10..20) * 100,
+    service: rand(2) == 0,
+    price: rand(2) == 0 ? 0 : rand(10..20) * 100,
     note: addon.capitalize
   } if Addition.find_by_code(code).blank?
 end
@@ -199,6 +199,8 @@ puts
 # Заполнить данные для окружения разработки
 if Rails.env.development?
   # Удалить сгенерированные записи
+  OrderAddon.destroy_all
+  Order.destroy_all
   RentalPlan.destroy_all
   RentalPrice.destroy_all
   RangeRate.destroy_all
@@ -394,7 +396,7 @@ if Rails.env.development?
       middle_name: middle_name,
       last_name: last_name,
       gender: gender,
-      birthday: Faker::Date.between(60.year.ago, 20.year.ago),
+      birthday: Faker::Date.birthday(18, 65),
       phone: Faker::PhoneNumber.cell_phone,
       address: addresses.sample,
       passport: passports.sample,
@@ -625,4 +627,71 @@ if Rails.env.development?
   vehicles = Vehicle.create! seeds
   puts
 
+  # Заполнить справочник заказов
+  print ' • справочник заказов'
+  seeds = MAX_SEEDS.times.map do
+    print '.'
+    vehicle = vehicles.sample
+    model = vehicle.model
+    date_from = Faker::Date.forward(10)
+    time_from = Faker::Time.between(DateTime.now, DateTime.now + 1)
+    date_to = Faker::Date.between(date_from, date_from + 30.day)
+    time_to = Faker::Time.between(DateTime.now, DateTime.now + 1)
+    days_count = (date_to - date_from).to_i
+    days_over = rand(0..days_count)
+    rental_plan = rental_plans.select { |p| p.model == model }.sample
+    pay_type = pay_types.sample
+    weekend_fee = rand(2) == 0 ? 0 : 0 # заглушка
+    workweek_fee = rand(2) == 0 ? 0 : 0 # заглушка
+    days_fee = rand(2) == 0 ? 0 : 0 # заглушка
+    addons_fee = rand(2) == 0 ? 0 : 0 # заглушка
+    forfeit_fee = rand(2) == 0 ? 0 : 0 # заглушка
+    discouts = rand(2) == 0 ? 0 : 0 # заглушка
+    total_fee = weekend_fee + workweek_fee + days_fee + addons_fee + forfeit_fee - discouts
+    total_paid = rand(2) == 0 ? 0 : 0 # заглушка
+    {
+      vehicle: vehicle,
+      model: vehicle.model,
+      client: clients.sample,
+      issue_spot: spots.sample,
+      return_spot: spots.sample,
+      date_from: date_from,
+      time_from: time_from,
+      date_to: date_to,
+      time_to: time_to,
+      days_count: days_count,
+      days_over: days_over,
+      rental_plan: rental_plan,
+      pay_type: pay_type,
+      weekend_fee: weekend_fee,
+      workweek_fee: workweek_fee,
+      days_fee: days_fee,
+      addons_fee: addons_fee,
+      forfeit_fee: forfeit_fee,
+      discouts: discouts,
+      total_fee: total_fee,
+      total_paid: total_paid
+    }
+  end
+  orders = Order.create! seeds
+  puts
+
+  # Заполнить справочник заказов
+  print ' • справочник дополнений к заказам'
+  seeds = orders.map do |order|
+    rand(0..rand(additions.size / 2)).times.map do
+      print '.'
+      addon = additions.sample
+      {
+        code: addon.code,
+        name: addon.name,
+        order: order,
+        addition: addon,
+        price: addon.price
+      }
+    end
+  end
+  order_addons = OrderAddon.create! seeds.flatten
+  puts
+ 
 end
