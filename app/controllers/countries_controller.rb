@@ -48,6 +48,6 @@ class CountriesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def country_params
-    params.require(:country).permit(:code, :name, :note)
+    params.require(:country).permit(:code, :name, :active, :note)
   end
 end

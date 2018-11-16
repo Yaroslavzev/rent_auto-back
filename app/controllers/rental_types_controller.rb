@@ -47,6 +47,6 @@ class RentalTypesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def rental_type_params
-      params.require(:rental_type).permit(:code, :name, :note)
+      params.require(:rental_type).permit(:code, :name, :active, :note)
     end
 end

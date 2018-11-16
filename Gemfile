@@ -18,6 +18,9 @@ gem 'rails-i18n'
 gem 'money'
 gem 'money-rails'
 
+# Supplies TimeOfDay class that includes parsing, strftime, comparison, and arithmetic.
+gem 'tod' #, '~> 2.2'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # ActiveModel::Serializers allows you to generate your JSON in an object-oriented and convention-driven manner.
@@ -44,13 +47,17 @@ gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  # An IRB alternative and runtime developer console
+  gem 'pry' #, '~> 0.10.3'
+  # Combine 'pry' with 'byebug'. Adds 'step', 'next', 'finish', 'continue' and 'break' commands to control execution.
+  gem 'pry-byebug' #, '~> 3.6'
   # BDD for Ruby
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails' #, '~> 3.8'
   # gem 'rspec', '~> 3.8'
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide.
   gem 'rubocop', require: false
   # Faker is used to easily generate fake data: names, addresses, phone numbers, etc.
-  gem 'faker', require: false
+  gem 'faker' #, require: false
   gem 'ffaker', require: false
   # Faker russian specific values. INN, OKPO, OGRN et.c.
   # (пока нет генерации паспортов он для нас беполезен)

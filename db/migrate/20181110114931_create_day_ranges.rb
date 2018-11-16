@@ -4,6 +4,7 @@ class CreateDayRanges < ActiveRecord::Migration[5.2]
     create_table :day_ranges, comment: 'Справочник диапазонов дней аренды' do |t|
       t.string :code
       t.string :name
+      t.boolean :active, default: true
       t.integer :day_from
       t.integer :day_to
       t.text :note

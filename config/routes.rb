@@ -1,5 +1,17 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :order_addons
+  resources :orders
+  resources :pay_types
+  resources :users
+  resources :clients
+  resources :spots
+  resources :driver_licenses
+  resources :passports
+  resources :settlements
+  resources :districts
+  resources :addresses
+  resources :additions
   resources :vehicles
   resources :rental_plans
   resources :rental_prices

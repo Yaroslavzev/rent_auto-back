@@ -48,6 +48,6 @@ class BodyTypesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def body_type_params
-    params.require(:body_type).permit(:code, :name, :note)
+    params.require(:body_type).permit(:code, :name, :active, :note)
   end
 end
