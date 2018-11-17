@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :slice_rates
   resources :days_slices
   resources :order_addons
   resources :orders

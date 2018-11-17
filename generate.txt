@@ -42,6 +42,7 @@ rails g scaffold days_range code:string name:string active:boolean days_from:int
 rails g scaffold range_rate code:string name:string active:boolean rental_rate:references days_range:references rate:float note:text -p
 
 rails g scaffold days_slice code:string name:string active:boolean week:boolean day_from:integer time_from:time day_to:integer time_to:time note:text -p
+rails g scaffold slice_rate code:string name:string active:boolean rental_rate:references days_slice:references rate:float note:text -p
 
 rails g scaffold rental_price code:string name:string model:references model_class:references day_price:money forfeit_price:money earnest:money km_price:money km_limit_price:money weekend_price:money workweek_price:money workday_price:money note:text -p
 

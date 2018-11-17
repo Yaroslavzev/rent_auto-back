@@ -566,8 +566,8 @@ if Rails.env.development?
   rental_rates = RentalRate.create! seeds.flatten
   puts
 
-  # Заполнить связки коэффициентов и диапазонов дней
-  print ' • связки коэффициентов и диапазонов дней'
+  # Заполнить справочник коэффициентов по диапазонам дней
+  print ' • справочник коэффициентов по диапазонам дней'
   seeds = rental_rates.map do |rate|
     days_ranges.map do |range|
       print '.'
@@ -583,6 +583,25 @@ if Rails.env.development?
     end
   end
   range_rates = RangeRate.create! seeds.flatten
+  puts
+
+  # Заполнить справочник коэффициентов по срезам дней
+  print ' • справочник коэффициентов по срезам дней'
+  seeds = rental_rates.map do |rate|
+    days_slices.map do |slice|
+      print '.'
+      rate_name = "#{rate.name}(#{slice.name})"
+      {
+        code: "#{rate.code}-#{slice.code}",
+        name: rate_name,
+        rental_rate: rate,
+        days_slice: slice,
+        rate: rand(80..100).to_f / 100,
+        note: rate_name
+      }
+    end
+  end
+  slice_rates = SliceRate.create! seeds.flatten
   puts
 
   # Заполнить справочник базовых цен для моделей (классов?)
