@@ -4,7 +4,6 @@ class RentValuesController < ApplicationController
 
     @calculation =  ::CalculatorOfRent::Calculator.new(post_params['start_time'], post_params['end_time'],post_params['model'])
 
-    @calculation.model_cost
     @cost = @calculation.logic_calculator
     render json: @cost
 
