@@ -7,7 +7,6 @@ class RentalPrice < ApplicationRecord
   attribute :forfeit, :money
   attribute :earnest, :money
   attribute :km, :money
-  attribute :km_over, :money
   attribute :weekend, :money
   attribute :workweek, :money
   attribute :workday, :money

@@ -1,6 +1,6 @@
 # app/controllers/passports_controller.rb
 class PassportsController < ApplicationController
-  before_action :set_passport, only: [:show, :update, :destroy]
+  before_action :set_passport, only: %i[show update destroy]
 
   # GET /passports
   def index
@@ -40,13 +40,15 @@ class PassportsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_passport
-      @passport = Passport.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def passport_params
-      params.require(:passport).permit(:code, :name, :active, :verified, :country_id, :series, :number, :issued_by, :issued_code, :issued_date, :valid_to, :address_id, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_passport
+    @passport = Passport.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def passport_params
+    params.require(:passport).permit(:code, :name, :active, :verified, :country_id, :series, :number, :issued_by,
+                                     :issued_code, :issued_date, :valid_to, :address_id, :note)
+  end
 end

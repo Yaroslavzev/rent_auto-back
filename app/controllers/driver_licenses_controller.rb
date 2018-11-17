@@ -1,6 +1,6 @@
 # app/controllers/driver_licenses_controller.rb
 class DriverLicensesController < ApplicationController
-  before_action :set_driver_license, only: [:show, :update, :destroy]
+  before_action :set_driver_license, only: %i[show update destroy]
 
   # GET /driver_licenses
   def index
@@ -40,13 +40,15 @@ class DriverLicensesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_driver_license
-      @driver_license = DriverLicense.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def driver_license_params
-      params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :series, :number, :category, :issued_by, :issued_code, :issued_date, :valid_to, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_driver_license
+    @driver_license = DriverLicense.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def driver_license_params
+    params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :series, :number,
+                                           :category, :issued_by, :issued_code, :issued_date, :valid_to, :note)
+  end
 end

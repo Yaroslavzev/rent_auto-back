@@ -1,6 +1,6 @@
 # app/controllers/model_classes_controller.rb
 class ModelClassesController < ApplicationController
-  before_action :set_model_class, only: [:show, :update, :destroy]
+  before_action :set_model_class, only: %i[show update destroy]
 
   # GET /model_classes
   def index
@@ -40,13 +40,14 @@ class ModelClassesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_model_class
-      @model_class = ModelClass.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def model_class_params
-      params.require(:model_class).permit(:code, :name, :active, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_model_class
+    @model_class = ModelClass.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def model_class_params
+    params.require(:model_class).permit(:code, :name, :active, :note)
+  end
 end

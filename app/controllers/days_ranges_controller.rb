@@ -1,6 +1,6 @@
 # app/controllers/days_ranges_controller.rb
 class DaysRangesController < ApplicationController
-  before_action :set_days_range, only: [:show, :update, :destroy]
+  before_action :set_days_range, only: %i[show update destroy]
 
   # GET /days_ranges
   def index
@@ -40,13 +40,14 @@ class DaysRangesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_days_range
-      @days_range = DaysRange.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def days_range_params
-      params.require(:days_range).permit(:code, :name, :active, :days_from, :days_to, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_days_range
+    @days_range = DaysRange.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def days_range_params
+    params.require(:days_range).permit(:code, :name, :active, :days_from, :days_to, :note)
+  end
 end

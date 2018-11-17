@@ -1,6 +1,6 @@
 # app/controllers/order_addons_controller.rb
 class OrderAddonsController < ApplicationController
-  before_action :set_order_addon, only: [:show, :update, :destroy]
+  before_action :set_order_addon, only: %i[show update destroy]
 
   # GET /order_addons
   def index
@@ -40,13 +40,14 @@ class OrderAddonsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_order_addon
-      @order_addon = OrderAddon.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def order_addon_params
-      params.require(:order_addon).permit(:code, :name, :active, :order_id, :addition_id, :price, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_order_addon
+    @order_addon = OrderAddon.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def order_addon_params
+    params.require(:order_addon).permit(:code, :name, :active, :order_id, :addition_id, :price, :note)
+  end
 end

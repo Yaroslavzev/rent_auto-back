@@ -5,7 +5,7 @@ class CreateModels < ActiveRecord::Migration[5.2]
       t.string :code, comment: 'короткое название/аббревиатура/ключевое слово'
       t.string :name, comment: 'название модели'
       t.boolean :active, default: true, comment: 'актуальность'
-      t.references :model_class , comment: 'класс модели'
+      t.references :model_class, comment: 'класс модели'
       t.references :brand, foreign_key: true, comment: 'марка модели'
       t.references :manufacture, foreign_key: true, comment: 'производитель модели'
       t.references :body_type, foreign_key: true, comment: 'тип кузова'

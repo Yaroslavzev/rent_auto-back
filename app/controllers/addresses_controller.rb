@@ -1,6 +1,6 @@
 # app/controllers/addresses_controller.rb
 class AddressesController < ApplicationController
-  before_action :set_address, only: [:show, :update, :destroy]
+  before_action :set_address, only: %i[show update destroy]
 
   # GET /addresses
   def index
@@ -40,13 +40,15 @@ class AddressesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_address
-      @address = Address.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def address_params
-      params.require(:address).permit(:code, :name, :active, :verified, :country_id, :region_id, :district_id, :settlement_id, :postcode, :street, :house, :flat, :address1, :address2, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_address
+    @address = Address.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def address_params
+    params.require(:address).permit(:code, :name, :active, :verified, :country_id, :region_id, :district_id,
+                                    :settlement_id, :postcode, :street, :house, :flat, :address1, :address2, :note)
+  end
 end

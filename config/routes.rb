@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :days_slices
   resources :order_addons
   resources :orders
   resources :pay_types

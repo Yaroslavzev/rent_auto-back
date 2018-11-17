@@ -12,7 +12,7 @@ class CreateRentalPrices < ActiveRecord::Migration[5.2]
       t.decimal :forfeit, comment: 'штраф (за просроченный день?)'
       t.decimal :earnest, comment: 'залог'
       t.decimal :km, comment: 'стоимость километра'
-      t.decimal :km_over, comment: 'лимит километров(?)'
+      t.decimal :km_limit, comment: 'лимит километров(?)'
       t.decimal :weekend
       t.decimal :workweek
       t.decimal :workday

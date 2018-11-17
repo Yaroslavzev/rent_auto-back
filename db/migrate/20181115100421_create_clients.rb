@@ -1,3 +1,4 @@
+# db/migrate/20181115100421_create_clients.rb
 class CreateClients < ActiveRecord::Migration[5.2]
   def change
     create_table :clients, comment: 'Справочник клиентов' do |t|

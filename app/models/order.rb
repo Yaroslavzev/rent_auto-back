@@ -8,7 +8,7 @@ class Order < ApplicationRecord
   belongs_to :rental_plan
   belongs_to :pay_type
 
-  has_many :order_addons
+  has_many :order_addons, dependent: :destroy
 
   # attribute :time_from, :time
   # attribute :time_to, :time
