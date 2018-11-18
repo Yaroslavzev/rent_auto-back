@@ -1,5 +1,6 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  resources :rent_values, only: [:index]
   resources :slice_rates
   resources :days_slices
   resources :order_addons
@@ -37,5 +38,8 @@ Rails.application.routes.draw do
   resources :countries
   resources :manufacturers
   resources :brands
+
+  post '/requests', to: 'requests#create'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

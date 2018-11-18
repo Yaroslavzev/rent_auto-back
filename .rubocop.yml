@@ -19,7 +19,7 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Enabled: false
 
-# 80 маловото
+# 80 маловато
 Metrics/LineLength:
   Max: 120
 
