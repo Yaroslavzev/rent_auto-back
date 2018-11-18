@@ -8,16 +8,22 @@ threads_min = ENV.fetch('RAILS_MIN_THREADS') { 1 }
 threads_max = ENV.fetch('RAILS_MAX_THREADS') { 4 }
 threads threads_min, threads_max
 
+# Run as daemon?
+run_as_daemon = ENV.fetch('DAEMON') { false }
+
+# Bind port?
+bind_port = ENV.fetch('PORT') { false }
+
 # Specifies the `environment` that Puma will run in.
 #
 environment ENV.fetch('RAILS_ENV') { 'development' }
 
 # Logging
-stdout_redirect "#{Rails.root}/log/puma.stdout.log", "#{Rails.root}/log/puma.stderr.log", true
+stdout_redirect "#{Rails.root}/log/puma.stdout.log", "#{Rails.root}/log/puma.stderr.log", true if run_as_daemon
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 #
-port ENV.fetch('PORT') { 3000 } if Rails.env.development?
+port ENV.fetch('PORT') { 3000 } if bind_port
 
 # Unix socket bind
 bind        "unix://#{Rails.root}/tmp/sockets/puma.socket"
@@ -31,7 +37,7 @@ activate_control_app
 # Daemonize the server into the background. Highly suggest that
 # this be combined with “pidfile” and “stdout_redirect”.
 # The default is “false”.
-# daemonize true
+daemonize true if run_as_daemon
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together

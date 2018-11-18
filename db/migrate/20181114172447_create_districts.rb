@@ -2,12 +2,12 @@
 class CreateDistricts < ActiveRecord::Migration[5.2]
   def change
     create_table :districts, comment: 'Справочник административных районов' do |t|
-      t.string :code
-      t.string :name
-      t.boolean :active, default: true
-      t.references :region, foreign_key: true
-      t.references :country, foreign_key: true
-      t.text :note
+      t.string :code, comment: 'короткое название/аббревиатура/ключевое слово'
+      t.string :name, comment: 'название района'
+      t.boolean :active, default: true, comment: 'актуальность'
+      t.references :region, foreign_key: true, comment: 'регион (необязательное поле)'
+      t.references :country, foreign_key: true, comment: 'страна'
+      t.text :note, comment: 'заметки'
 
       t.timestamps
     end

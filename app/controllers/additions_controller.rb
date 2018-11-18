@@ -1,6 +1,6 @@
 # app/controllers/additions_controller.rb
 class AdditionsController < ApplicationController
-  before_action :set_addition, only: [:show, :update, :destroy]
+  before_action :set_addition, only: %i[show update destroy]
 
   # GET /additions
   def index
@@ -40,13 +40,14 @@ class AdditionsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_addition
-      @addition = Addition.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def addition_params
-      params.require(:addition).permit(:code, :name, :active, :service, :price, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_addition
+    @addition = Addition.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def addition_params
+    params.require(:addition).permit(:code, :name, :active, :service, :price, :note)
+  end
 end

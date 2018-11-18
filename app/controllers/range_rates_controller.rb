@@ -1,6 +1,6 @@
 # app/controllers/range_rates_controller.rb
 class RangeRatesController < ApplicationController
-  before_action :set_range_rate, only: [:show, :update, :destroy]
+  before_action :set_range_rate, only: %i[show update destroy]
 
   # GET /range_rates
   def index
@@ -40,13 +40,14 @@ class RangeRatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_range_rate
-      @range_rate = RangeRate.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def range_rate_params
-      params.require(:range_rate).permit(:code, :name, :active, :rental_rate_id, :day_range_id, :rate, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_range_rate
+    @range_rate = RangeRate.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def range_rate_params
+    params.require(:range_rate).permit(:code, :name, :active, :rental_rate_id, :days_range_id, :rate, :note)
+  end
 end

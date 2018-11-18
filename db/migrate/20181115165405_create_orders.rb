@@ -2,9 +2,9 @@
 class CreateOrders < ActiveRecord::Migration[5.2]
   def change
     create_table :orders, comment: 'Справочник заказов' do |t|
-      t.string :code, default: nil
-      t.string :name, default: nil
-      t.boolean :active, default: true
+      t.string :code, default: nil, comment: 'короткое название/аббревиатура/ключевое слово'
+      t.string :name, default: nil, comment: 'можно использовать для пометок (необязательное поле)'
+      t.boolean :active, default: true, comment: 'актуальность'
       t.string :status, default: 'created', comment: 'состояние заказа'
       t.references :vehicle, foreign_key: true, comment: 'конкретный автомобиль (может не быть)'
       t.references :model, foreign_key: true, comment: 'модель (если есть конкретный автомобиль то модель берем оттуда)'
@@ -15,12 +15,14 @@ class CreateOrders < ActiveRecord::Migration[5.2]
       t.time :time_from, comment: 'время выдачи'
       t.date :date_to, comment: 'дата возврата'
       t.time :time_to, comment: 'время возврата'
-      t.integer :days_count, comment: 'кол-во дней аренды (наверно тех что не попали в другие тарифы)'
+      t.integer :days_count, comment: 'кол-во дней аренды (которые не попали в другие тарифы?)'
       t.integer :days_over, comment: 'кол-во просроченных дней'
-      t.references :rental_plan, foreign_key: true, comment: 'тарифный план'
       t.references :pay_type, foreign_key: true, comment: 'форма оплаты'
-      t.decimal :weekend_fee, comment: 'плата по тарифу выходных дней'
-      t.decimal :workweek_fee, comment: 'плата по тарифу рабочей недели'
+      t.references :rental_plan, foreign_key: true, comment: 'тарифный план'
+      t.references :days_range, foreign_key: true, comment: 'тариф диапазона дней (nil если не используется)'
+      t.references :days_slice, foreign_key: true, comment: 'тариф среза дней (nil если не используется)'
+      t.decimal :days_range_fee, comment: 'плата по тарифу диапазона дней'
+      t.decimal :days_slice_fee, comment: 'плата по тарифу среза дней'
       t.decimal :days_fee, comment: 'плата по тарифу по дням'
       t.decimal :addons_fee, comment: 'плата за дополнительные услуги/снаряжение'
       t.decimal :forfeit_fee, comment: 'штрафы'
@@ -28,7 +30,7 @@ class CreateOrders < ActiveRecord::Migration[5.2]
       t.decimal :total_fee, comment: 'общая сумма к оплате'
       t.decimal :total_paid, comment: 'сколько уже оплачено от общей суммы (может быть частично/залог)'
       t.boolean :paid_full, default: false, comment: 'отметка о полной оплате'
-      t.text :note, default: nil
+      t.text :note, default: nil, comment: 'заметки'
 
       t.timestamps
     end

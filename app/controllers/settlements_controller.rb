@@ -1,6 +1,6 @@
 # app/controllers/settlements_controller.rb
 class SettlementsController < ApplicationController
-  before_action :set_settlement, only: [:show, :update, :destroy]
+  before_action :set_settlement, only: %i[show update destroy]
 
   # GET /settlements
   def index
@@ -40,13 +40,14 @@ class SettlementsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_settlement
-      @settlement = Settlement.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def settlement_params
-      params.require(:settlement).permit(:code, :name, :active, :status_id, :district_id, :region_id, :country_id, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_settlement
+    @settlement = Settlement.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def settlement_params
+    params.require(:settlement).permit(:code, :name, :active, :status_id, :district_id, :region_id, :country_id, :note)
+  end
 end

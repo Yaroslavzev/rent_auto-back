@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe "DayRanges", type: :request do
-  describe "GET /day_ranges" do
+RSpec.describe "SliceRates", type: :request do
+  describe "GET /slice_rates" do
     it "works! (now write some real specs)" do
-      get day_ranges_path
+      get slice_rates_path
       expect(response).to have_http_status(200)
     end
   end

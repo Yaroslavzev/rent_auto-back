@@ -21,16 +21,22 @@ MODEL_CLASSES = %w[стандарт бизнес премиум эконом].fr
 BODY_TYPES = %w[автобус внедорожник кабриолет кроссовер купе лимузин лифтбэк микроавтобус минивэн пикап
                 родстер седан стретч тарга универсал фургон хэтчбек].freeze
 
-TRUNK_TYPES = %w[бокс\ жесткий бокс\ мягкий велосипед корзина лодка лыжи/сноуборд специальный]
+TRUNK_TYPES = %w[бокс\ жесткий бокс\ мягкий велосипед корзина лодка лыжи/сноуборд специальный].freeze
 
 ADDITIONS = %w[автокресло навигатор переходник\ в\ прикуриватель подача\ город возврат\ город
-               подача\ аэропорт возврат\ аэропорт услуги\ водителя]
+               подача\ аэропорт возврат\ аэропорт услуги\ водителя].freeze
 
 RENTAL_TYPES = %w[основной демисезон зимний летний].freeze
 
 PAY_TYPES = %w[наличный безналичный банковская\ карта натурой].freeze
 
-DAY_RANGES = [[1,6],[7,20],[21,nil]].freeze
+DAYS_RANGES = [[1, 6], [7, 20], [21, nil]].freeze
+
+DAYS_SLICE_FIELDS = %i[name week mon_from day_from time_from mon_to day_to time_to].freeze
+DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00'],
+               ['рабочие дни', true, nil, 1, '10:00', nil, 5, '17:00'],
+               ['новый год', false, 12, 31, '17:00', 1, 10, '10:00'],
+               ['майские праздники', false, 4, 30, '17:00', 5, 10, '10:10']].freeze
 
 # Генерация поля code по правилам зависимым от параметров:
 #   - если в 1м параметре 1 слово, то берем 3 первых буквы, исключая гласные, кроме первой,
@@ -43,32 +49,30 @@ def gen_code(name, vowel = false, *others)
   code = ''
   words = name.downcase.split(/[\s\/-]+/)
   if words.size > 1
-    code = words.inject('') { |s,w| s += w[0] }
+    code = words.inject('') { |s, w| s += w[0] }
     code = code.insert(code_size / 2, '/') if code.size < code_size
   else
     word = words[0]
-    if vowel or word.scan(/[^аеёийоуъыьэюя]/).size < code_size
+    if vowel || (word.scan(/[^аеёийоуъыьэюя]/).size < code_size)
       i = code_size - 1
-      i +=1 while i < word.size and 'аеёийоуъыьэюя'.include? word[i]
+      i += 1 while (i < word.size) && 'аеёийоуъыьэюя'.include?(word[i])
       code = word[0..i]
       code = code.gsub(/(\W)[аеёийоуъыьэюя]/, '\1') if code.size > code_size
     else
-      code = word.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..code_size-1]
+      code = word.gsub(/(\W)[аеёийоуъыьэюя]/, '\1')[0..code_size - 1]
       # word.split('').each do |l|
       #   code += l if code.blank? or not 'аеёийоуъыьэюя'.include? l
       #   break if code.size >= CODE_SIZE
       # end
     end
   end
-  if others.size > 0
-    code += others.inject('') { |s,c| s += "-#{c}" }
-  end
+  code += others.inject('') { |s, c| s += "-#{c}" } unless others.size.zero?
   code
 end
 
 # Генерация числа заданной разрядности ввиде строки
-def gen_num_str(n)
-  n.times.inject('') { |s| s += rand(0..9).to_s }
+def gen_num_str(num)
+  num.times.inject('') { |s| s += rand(0..9).to_s }
 end
 
 # Понеслась...
@@ -76,122 +80,152 @@ puts 'Генерируется база:'
 
 # Заполнить справочник статусов населенных пунктов
 print ' • справочник статусов населенных пунктов'
-seeds = LOCALITY_STATUSES.inject([]) do |arr,stat|
+seeds = LOCALITY_STATUSES.inject([]) do |arr, stat|
   print '.'
   code = gen_code(stat, true)
+  next if Status.find_by(code: code).present?
+
   arr << {
     # code: stat[0],
     code: code,
     name: stat,
     note: stat.capitalize
-  } if Status.find_by_code(code).blank?
+  }
 end
 statuses = seeds.blank? ? Status.all : Status.create!(seeds)
 puts
 
 # Заполнить справочник классов моделей автомобилей
 print ' • справочник классов моделей автомобилей'
-seeds = MODEL_CLASSES.inject([]) do |arr,klass|
+seeds = MODEL_CLASSES.inject([]) do |arr, klass|
   print '.'
   code = gen_code(klass)
+  next if ModelClass.find_by(code: code).present?
+
   arr << {
     code: code,
     name: klass,
     note: klass.capitalize
-  } if ModelClass.find_by_code(code).blank?
+  }
 end
 model_classes = seeds.blank? ? ModelClass.all : ModelClass.create!(seeds)
 puts
 
 # Заполнить справочник дополнительных услуг и снаряжения
 print ' • справочник дополнительных услуг/снаряжения'
-seeds = ADDITIONS.inject([]) do |arr,addon|
+seeds = ADDITIONS.inject([]) do |arr, addon|
   print '.'
   code = gen_code(addon)
+  next if Addition.find_by(code: code).present?
+
   arr << {
     code: code,
     name: addon,
     active: true,
-    service: rand(2) == 0,
-    price: rand(2) == 0 ? 0 : rand(10..20) * 100,
+    service: rand(2).zero?,
+    price: rand(2).zero? ? 0 : rand(10..20) * 100,
     note: addon.capitalize
-  } if Addition.find_by_code(code).blank?
+  }
 end
 additions = seeds.blank? ? Addition.all : Addition.create!(seeds)
 puts
 
 # Заполнить справочник типов кузовов автомобилей
 print ' • справочник типов кузовов автомобилей'
-seeds = BODY_TYPES.inject([]) do |arr,type|
+seeds = BODY_TYPES.inject([]) do |arr, type|
   print '.'
   code = gen_code(type)
+  next if BodyType.find_by(code: code).present?
+
   arr << {
     code: code,
     name: type,
     note: type.capitalize
-  } if BodyType.find_by_code(code).blank?
+  }
 end
 body_types = seeds.blank? ? BodyType.all : BodyType.create!(seeds)
 puts
 
 # Заполнить справочник типов багажников автомобилей
 print ' • справочник типов багажников автомобилей'
-seeds = TRUNK_TYPES.inject([]) do |arr,type|
+seeds = TRUNK_TYPES.inject([]) do |arr, type|
   print '.'
   # объединить в один gsub не вышло, как экранировать '/' есть идеи?
   code = gen_code(type)
+  next if TrunkType.find_by(code: code).present?
+
   arr << {
     code: code,
     name: type,
     note: type.capitalize
-  } if TrunkType.find_by_code(code).blank?
+  }
 end
 trunk_types = seeds.blank? ? TrunkType.all : TrunkType.create!(seeds)
 puts
 
 # Заполнить справочник типов тарифных планов
 print ' • справочник типов тарифных планов'
-seeds = RENTAL_TYPES.inject([]) do |arr,type|
+seeds = RENTAL_TYPES.inject([]) do |arr, type|
   print '.'
   code = gen_code(type)
+  next if RentalType.find_by(code: code).present?
+
   arr << {
     code: code,
     name: type,
     note: type.capitalize
-  } if RentalType.find_by_code(code).blank?
+  }
 end
 rental_types = seeds.blank? ? RentalType.all : RentalType.create!(seeds)
 puts
 
 # Заполнить справочник диапазонов дней аренды
 print ' • справочник диапазонов дней аренды'
-seeds = DAY_RANGES.inject([]) do |arr,range|
+seeds = DAYS_RANGES.inject([]) do |arr, range|
   print '.'
   code = "д#{range[0]}" + (range[1].nil? ? '+' : "-#{range[1]}")
-  range_name = "от #{range[0]}" 
+  range_name = "от #{range[0]}"
   range_name += " до #{range[1]}" unless range[1].nil?
   range_name += ' дней'
+  next if DaysRange.find_by(code: code).present?
+
   arr << {
     code: code,
     name: range_name,
-    day_from: range[0],
-    day_to: range[1],
+    days_from: range[0],
+    days_to: range[1],
     note: range_name.capitalize
-  } if DayRange.find_by_code(code).blank?
+  }
 end
-day_ranges = seeds.blank? ? DayRange.all : DayRange.create!(seeds)
+days_ranges = seeds.blank? ? DaysRange.all : DaysRange.create!(seeds)
+puts
+
+# Заполнить справочник срезов дней аренды
+print ' • справочник срезов дней аренды'
+seeds = DAYS_SLICES.inject([]) do |arr, slice|
+  print '.'
+  code = gen_code(slice[0])
+  next if DaysSlice.find_by(code: code).present?
+
+  arr << { code: code }
+         .merge(DAYS_SLICE_FIELDS.zip(slice).to_h)
+         .merge(note: slice[0].capitalize)
+end
+days_slices = seeds.blank? ? DaysSlice.all : DaysSlice.create!(seeds)
 puts
 
 # Заполнить справочник форм оплаты
 print ' • справочник форм оплаты'
-seeds = PAY_TYPES.inject([]) do |arr,type|
+seeds = PAY_TYPES.inject([]) do |arr, type|
   print '.'
   code = gen_code(type)
+  next if PayType.find_by(code: code).present?
+
   arr << {
     code: code,
     name: type,
     note: type.capitalize
-  } if PayType.find_by_code(code).blank?
+  }
 end
 pay_types = seeds.blank? ? PayType.all : PayType.create!(seeds)
 puts
@@ -240,7 +274,7 @@ if Rails.env.development?
 
   # Заполнить справочник регионов (республика/край/область/округ)
   print ' • справочник регионов (республика/край/область/округ)'
-  seeds = (2*MAX_SEEDS).times.map do
+  seeds = (2 * MAX_SEEDS).times.map do
     print '.'
     address = Faker::Address
     {
@@ -255,7 +289,7 @@ if Rails.env.development?
 
   # Заполнить справочник административных районов
   print ' • справочник административных районов'
-  seeds = (4*MAX_SEEDS).times.map do
+  seeds = (4 * MAX_SEEDS).times.map do
     print '.'
     region = regions.sample
     address = Faker::Address
@@ -272,7 +306,7 @@ if Rails.env.development?
 
   # Заполнить справочник населенных пунктов (город/деревня/село)
   print ' • справочник населенных пунктов (город/деревня/село)'
-  seeds = (8*MAX_SEEDS).times.map do
+  seeds = (8 * MAX_SEEDS).times.map do
     print '.'
     district = districts.sample
     region = district.region
@@ -293,7 +327,7 @@ if Rails.env.development?
 
   # Заполнить справочник адресов
   print ' • справочник адресов'
-  seeds = (16*MAX_SEEDS).times.map do
+  seeds = (16 * MAX_SEEDS).times.map do
     print '.'
     address = Faker::Address
     settlement = settlements.sample
@@ -339,7 +373,7 @@ if Rails.env.development?
 
   # Заполнить справочник паспортов
   print ' • справочник паспортов'
-  seeds = (2*MAX_SEEDS).times.map do
+  seeds = (2 * MAX_SEEDS).times.map do
     print '.'
     address = addresses.sample
     {
@@ -361,7 +395,7 @@ if Rails.env.development?
 
   # Заполнить справочник водительских прав
   print ' • справочник водительских прав'
-  seeds = (2*MAX_SEEDS).times.map do
+  seeds = (2 * MAX_SEEDS).times.map do
     print '.'
     address = addresses.sample
     {
@@ -424,7 +458,7 @@ if Rails.env.development?
   users = User.create! seeds
   puts
 
- # Заполнить справочник бредов
+  # Заполнить справочник брендов
   print ' • справочник брендов'
   seeds = MAX_SEEDS.times.inject([]) do |arr|
     print '.'
@@ -521,10 +555,11 @@ if Rails.env.development?
         name: rate_name,
         model_class: klass,
         rental_type: type,
+        km: rand(5..15).to_f / 10,
         hour: rand(5..15).to_f / 10,
-        day:  rand(5..15).to_f / 10,
-        workweek: rand(5..15).to_f / 10,
-        weekend: rand(5..15).to_f / 10,
+        day: rand(5..15).to_f / 10,
+        # workweek: rand(5..15).to_f / 10,
+        # weekend: rand(5..15).to_f / 10,
         note: rate_name.capitalize
       }
     end
@@ -532,17 +567,17 @@ if Rails.env.development?
   rental_rates = RentalRate.create! seeds.flatten
   puts
 
-  # Заполнить связки коэффициентов и диапазонов дней
-  print ' • связки коэффициентов и диапазонов дней'
+  # Заполнить справочник коэффициентов по диапазонам дней
+  print ' • справочник коэффициентов по диапазонам дней'
   seeds = rental_rates.map do |rate|
-    day_ranges.map do |range|
+    days_ranges.map do |range|
       print '.'
       rate_name = "#{rate.name}(#{range.name})"
       {
         code: "#{rate.code}-#{range.code}",
         name: rate_name,
         rental_rate: rate,
-        day_range: range,
+        days_range: range,
         rate: rand(80..100).to_f / 100,
         note: rate_name
       }
@@ -551,27 +586,43 @@ if Rails.env.development?
   range_rates = RangeRate.create! seeds.flatten
   puts
 
+  # Заполнить справочник коэффициентов по срезам дней
+  print ' • справочник коэффициентов по срезам дней'
+  seeds = rental_rates.map do |rate|
+    days_slices.map do |slice|
+      print '.'
+      rate_name = "#{rate.name}(#{slice.name})"
+      {
+        code: "#{rate.code}-#{slice.code}",
+        name: rate_name,
+        rental_rate: rate,
+        days_slice: slice,
+        rate: rand(80..100).to_f / 100,
+        note: rate_name
+      }
+    end
+  end
+  slice_rates = SliceRate.create! seeds.flatten
+  puts
+
   # Заполнить справочник базовых цен для моделей (классов?)
   print ' • справочник базовых цен для моделей (классов?)'
   seeds = models.map do |model|
     price_name = "#{model.name}(#{model.model_class.name})"
-    day = rand(20..30) * 100
     km = rand(50..100) / 10
+    day = rand(10..20) * 100
     print '.'
     {
       code: "#{model.code}-#{model.model_class.code}",
       name: price_name,
       model: model,
       model_class: model.model_class,
+      km_limit: rand(10..30) * 100,
+      km: km,
       hour: day / 20,
       day: day,
       forfeit: day * 1.5,
       earnest: day * 3,
-      km: km,
-      km_over: km * 1.5,
-      weekend: day * 2 * 1.5,
-      workweek: day * 4,
-      workday: day * 0.9,
       note: price_name
     }
   end
@@ -595,7 +646,7 @@ if Rails.env.development?
         rental_type: rental_type,
         rental_rate: rate,
         rental_price: price,
-        note: "#{model.brand.name} #{price.name}(#{rental_type.name})",
+        note: "#{model.brand.name} #{price.name}(#{rental_type.name})"
       }
     end
   end
@@ -634,21 +685,23 @@ if Rails.env.development?
     vehicle = vehicles.sample
     model = vehicle.model
     date_from = Faker::Date.forward(10)
-    time_from = Faker::Time.between(DateTime.now, DateTime.now + 1)
+    time_from = Faker::Time.between(Time.current, Time.current + 1.day)
     date_to = Faker::Date.between(date_from, date_from + 30.day)
-    time_to = Faker::Time.between(DateTime.now, DateTime.now + 1)
+    time_to = Faker::Time.between(Time.current, Time.current + 1.day)
     days_count = (date_to - date_from).to_i
     days_over = rand(0..days_count)
-    rental_plan = rental_plans.select { |p| p.model == model }.sample
     pay_type = pay_types.sample
-    weekend_fee = rand(2) == 0 ? 0 : 0 # заглушка
-    workweek_fee = rand(2) == 0 ? 0 : 0 # заглушка
-    days_fee = rand(2) == 0 ? 0 : 0 # заглушка
-    addons_fee = rand(2) == 0 ? 0 : 0 # заглушка
-    forfeit_fee = rand(2) == 0 ? 0 : 0 # заглушка
-    discouts = rand(2) == 0 ? 0 : 0 # заглушка
-    total_fee = weekend_fee + workweek_fee + days_fee + addons_fee + forfeit_fee - discouts
-    total_paid = rand(2) == 0 ? 0 : 0 # заглушка
+    rental_plan = rental_plans.select { |p| p.model == model }.sample
+    days_range = rand(2).zero? ? nil : days_ranges.sample
+    days_slice = rand(2).zero? ? nil : days_slices.sample
+    days_range_fee = days_range ? 0 : 0 # заглушка
+    days_slice_fee = days_slice ? 0 : 0 # заглушка
+    days_fee =  (date_to - date_from).to_i * rental_plan.rental_price.day # rand(2).zero? ? 0 : 0 # заглушка
+    addons_fee = 0
+    forfeit_fee = rand(2).zero? ? 0 : 0 # заглушка
+    discouts = rand(2).zero? ? 0 : 0 # заглушка
+    total_fee = days_range_fee + days_slice_fee + days_fee + addons_fee + forfeit_fee - discouts
+    total_paid = rand(2).zero? ? 0 : 0 # заглушка
     {
       vehicle: vehicle,
       model: vehicle.model,
@@ -661,10 +714,12 @@ if Rails.env.development?
       time_to: time_to,
       days_count: days_count,
       days_over: days_over,
-      rental_plan: rental_plan,
       pay_type: pay_type,
-      weekend_fee: weekend_fee,
-      workweek_fee: workweek_fee,
+      rental_plan: rental_plan,
+      days_range: days_range,
+      days_slice: days_slice,
+      days_range_fee: days_range_fee,
+      days_slice_fee: days_slice_fee,
       days_fee: days_fee,
       addons_fee: addons_fee,
       forfeit_fee: forfeit_fee,
@@ -679,9 +734,13 @@ if Rails.env.development?
   # Заполнить справочник заказов
   print ' • справочник дополнений к заказам'
   seeds = orders.map do |order|
-    rand(0..rand(additions.size / 2)).times.map do
+    sum = 0
+    arr = []
+    arr << rand(0..rand(additions.size / 2)).times.map do
       print '.'
       addon = additions.sample
+      price = addon.price
+      sum += price
       {
         code: addon.code,
         name: addon.name,
@@ -690,8 +749,13 @@ if Rails.env.development?
         price: addon.price
       }
     end
+    # добавить суммарную стоимость в заказы (лучше триггерами/калбэками?)
+    order.addons_fee = sum
+    order.total_fee += sum
+    order.save!
+    arr
   end
   order_addons = OrderAddon.create! seeds.flatten
   puts
- 
+
 end

@@ -1,6 +1,6 @@
 # app/controllers/rental_types_controller.rb
 class RentalTypesController < ApplicationController
-  before_action :set_rental_type, only: [:show, :update, :destroy]
+  before_action :set_rental_type, only: %i[show update destroy]
 
   # GET /rental_types
   def index
@@ -40,13 +40,14 @@ class RentalTypesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_rental_type
-      @rental_type = RentalType.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def rental_type_params
-      params.require(:rental_type).permit(:code, :name, :active, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_rental_type
+    @rental_type = RentalType.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def rental_type_params
+    params.require(:rental_type).permit(:code, :name, :active, :note)
+  end
 end

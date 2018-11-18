@@ -11,5 +11,4 @@ class ModelSerializer < ActiveModel::Serializer
   has_one :brand
   has_one :manufacture
   has_one :body_type
-
 end

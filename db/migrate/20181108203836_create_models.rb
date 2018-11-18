@@ -2,25 +2,24 @@
 class CreateModels < ActiveRecord::Migration[5.2]
   def change
     create_table :models, comment: 'Справочник моделей автомобилей' do |t|
-      t.string :code
-      t.string :name
-      t.boolean :active, default: true
-      t.references :model_class 
-      t.references :brand, foreign_key: true
-      t.references :manufacture, foreign_key: true
-      t.references :body_type, foreign_key: true
-      t.boolean :active, default: true
-      t.integer :door_count
-      t.integer :seat_count
-      t.string :style
-      t.string :transmission
-      t.string :drive_type
-      t.string :fuel_type
-      t.string :engine
-      t.float :engine_volume
-      t.string :specs, array: true
-      t.string :options, array: true
-      t.text :note
+      t.string :code, comment: 'короткое название/аббревиатура/ключевое слово'
+      t.string :name, comment: 'название модели'
+      t.boolean :active, default: true, comment: 'актуальность'
+      t.references :model_class, comment: 'класс модели'
+      t.references :brand, foreign_key: true, comment: 'марка модели'
+      t.references :manufacture, foreign_key: true, comment: 'производитель модели'
+      t.references :body_type, foreign_key: true, comment: 'тип кузова'
+      t.integer :door_count, comment: 'кол-во дверей'
+      t.integer :seat_count, comment: 'кол-во посадочных мест'
+      t.string :style, comment: 'стиль модели'
+      t.string :transmission, comment: 'тип привода'
+      t.string :drive_type, comment: 'коробка передач'
+      t.string :fuel_type, comment: 'тип топлива'
+      t.string :engine, comment: 'двигатель'
+      t.float :engine_volume, comment: 'объем двигателя'
+      t.string :specs, array: true, comment: 'стандартные характеристики (массив строк)'
+      t.string :options, array: true, comment: 'прочее оснащение (массив строк)'
+      t.text :note, comment: 'заметки'
 
       t.timestamps
     end

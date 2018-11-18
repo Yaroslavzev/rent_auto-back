@@ -16,32 +16,32 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   enable_extension "plpgsql"
 
   create_table "additions", comment: "Справочник дополнений (услуг и снаряжения)", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "service", default: true
-    t.decimal "price", default: "0.0"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название услуги/снаряжения"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "service", default: true, comment: "отметка услуги"
+    t.decimal "price", default: "0.0", comment: "цена"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "addresses", comment: "Справочник адресов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.bigint "country_id"
-    t.bigint "region_id"
-    t.bigint "district_id"
-    t.bigint "settlement_id"
-    t.string "postcode"
-    t.string "street"
-    t.string "house"
-    t.string "flat"
-    t.string "address1"
-    t.string "address2"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "полное название (необязательное поле)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "verified", default: false, comment: "прошле ли проверку"
+    t.bigint "country_id", comment: "страна регистрации"
+    t.bigint "region_id", comment: "регион регистрации (необязательное поле)"
+    t.bigint "district_id", comment: "район регистрации (необязательное поле)"
+    t.bigint "settlement_id", comment: "нас.пункт регистрации"
+    t.string "postcode", comment: "почтовый инедекс (нужен, не?:))"
+    t.string "street", comment: "улица"
+    t.string "house", comment: "дом"
+    t.string "flat", comment: "квартира"
+    t.string "address1", comment: "международного формат (необязательное поле)"
+    t.string "address2", comment: "международного формат (необязательное поле)"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_addresses_on_country_id"
@@ -51,38 +51,38 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "body_types", comment: "Справочник типов кузовов автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название типа кузова/автомобиля"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "brands", comment: "Справочник марок автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название марки"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "clients", comment: "Справочник клиентов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.string "first_name"
-    t.string "middle_name"
-    t.string "last_name"
-    t.string "gender"
-    t.date "birthday"
-    t.string "phone"
-    t.bigint "address_id"
-    t.bigint "passport_id"
-    t.bigint "driver_license_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "полное имя (необязательно)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "verified", default: false, comment: "прошел ли проверку"
+    t.string "first_name", comment: "имя"
+    t.string "middle_name", comment: "отчество"
+    t.string "last_name", comment: "фамилия"
+    t.string "gender", comment: "пол"
+    t.date "birthday", comment: "дата рождения"
+    t.string "phone", comment: "телефонный номер"
+    t.bigint "address_id", comment: "адрес проживания (небязательно регистрации)"
+    t.bigint "passport_id", comment: "паспорт"
+    t.bigint "driver_license_id", comment: "вод.удостоверение"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_clients_on_address_id"
@@ -91,51 +91,67 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "countries", comment: "Справочник стран", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово/код"
+    t.string "name", comment: "название страны"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "day_ranges", comment: "Справочник диапазонов дней аренды", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.integer "day_from"
-    t.integer "day_to"
-    t.text "note"
+  create_table "days_ranges", comment: "Справочник диапазонов дней аренды", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название диапазона дней"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.integer "days_from", comment: "начало диапазона дней"
+    t.integer "days_to", comment: "конец диапазона дней"
+    t.text "note", comment: "заметки"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "days_slices", comment: "Справочник срезов дней (выходные, будние, праздники)", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название среза дней"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "week", comment: "дни недели если true, иначе дни месяца"
+    t.integer "mon_from", comment: "начальный месяц (nil для дней недели)"
+    t.integer "day_from", comment: "начальный день недели/месяца"
+    t.time "time_from", comment: "начальное время"
+    t.integer "mon_to", comment: "начальный месяц (nil для дней недели)"
+    t.integer "day_to", comment: "конечный день недели/месяца"
+    t.time "time_to", comment: "конечное время"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "districts", comment: "Справочник административных районов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "region_id"
-    t.bigint "country_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название района"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "region_id", comment: "регион (необязательное поле)"
+    t.bigint "country_id", comment: "страна"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_districts_on_country_id"
     t.index ["region_id"], name: "index_districts_on_region_id"
   end
 
-  create_table "driver_licenses", comment: "Справчник водительских прав", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.bigint "country_id"
-    t.string "serial"
-    t.string "number"
-    t.string "category"
-    t.string "issued_by"
-    t.string "issued_code"
-    t.date "issued_date"
-    t.date "valid_to"
+  create_table "driver_licenses", comment: "Справчник водительских удостоверений", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "полное название (необязательное поле)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "verified", default: false, comment: "прошло ли проверку"
+    t.bigint "country_id", comment: "страна выдачи"
+    t.string "series", comment: "серия удостоверения"
+    t.string "number", comment: "номер удостоверения"
+    t.string "category", comment: "категория удостоверения"
+    t.string "issued_by", comment: "кем выдано"
+    t.string "issued_code", comment: "код подразделения (есть такое?)"
+    t.date "issued_date", comment: "дата выдачи"
+    t.date "valid_to", comment: "дата окончания действия"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -143,12 +159,12 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "manufactures", comment: "Справочник производителей автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "brand_id"
-    t.bigint "country_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название производителя"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "brand_id", comment: "марка"
+    t.bigint "country_id", comment: "страна производителя"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_manufactures_on_brand_id"
@@ -156,33 +172,33 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "model_classes", comment: "Справочник классов моделей автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название класса модели"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "models", comment: "Справочник моделей автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_class_id"
-    t.bigint "brand_id"
-    t.bigint "manufacture_id"
-    t.bigint "body_type_id"
-    t.integer "door_count"
-    t.integer "seat_count"
-    t.string "style"
-    t.string "transmission"
-    t.string "drive_type"
-    t.string "fuel_type"
-    t.string "engine"
-    t.float "engine_volume"
-    t.string "specs", array: true
-    t.string "options", array: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название модели"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_class_id", comment: "класс модели"
+    t.bigint "brand_id", comment: "марка модели"
+    t.bigint "manufacture_id", comment: "производитель модели"
+    t.bigint "body_type_id", comment: "тип кузова"
+    t.integer "door_count", comment: "кол-во дверей"
+    t.integer "seat_count", comment: "кол-во посадочных мест"
+    t.string "style", comment: "стиль модели"
+    t.string "transmission", comment: "тип привода"
+    t.string "drive_type", comment: "коробка передач"
+    t.string "fuel_type", comment: "тип топлива"
+    t.string "engine", comment: "двигатель"
+    t.float "engine_volume", comment: "объем двигателя"
+    t.string "specs", comment: "стандартные характеристики (массив строк)", array: true
+    t.string "options", comment: "прочее оснащение (массив строк)", array: true
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["body_type_id"], name: "index_models_on_body_type_id"
@@ -192,13 +208,13 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "order_addons", comment: "Справочник дополнений для каждого заказа", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "order_id"
-    t.bigint "addition_id"
-    t.decimal "price"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название услуги/снаряжения (необязательное поле)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "order_id", comment: "связанный заказ"
+    t.bigint "addition_id", comment: "услуга/снаряжения"
+    t.decimal "price", comment: "цена (если nil, то берется из additions)"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["addition_id"], name: "index_order_addons_on_addition_id"
@@ -206,9 +222,9 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "orders", comment: "Справочник заказов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "можно использовать для пометок (необязательное поле)"
+    t.boolean "active", default: true, comment: "актуальность"
     t.string "status", default: "created", comment: "состояние заказа"
     t.bigint "vehicle_id", comment: "конкретный автомобиль (может не быть)"
     t.bigint "model_id", comment: "модель (если есть конкретный автомобиль то модель берем оттуда)"
@@ -219,12 +235,14 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
     t.time "time_from", comment: "время выдачи"
     t.date "date_to", comment: "дата возврата"
     t.time "time_to", comment: "время возврата"
-    t.integer "days_count", comment: "кол-во дней аренды (наверно тех что не попали в другие тарифы)"
+    t.integer "days_count", comment: "кол-во дней аренды (которые не попали в другие тарифы?)"
     t.integer "days_over", comment: "кол-во просроченных дней"
-    t.bigint "rental_plan_id", comment: "тарифный план"
     t.bigint "pay_type_id", comment: "форма оплаты"
-    t.decimal "weekend_fee", comment: "плата по тарифу выходных дней"
-    t.decimal "workweek_fee", comment: "плата по тарифу рабочей недели"
+    t.bigint "rental_plan_id", comment: "тарифный план"
+    t.bigint "days_range_id", comment: "тариф диапазона дней (nil если не используется)"
+    t.bigint "days_slice_id", comment: "тариф среза дней (nil если не используется)"
+    t.decimal "days_range_fee", comment: "плата по тарифу диапазона дней"
+    t.decimal "days_slice_fee", comment: "плата по тарифу среза дней"
     t.decimal "days_fee", comment: "плата по тарифу по дням"
     t.decimal "addons_fee", comment: "плата за дополнительные услуги/снаряжение"
     t.decimal "forfeit_fee", comment: "штрафы"
@@ -232,10 +250,12 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
     t.decimal "total_fee", comment: "общая сумма к оплате"
     t.decimal "total_paid", comment: "сколько уже оплачено от общей суммы (может быть частично/залог)"
     t.boolean "paid_full", default: false, comment: "отметка о полной оплате"
-    t.text "note"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_orders_on_client_id"
+    t.index ["days_range_id"], name: "index_orders_on_days_range_id"
+    t.index ["days_slice_id"], name: "index_orders_on_days_slice_id"
     t.index ["issue_spot_id"], name: "index_orders_on_issue_spot_id"
     t.index ["model_id"], name: "index_orders_on_model_id"
     t.index ["pay_type_id"], name: "index_orders_on_pay_type_id"
@@ -245,18 +265,18 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "passports", comment: "Справочник паспортов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.bigint "country_id"
-    t.string "serial"
-    t.string "number"
-    t.string "issued_by"
-    t.string "issued_code"
-    t.date "issued_date"
-    t.date "valid_to"
-    t.bigint "address_id"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "полное название (необязательное поле)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "verified", default: false, comment: "прошел ли проверку"
+    t.bigint "country_id", comment: "страна выдачи"
+    t.string "series", comment: "серия паспорта"
+    t.string "number", comment: "номер паспорта"
+    t.string "issued_by", comment: "кем выдан"
+    t.string "issued_code", comment: "код подразделения"
+    t.date "issued_date", comment: "дата выдачи"
+    t.date "valid_to", comment: "дата окончания действия"
+    t.bigint "address_id", comment: "адрес регистрации"
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -265,52 +285,52 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "pay_types", comment: "Справочник форм оплаты", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.float "tax", default: 0.0, comment: "коэффициент налога"
-    t.float "rebate", default: 0.0, comment: "коэффициент льготы"
-    t.float "discount", default: 0.0, comment: "коэффициент скидки"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название формы оплаты"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.float "tax", default: 0.0, comment: "коэффициент налога (необязательно)"
+    t.float "rebate", default: 0.0, comment: "коэффициент льготы (необязательно)"
+    t.float "discount", default: 0.0, comment: "коэффициент скидки (необязательно)"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "range_rates", comment: "Связка коэффициентов и диапазонов дней", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "rental_rate_id"
-    t.bigint "day_range_id"
-    t.float "rate"
-    t.text "note"
+  create_table "range_rates", comment: "Справочник коэффициентов по диапазонам дней", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название диапазона дней"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "rental_rate_id", comment: "тариф коэффициентов"
+    t.bigint "days_range_id", comment: "диапазон дней"
+    t.float "rate", comment: "коэффициент"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["day_range_id"], name: "index_range_rates_on_day_range_id"
+    t.index ["days_range_id"], name: "index_range_rates_on_days_range_id"
     t.index ["rental_rate_id"], name: "index_range_rates_on_rental_rate_id"
   end
 
   create_table "regions", comment: "Справочник регионов (республика/край/область/округ)", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "country_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название региона"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "country_id", comment: "страна"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_regions_on_country_id"
   end
 
-  create_table "rental_plans", comment: "Справочник тарифных планов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_id"
-    t.bigint "model_class_id"
-    t.bigint "rental_type_id"
-    t.bigint "rental_rate_id"
-    t.bigint "rental_price_id"
-    t.text "note"
+  create_table "rental_plans", comment: "Справочник тарифных планов (сводная таблица)", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название тарифного плана, примерно: <марка> <модель> (<класс>)(<тип тарифа>)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_id", comment: "модель"
+    t.bigint "model_class_id", comment: "класс модели"
+    t.bigint "rental_type_id", comment: "тип тарифа"
+    t.bigint "rental_rate_id", comment: "коэффициенты тарифа"
+    t.bigint "rental_price_id", comment: "цены тарифа"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_class_id"], name: "index_rental_plans_on_model_class_id"
@@ -321,21 +341,18 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "rental_prices", comment: "Справчник базовых цен для моделей (классов?)", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_id"
-    t.bigint "model_class_id"
-    t.decimal "hour"
-    t.decimal "day"
-    t.decimal "forfeit"
-    t.decimal "earnest"
-    t.decimal "km"
-    t.decimal "km_over"
-    t.decimal "weekend"
-    t.decimal "workweek"
-    t.decimal "workday"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название базовых цен"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_id", comment: "модель"
+    t.bigint "model_class_id", comment: "класс модели"
+    t.decimal "km_limit", comment: "лимит километров(?)"
+    t.decimal "km", comment: "стоимость километра"
+    t.decimal "hour", comment: "стоимость часа"
+    t.decimal "day", comment: "стоимость дня"
+    t.decimal "forfeit", comment: "штраф (за каждый просроченный день?)"
+    t.decimal "earnest", comment: "залог"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_class_id"], name: "index_rental_prices_on_model_class_id"
@@ -343,16 +360,15 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "rental_rates", comment: "Справочник коэффициентов тарифов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_class_id"
-    t.bigint "rental_type_id"
-    t.float "hour"
-    t.float "day"
-    t.float "workweek"
-    t.float "weekend"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название (для других справочников)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_class_id", comment: "класс модели"
+    t.bigint "rental_type_id", comment: "тип тарифа"
+    t.float "km", comment: "коэффициент км"
+    t.float "hour", comment: "коэффициент часа"
+    t.float "day", comment: "коэффициент дня"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_class_id"], name: "index_rental_rates_on_model_class_id"
@@ -360,23 +376,23 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "rental_types", comment: "Справочник типов тарифных планов", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название типа тарифного плана (зима, лето, ...)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "settlements", comment: "Справочник населенных пунктов (город/деревня/село)", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "status_id"
-    t.bigint "district_id"
-    t.bigint "region_id"
-    t.bigint "country_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название нас.пункта"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "status_id", comment: "статус нас.пункта"
+    t.bigint "district_id", comment: "административный район (необязательное поле)"
+    t.bigint "region_id", comment: "регион (необязательное поле)"
+    t.bigint "country_id", comment: "страна"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["country_id"], name: "index_settlements_on_country_id"
@@ -385,43 +401,57 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
     t.index ["status_id"], name: "index_settlements_on_status_id"
   end
 
+  create_table "slice_rates", comment: "Справочник коэффициентов по срезам дней", force: :cascade do |t|
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название среза дней"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "rental_rate_id", comment: "тариф коэффициентов"
+    t.bigint "days_slice_id", comment: "срез дней"
+    t.float "rate", comment: "коэффициент"
+    t.text "note", comment: "заметки"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["days_slice_id"], name: "index_slice_rates_on_days_slice_id"
+    t.index ["rental_rate_id"], name: "index_slice_rates_on_rental_rate_id"
+  end
+
   create_table "spots", comment: "Справочник точек выдачи/возврата", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "address_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название точки"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "address_id", comment: "адрес точки"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_spots_on_address_id"
   end
 
   create_table "statuses", comment: "Справочник статусов нас.пунктов (город, село, деревня...)", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название статуса населенного пункта: город, село, деревня..."
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "trunk_types", comment: "Справочник типов багажников автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название типа багажника"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "trunks", comment: "Справочник багажников автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_id"
-    t.bigint "trunk_type_id"
-    t.decimal "price"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название багажника"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_id", comment: "модель автомобиля"
+    t.bigint "trunk_type_id", comment: "тип банажника"
+    t.decimal "price", comment: "цена (необязательна)"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_id"], name: "index_trunks_on_model_id"
@@ -429,36 +459,36 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   end
 
   create_table "users", comment: "Справочник пользователей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.boolean "verified", default: false
-    t.string "secret"
-    t.string "role", default: "user"
-    t.string "email"
-    t.string "image"
-    t.bigint "client_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "имя пользователя (nickname)"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.boolean "verified", default: false, comment: "прошел ли проверку"
+    t.string "secret", comment: "пароль"
+    t.string "role", default: "user", comment: "статус пользователя в системе (admin, user и прочие)"
+    t.string "email", comment: "электронная почта"
+    t.string "image", comment: "фотка/аватар/картинка профиля"
+    t.bigint "client_id", comment: "клиент (необязательно)"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_users_on_client_id"
   end
 
   create_table "vehicles", comment: "Справочник автомобилей", force: :cascade do |t|
-    t.string "code"
-    t.string "name"
-    t.boolean "active", default: true
-    t.bigint "model_id"
-    t.string "garage_no"
-    t.string "state_no"
-    t.string "vin"
-    t.date "release"
-    t.integer "mileage"
-    t.string "color"
-    t.string "specs", array: true
-    t.string "options", array: true
-    t.bigint "trunk_id"
-    t.text "note"
+    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
+    t.string "name", comment: "название машины, примерно: <марка> <модель> <гос.номер>"
+    t.boolean "active", default: true, comment: "актуальность"
+    t.bigint "model_id", comment: "модель"
+    t.string "garage_no", comment: "гаражный номер"
+    t.string "state_no", comment: "гос. номер"
+    t.string "vin", comment: "идентификационный номер автомобиля"
+    t.date "release", comment: "дата выпуска"
+    t.integer "mileage", comment: "пробег"
+    t.string "color", comment: "цвет"
+    t.string "specs", comment: "стандартные характеристики (массив строк)", array: true
+    t.string "options", comment: "прочее оснащение (массив строк)", array: true
+    t.bigint "trunk_id", comment: "багажник"
+    t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_id"], name: "index_vehicles_on_model_id"
@@ -483,6 +513,8 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   add_foreign_key "order_addons", "additions"
   add_foreign_key "order_addons", "orders"
   add_foreign_key "orders", "clients"
+  add_foreign_key "orders", "days_ranges"
+  add_foreign_key "orders", "days_slices"
   add_foreign_key "orders", "models"
   add_foreign_key "orders", "pay_types"
   add_foreign_key "orders", "rental_plans"
@@ -491,7 +523,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   add_foreign_key "orders", "vehicles"
   add_foreign_key "passports", "addresses"
   add_foreign_key "passports", "countries"
-  add_foreign_key "range_rates", "day_ranges"
+  add_foreign_key "range_rates", "days_ranges"
   add_foreign_key "range_rates", "rental_rates"
   add_foreign_key "regions", "countries"
   add_foreign_key "rental_plans", "model_classes"
@@ -507,6 +539,8 @@ ActiveRecord::Schema.define(version: 2018_11_15_181035) do
   add_foreign_key "settlements", "districts"
   add_foreign_key "settlements", "regions"
   add_foreign_key "settlements", "statuses"
+  add_foreign_key "slice_rates", "days_slices"
+  add_foreign_key "slice_rates", "rental_rates"
   add_foreign_key "spots", "addresses"
   add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"

@@ -5,6 +5,5 @@ class VehicleSerializer < ActiveModel::Serializer
   has_one :model
   has_one :trunk
 
-  attribute :release do object.release.strftime("%Y-%m") end
-
+  attribute :release do object.release.strftime('%Y-%m') end
 end

@@ -1,6 +1,6 @@
 # app/controllers/rental_rates_controller.rb
 class RentalRatesController < ApplicationController
-  before_action :set_rental_rate, only: [:show, :update, :destroy]
+  before_action :set_rental_rate, only: %i[show update destroy]
 
   # GET /rental_rates
   def index
@@ -40,13 +40,14 @@ class RentalRatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_rental_rate
-      @rental_rate = RentalRate.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def rental_rate_params
-      params.require(:rental_rate).permit(:code, :name, :active, :model_class_id, :rental_type_id, :workweek, :weekend, :hour, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_rental_rate
+    @rental_rate = RentalRate.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def rental_rate_params
+    params.require(:rental_rate).permit(:code, :name, :active, :model_class_id, :rental_type_id, :km, :hour, :note)
+  end
 end

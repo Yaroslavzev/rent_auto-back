@@ -1,6 +1,8 @@
 # config/routes.rb
 Rails.application.routes.draw do
   resources :rent_values, only: [:index]
+  resources :slice_rates
+  resources :days_slices
   resources :order_addons
   resources :orders
   resources :pay_types
@@ -18,7 +20,7 @@ Rails.application.routes.draw do
   resources :rental_prices
   resources :model_classes
   resources :range_rates
-  resources :day_ranges
+  resources :days_ranges
   resources :rental_rates
   resources :rental_types
   resources :rental_classes

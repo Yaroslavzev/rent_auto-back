@@ -1,6 +1,6 @@
 # app/controllers/spots_controller.rb
 class SpotsController < ApplicationController
-  before_action :set_spot, only: [:show, :update, :destroy]
+  before_action :set_spot, only: %i[show update destroy]
 
   # GET /spots
   def index
@@ -40,13 +40,14 @@ class SpotsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_spot
-      @spot = Spot.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def spot_params
-      params.require(:spot).permit(:code, :name, :active, :address_id, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_spot
+    @spot = Spot.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def spot_params
+    params.require(:spot).permit(:code, :name, :active, :address_id, :note)
+  end
 end

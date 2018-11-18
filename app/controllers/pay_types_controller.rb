@@ -1,6 +1,6 @@
 # app/controllers/pay_types_controller.rb
 class PayTypesController < ApplicationController
-  before_action :set_pay_type, only: [:show, :update, :destroy]
+  before_action :set_pay_type, only: %i[show update destroy]
 
   # GET /pay_types
   def index
@@ -40,13 +40,14 @@ class PayTypesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_pay_type
-      @pay_type = PayType.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def pay_type_params
-      params.require(:pay_type).permit(:code, :name, :active, :tax, :rebate, :discount, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_pay_type
+    @pay_type = PayType.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def pay_type_params
+    params.require(:pay_type).permit(:code, :name, :active, :tax, :rebate, :discount, :note)
+  end
 end

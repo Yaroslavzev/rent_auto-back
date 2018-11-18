@@ -1,6 +1,6 @@
 # app/controllers/districts_controller.rb
 class DistrictsController < ApplicationController
-  before_action :set_district, only: [:show, :update, :destroy]
+  before_action :set_district, only: %i[show update destroy]
 
   # GET /districts
   def index
@@ -40,13 +40,14 @@ class DistrictsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_district
-      @district = District.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def district_params
-      params.require(:district).permit(:code, :name, :active, :region_id, :country_id, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_district
+    @district = District.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def district_params
+    params.require(:district).permit(:code, :name, :active, :region_id, :country_id, :note)
+  end
 end

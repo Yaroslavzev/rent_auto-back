@@ -21,7 +21,7 @@ Metrics/MethodLength:
 
 # 80 маловато
 Metrics/LineLength:
-  Max: 132
+  Max: 120
 
 # Сам знаю что не используются :)
 Lint/UselessAssignment:

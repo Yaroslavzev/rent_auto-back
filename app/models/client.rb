@@ -1,3 +1,4 @@
+# app/models/client.rb
 class Client < ApplicationRecord
   belongs_to :address
   belongs_to :passport
