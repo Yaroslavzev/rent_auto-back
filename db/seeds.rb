@@ -555,10 +555,11 @@ if Rails.env.development?
         name: rate_name,
         model_class: klass,
         rental_type: type,
+        km: rand(5..15).to_f / 10,
         hour: rand(5..15).to_f / 10,
         day: rand(5..15).to_f / 10,
-        workweek: rand(5..15).to_f / 10,
-        weekend: rand(5..15).to_f / 10,
+        # workweek: rand(5..15).to_f / 10,
+        # weekend: rand(5..15).to_f / 10,
         note: rate_name.capitalize
       }
     end
@@ -608,23 +609,20 @@ if Rails.env.development?
   print ' • справочник базовых цен для моделей (классов?)'
   seeds = models.map do |model|
     price_name = "#{model.name}(#{model.model_class.name})"
-    day = rand(20..30) * 100
     km = rand(50..100) / 10
+    day = rand(10..20) * 100
     print '.'
     {
       code: "#{model.code}-#{model.model_class.code}",
       name: price_name,
       model: model,
       model_class: model.model_class,
+      km_limit: rand(10..30) * 100,
+      km: km,
       hour: day / 20,
       day: day,
       forfeit: day * 1.5,
       earnest: day * 3,
-      km: km,
-      km_limit: rand(10..30) * 100,
-      weekend: day * 2 * 1.5,
-      workweek: day * 4,
-      workday: day * 0.9,
       note: price_name
     }
   end
@@ -692,15 +690,17 @@ if Rails.env.development?
     time_to = Faker::Time.between(Time.current, Time.current + 1.day)
     days_count = (date_to - date_from).to_i
     days_over = rand(0..days_count)
-    rental_plan = rental_plans.select { |p| p.model == model }.sample
     pay_type = pay_types.sample
-    weekend_fee = rand(2).zero? ? 0 : 0 # заглушка
-    workweek_fee = rand(2).zero? ? 0 : 0 # заглушка
-    days_fee = rand(2).zero? ? 0 : 0 # заглушка
-    addons_fee = rand(2).zero? ? 0 : 0 # заглушка
+    rental_plan = rental_plans.select { |p| p.model == model }.sample
+    days_range = rand(2).zero? ? nil : days_ranges.sample
+    days_slice = rand(2).zero? ? nil : days_slices.sample
+    days_range_fee = days_range ? 0 : 0 # заглушка
+    days_slice_fee = days_slice ? 0 : 0 # заглушка
+    days_fee =  (date_to - date_from).to_i * rental_plan.rental_price.day # rand(2).zero? ? 0 : 0 # заглушка
+    addons_fee = 0
     forfeit_fee = rand(2).zero? ? 0 : 0 # заглушка
     discouts = rand(2).zero? ? 0 : 0 # заглушка
-    total_fee = weekend_fee + workweek_fee + days_fee + addons_fee + forfeit_fee - discouts
+    total_fee = days_range_fee + days_slice_fee + days_fee + addons_fee + forfeit_fee - discouts
     total_paid = rand(2).zero? ? 0 : 0 # заглушка
     {
       vehicle: vehicle,
@@ -714,10 +714,12 @@ if Rails.env.development?
       time_to: time_to,
       days_count: days_count,
       days_over: days_over,
-      rental_plan: rental_plan,
       pay_type: pay_type,
-      weekend_fee: weekend_fee,
-      workweek_fee: workweek_fee,
+      rental_plan: rental_plan,
+      days_range: days_range,
+      days_slice: days_slice,
+      days_range_fee: days_range_fee,
+      days_slice_fee: days_slice_fee,
       days_fee: days_fee,
       addons_fee: addons_fee,
       forfeit_fee: forfeit_fee,
@@ -732,9 +734,13 @@ if Rails.env.development?
   # Заполнить справочник заказов
   print ' • справочник дополнений к заказам'
   seeds = orders.map do |order|
-    rand(0..rand(additions.size / 2)).times.map do
+    sum = 0
+    arr = []
+    arr << rand(0..rand(additions.size / 2)).times.map do
       print '.'
       addon = additions.sample
+      price = addon.price
+      sum += price
       {
         code: addon.code,
         name: addon.name,
@@ -743,6 +749,11 @@ if Rails.env.development?
         price: addon.price
       }
     end
+    # добавить суммарную стоимость в заказы (лучше триггерами/калбэками?)
+    order.addons_fee = sum
+    order.total_fee += sum
+    order.save!
+    arr
   end
   order_addons = OrderAddon.create! seeds.flatten
   puts

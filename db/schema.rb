@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_17_105620) do
+ActiveRecord::Schema.define(version: 2018_11_15_181035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -235,12 +235,14 @@ ActiveRecord::Schema.define(version: 2018_11_17_105620) do
     t.time "time_from", comment: "время выдачи"
     t.date "date_to", comment: "дата возврата"
     t.time "time_to", comment: "время возврата"
-    t.integer "days_count", comment: "кол-во дней аренды (наверно тех что не попали в другие тарифы)"
+    t.integer "days_count", comment: "кол-во дней аренды (которые не попали в другие тарифы?)"
     t.integer "days_over", comment: "кол-во просроченных дней"
-    t.bigint "rental_plan_id", comment: "тарифный план"
     t.bigint "pay_type_id", comment: "форма оплаты"
-    t.decimal "weekend_fee", comment: "плата по тарифу выходных дней"
-    t.decimal "workweek_fee", comment: "плата по тарифу рабочей недели"
+    t.bigint "rental_plan_id", comment: "тарифный план"
+    t.bigint "days_range_id", comment: "тариф диапазона дней (nil если не используется)"
+    t.bigint "days_slice_id", comment: "тариф среза дней (nil если не используется)"
+    t.decimal "days_range_fee", comment: "плата по тарифу диапазона дней"
+    t.decimal "days_slice_fee", comment: "плата по тарифу среза дней"
     t.decimal "days_fee", comment: "плата по тарифу по дням"
     t.decimal "addons_fee", comment: "плата за дополнительные услуги/снаряжение"
     t.decimal "forfeit_fee", comment: "штрафы"
@@ -252,6 +254,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_105620) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_id"], name: "index_orders_on_client_id"
+    t.index ["days_range_id"], name: "index_orders_on_days_range_id"
+    t.index ["days_slice_id"], name: "index_orders_on_days_slice_id"
     t.index ["issue_spot_id"], name: "index_orders_on_issue_spot_id"
     t.index ["model_id"], name: "index_orders_on_model_id"
     t.index ["pay_type_id"], name: "index_orders_on_pay_type_id"
@@ -342,15 +346,12 @@ ActiveRecord::Schema.define(version: 2018_11_17_105620) do
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_id", comment: "модель"
     t.bigint "model_class_id", comment: "класс модели"
+    t.decimal "km_limit", comment: "лимит километров(?)"
+    t.decimal "km", comment: "стоимость километра"
     t.decimal "hour", comment: "стоимость часа"
     t.decimal "day", comment: "стоимость дня"
-    t.decimal "forfeit", comment: "штраф (за просроченный день?)"
+    t.decimal "forfeit", comment: "штраф (за каждый просроченный день?)"
     t.decimal "earnest", comment: "залог"
-    t.decimal "km", comment: "стоимость километра"
-    t.decimal "km_limit", comment: "лимит километров(?)"
-    t.decimal "weekend"
-    t.decimal "workweek"
-    t.decimal "workday"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -364,10 +365,9 @@ ActiveRecord::Schema.define(version: 2018_11_17_105620) do
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_class_id", comment: "класс модели"
     t.bigint "rental_type_id", comment: "тип тарифа"
+    t.float "km", comment: "коэффициент км"
     t.float "hour", comment: "коэффициент часа"
     t.float "day", comment: "коэффициент дня"
-    t.float "workweek"
-    t.float "weekend"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -513,6 +513,8 @@ ActiveRecord::Schema.define(version: 2018_11_17_105620) do
   add_foreign_key "order_addons", "additions"
   add_foreign_key "order_addons", "orders"
   add_foreign_key "orders", "clients"
+  add_foreign_key "orders", "days_ranges"
+  add_foreign_key "orders", "days_slices"
   add_foreign_key "orders", "models"
   add_foreign_key "orders", "pay_types"
   add_foreign_key "orders", "rental_plans"

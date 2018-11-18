@@ -7,10 +7,11 @@ class CreateRentalRates < ActiveRecord::Migration[5.2]
       t.boolean :active, default: true, comment: 'актуальность'
       t.references :model_class, foreign_key: true, comment: 'класс модели'
       t.references :rental_type, foreign_key: true, comment: 'тип тарифа'
+      t.float :km, comment: 'коэффициент км'
       t.float :hour, comment: 'коэффициент часа'
       t.float :day, comment: 'коэффициент дня'
-      t.float :workweek
-      t.float :weekend
+      # t.float :workweek
+      # t.float :weekend
       t.text :note, comment: 'заметки'
 
       t.timestamps

@@ -1,4 +1,4 @@
-# db/migrate/20181115142843_create_pay_types.rb
+# db/migrate/20181115102843_create_pay_types.rb
 class CreatePayTypes < ActiveRecord::Migration[5.2]
   def change
     create_table :pay_types, comment: 'Справочник форм оплаты' do |t|

@@ -1,4 +1,4 @@
-# db/migrate/20181116165757_create_days_slices.rb
+# db/migrate/20181115105557_create_days_slices.rb
 class CreateDaysSlices < ActiveRecord::Migration[5.2]
   def change
     create_table :days_slices, comment: 'Справочник срезов дней (выходные, будние, праздники)' do |t|

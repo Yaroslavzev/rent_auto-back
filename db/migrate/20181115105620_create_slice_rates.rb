@@ -1,4 +1,4 @@
-# db/migrate/20181117105620_create_slice_rates.rb
+# db/migrate/20181115105620_create_slice_rates.rb
 class CreateSliceRates < ActiveRecord::Migration[5.2]
   def change
     create_table :slice_rates, comment: 'Справочник коэффициентов по срезам дней' do |t|

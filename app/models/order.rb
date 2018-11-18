@@ -1,18 +1,14 @@
 # app/models/order.rb
 class Order < ApplicationRecord
-  belongs_to :vehicle
+  belongs_to :vehicle, optional: true
   belongs_to :model
   belongs_to :client
-  belongs_to :issue_spot, class_name: 'Spot'
-  belongs_to :return_spot, class_name: 'Spot'
+  belongs_to :issue_spot, class_name: 'Spot', optional: true
+  belongs_to :return_spot, class_name: 'Spot', optional: true
+  belongs_to :pay_type, optional: true
   belongs_to :rental_plan
-  belongs_to :pay_type
+  belongs_to :days_range, optional: true
+  belongs_to :days_slice, optional: true
 
   has_many :order_addons, dependent: :destroy
-
-  # attribute :time_from, :time
-  # attribute :time_to, :time
-
-  # serialize :time_from, Tod::TimeOfDay
-  # serialize :time_to, Tod::TimeOfDay
 end
