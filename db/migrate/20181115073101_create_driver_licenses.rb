@@ -14,7 +14,7 @@ class CreateDriverLicenses < ActiveRecord::Migration[5.2]
       t.string :issued_code, comment: 'код подразделения (есть такое?)'
       t.date :issued_date, comment: 'дата выдачи'
       t.date :valid_to, comment: 'дата окончания действия'
-      t.text :note, default: nil
+      t.text :note, default: nil, comment: 'заметки'
 
       t.timestamps
     end

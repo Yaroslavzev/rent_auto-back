@@ -14,7 +14,7 @@ class CreatePassports < ActiveRecord::Migration[5.2]
       t.date :issued_date, comment: 'дата выдачи'
       t.date :valid_to, comment: 'дата окончания действия'
       t.references :address, foreign_key: true, comment: 'адрес регистрации'
-      t.text :note, default: nil
+      t.text :note, default: nil, comment: 'заметки'
 
       t.timestamps
     end

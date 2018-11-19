@@ -64,6 +64,8 @@ group :development, :test do
   # gem 'faker-russian'
   # Great Ruby dubugging companion: pretty print Ruby objects to visualize their structure.
   gem 'awesome_print'
+  # Rails ERD generates diagrams using Graphviz, a visualisation library.
+  gem 'rails-erd'
 end
 
 group :development do
