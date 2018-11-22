@@ -1,5 +1,6 @@
 # app/controllers/order_addons_controller.rb
 class OrderAddonsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_order_addon, only: %i[show update destroy]
 
   # GET /order_addons

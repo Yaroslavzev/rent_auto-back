@@ -4,8 +4,12 @@ class OrderSerializer < ActiveModel::Serializer
              :days_range_fee, :days_slice_fee, :days_fee, :addons_fee, :forfeit_fee, :discouts, :total_fee, :total_paid,
              :paid_full, :note
 
-  attribute :time_from do object.time_from.to_s end
-  attribute :time_to do object.time_to.to_s end
+  attribute :time_from do
+    object.time_from.to_s
+  end
+  attribute :time_to do
+    object.time_to.to_s
+  end
 
   has_one :vehicle
   has_one :model

@@ -3,4 +3,8 @@ class Client < ApplicationRecord
   belongs_to :address
   belongs_to :passport
   belongs_to :driver_license
+
+  has_one :user, dependent: :nullify
+
+  has_many :formats, -> { select '"formats".*' }, as: :formatable, primary_key: :table_name
 end

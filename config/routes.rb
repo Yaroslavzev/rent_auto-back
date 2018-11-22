@@ -1,6 +1,8 @@
 # config/routes.rb
 Rails.application.routes.draw do
+  devise_for :users, path: 'auth', controllers: { sessions: 'auth/sessions' }, defaults: { format: :json }
   resources :rent_values, only: [:index]
+  resources :formats
   resources :slice_rates
   resources :days_slices
   resources :order_addons

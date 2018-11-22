@@ -1,5 +1,6 @@
 # app/controllers/vehicles_controller.rb
 class VehiclesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_vehicle, only: %i[show update destroy]
 
   # GET /vehicles

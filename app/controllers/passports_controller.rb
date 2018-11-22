@@ -1,5 +1,6 @@
 # app/controllers/passports_controller.rb
 class PassportsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_passport, only: %i[show update destroy]
 
   # GET /passports
@@ -48,7 +49,7 @@ class PassportsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def passport_params
-    params.require(:passport).permit(:code, :name, :active, :verified, :country_id, :series, :number, :issued_by,
+    params.require(:passport).permit(:code, :name, :active, :verified, :country_id, :series_number, :issued_by,
                                      :issued_code, :issued_date, :valid_to, :address_id, :note)
   end
 end
