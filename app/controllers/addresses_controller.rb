@@ -1,5 +1,6 @@
 # app/controllers/addresses_controller.rb
 class AddressesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_address, only: %i[show update destroy]
 
   # GET /addresses

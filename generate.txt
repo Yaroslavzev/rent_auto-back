@@ -22,7 +22,7 @@ rails g scaffold driver_license code:string name:string active:boolean verified:
 
 rails g scaffold client code:string name:string active:boolean verified:boolean first_name:string middle_name:string last_name:string gender:string birthday:date phone:string:array address:references passport:references driver_license:references note:text -p
 
-rails g scaffold user code:string name:string active:boolean verified:boolean secret:string role:string email:string image:string client:references note:text -p
+rails g scaffold user code:string name:string active:boolean verified:boolean encrypted_password:string role:string email:string image:string client:references note:text -p
 
 rails g scaffold brand code:string name:string note:text -p
 rails g scaffold manufacture code:string name:string brand:references country:references note:text -p
@@ -57,3 +57,11 @@ rails g scaffold pay_type code:string name:string active:boolean tax:float rebat
 rails g scaffold order code:string name:string active:boolean status:string vehicle:references model:references client:references issue_spot:references:spot return_spot:references:spot date_from:date time_from:time date_to:date time_to:time days_count:integer days_over:integer rental_plan:references pay_type:references weekend_fee:decimal workweek_fee:decimal days_fee:decimal addons_fee:decimal forfeit_fee:decimal discouts:decimal total_fee:decimal total_paid:decimal paid_full:boolean note:text -p
 
 rails g scaffold order_addon code:string name:string active:boolean order:references addition:references price:decimal note:text -p
+
+rails g scaffold format formatable:polymorphic key:string format:string args:string -p
+
+# auth
+rails generate devise:install -p
+rails generate devise User -p
+rails generate devise:controllers users -p
+rails g model AuthenticationToken body:string:index user:references last_used_at:datetime expires_in:integer ip_address:string user_agent:string -p

@@ -8,7 +8,7 @@ gem 'rails', '~> 5.2.1'
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma'
 
 # Ruby Internationalization and localization solution.
 gem 'i18n'
@@ -19,15 +19,28 @@ gem 'money'
 gem 'money-rails'
 
 # Supplies TimeOfDay class that includes parsing, strftime, comparison, and arithmetic.
-# gem 'tod' #, '~> 2.2'
+# gem 'tod'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # ActiveModel::Serializers allows you to generate your JSON in an object-oriented and convention-driven manner.
-gem 'active_model_serializers', '~> 0.10.8'
+gem 'active_model_serializers' # , github: "rails-api/active_model_serializers"
 
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt' # , '~> 3.1.7'
+
+# Flexible authentication solution for Rails with Warden
+gem 'devise' # , '~> 4.5'
+gem 'devise-i18n'
+
+# JWT authentication for devise with configurable token revocation strategies
+# gem 'devise-jwt' # , '~> 0.5.8'
+
+# Token authentication for Devise which supports multiple tokens per model
+gem 'tiddle' # , '~> 1.3'
+
+# A pure ruby implementation of the RFC 7519 OAuth JSON Web Token (JWT) standard.
+# gem 'jwt' # , '~> 2.1'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -48,17 +61,16 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # An IRB alternative and runtime developer console
-  gem 'pry' # , '~> 0.10.3'
+  gem 'pry'
   # Combine 'pry' with 'byebug'. Adds 'step', 'next', 'finish', 'continue' and 'break' commands to control execution.
-  gem 'pry-byebug' # , '~> 3.6'
+  gem 'pry-byebug'
   # BDD for Ruby
-  gem 'rspec-rails' # , '~> 3.8'
+  gem 'rspec-rails'
   # gem 'rspec', '~> 3.8'
   # Automatic Ruby code style checking tool. Aims to enforce the community-driven Ruby Style Guide.
   gem 'rubocop', require: false
   # Faker is used to easily generate fake data: names, addresses, phone numbers, etc.
   gem 'faker' # , require: false
-  gem 'ffaker', require: false
   # Faker russian specific values. INN, OKPO, OGRN et.c.
   # (пока нет генерации паспортов он для нас беполезен)
   # gem 'faker-russian'
@@ -66,6 +78,8 @@ group :development, :test do
   gem 'awesome_print'
   # Rails ERD generates diagrams using Graphviz, a visualisation library.
   gem 'rails-erd'
+  # где хистори?
+  gem 'rb-readline'
 end
 
 group :development do

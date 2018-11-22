@@ -9,6 +9,16 @@ AllCops:
     - 'tmp/**/*'
     - 'spec/**/*'
 
+# Сам знаю что не используются :)
+Lint/UselessAssignment:
+  Exclude:
+    - 'db/**/*'
+
+# не пойму что ему не нравится
+Lint/NextWithoutAccumulator:
+  Exclude:
+    - 'db/seeds.rb'
+
 Metrics/AbcSize:
   Exclude:
     - 'db/**/*'
@@ -22,11 +32,6 @@ Metrics/MethodLength:
 # 80 маловато
 Metrics/LineLength:
   Max: 120
-
-# Сам знаю что не используются :)
-Lint/UselessAssignment:
-  Exclude:
-    - 'db/**/*'
 
 Performance/TimesMap:
   Exclude:

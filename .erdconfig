@@ -2,7 +2,7 @@ attributes:
   - foreign_key
   - inheritance
   - content
-disconnected: true
+disconnected: false
 filename: rent-auto.erd
 filetype: svg
 indirect: true
@@ -12,7 +12,7 @@ notation: bachman
 orientation: vertical
 polymorphism: true
 sort: true
-warn: true
+warn: false
 title: true
 exclude: "ApplicationRecord"
 only: null
