@@ -1,5 +1,6 @@
 # app/controllers/clients_controller.rb
 class ClientsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_client, only: %i[show update destroy]
 
   # GET /clients

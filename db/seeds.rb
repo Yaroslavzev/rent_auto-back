@@ -32,11 +32,19 @@ PAY_TYPES = %w[наличный безналичный банковская\ к�
 
 DAYS_RANGES = [[1, 6], [7, 20], [21, nil]].freeze
 
-DAYS_SLICE_FIELDS = %i[name week mon_from day_from time_from mon_to day_to time_to].freeze
+DAYS_SLICE_KEYS = %i[name week mon_from day_from time_from mon_to day_to time_to].freeze
 DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00'],
                ['рабочие дни', true, nil, 1, '10:00', nil, 5, '17:00'],
                ['новый год', false, 12, 31, '17:00', 1, 10, '10:00'],
                ['майские праздники', false, 4, 30, '17:00', 5, 10, '10:10']].freeze
+
+FORMATS_KEYS = %i[formatable_type formatable_id key format args].freeze
+# rubocop:disable LineLength
+FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<volume>.1f %<style>s (%<class>s класс)',
+            '{ brand: $.brand.name, model: $.name, volume: $.engine_volume, style: $.style, class: $.model_class.name }'],
+           ['Client', nil, 'full_name', '%<last>s %<first>s %<middle>s',
+            '{ first: $.first_name, middle: $.middle_name, last: $.last_name }']].freeze
+# rubocop:enable LineLength
 
 # Генерация поля code по правилам зависимым от параметров:
 #   - если в 1м параметре 1 слово, то берем 3 первых буквы, исключая гласные, кроме первой,
@@ -44,10 +52,11 @@ DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00
 #     иначе исключает выбирает первые 3 буквы исключая гласные на конце
 #   - если слов больше 2х - берем первую букву от каждого слова и склеиваем
 #   - остальные параметры добавляются как есть через '-'
+# rubocop:disable CyclomaticComplexity, PerceivedComplexity
 def gen_code(name, vowel = false, *others)
   code_size = 3 # 3х букв для кода достаточно(?)
   code = ''
-  words = name.downcase.split(/[\s\/-]+/)
+  words = name.downcase.split(%r{[\s/-]+/})
   if words.size > 1
     code = words.inject('') { |s, w| s += w[0] }
     code = code.insert(code_size / 2, '/') if code.size < code_size
@@ -69,6 +78,7 @@ def gen_code(name, vowel = false, *others)
   code += others.inject('') { |s, c| s += "-#{c}" } unless others.size.zero?
   code
 end
+# rubocop:enable CyclomaticComplexity, PerceivedComplexity
 
 # Генерация числа заданной разрядности ввиде строки
 def gen_num_str(num)
@@ -77,6 +87,18 @@ end
 
 # Понеслась...
 puts 'Генерируется база:'
+
+# Заполнить справочник форматов
+print ' • справочник форматов'
+seeds = FORMATS.inject([]) do |arr, fmt|
+  print '.'
+  next if Format.find_by(formatable_type: fmt[0], key: fmt[2]).present?
+
+  arr << FORMATS_KEYS.zip(fmt).to_h
+end
+formats = seeds.blank? ? Format.all : Format.create!(seeds)
+
+puts
 
 # Заполнить справочник статусов населенных пунктов
 print ' • справочник статусов населенных пунктов'
@@ -208,7 +230,7 @@ seeds = DAYS_SLICES.inject([]) do |arr, slice|
   next if DaysSlice.find_by(code: code).present?
 
   arr << { code: code }
-         .merge(DAYS_SLICE_FIELDS.zip(slice).to_h)
+         .merge(DAYS_SLICE_KEYS.zip(slice).to_h)
          .merge(note: slice[0].capitalize)
 end
 days_slices = seeds.blank? ? DaysSlice.all : DaysSlice.create!(seeds)
@@ -380,12 +402,11 @@ if Rails.env.development?
       # code:
       # name:
       country: address.country,
-      series: gen_num_str(4),
-      number: gen_num_str(6),
+      series_number: "#{gen_num_str(2)} #{gen_num_str(2)} #{gen_num_str(6)}",
       issued_by: "ПВО ОВД, #{address.region.name}, #{address.settlement.name}",
       issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
-      issued_date: Faker::Date.between(20.year.ago, Date.today),
-      valid_to: Faker::Date.between(5.year.ago, 15.year.from_now),
+      issued_date: Faker::Date.between(20.years.ago, Date.today),
+      valid_to: Faker::Date.between(5.years.ago, 15.years.from_now),
       address: address
       # note:
     }
@@ -402,12 +423,11 @@ if Rails.env.development?
       # code:
       # name:
       country: address.country,
-      series: gen_num_str(4),
-      number: gen_num_str(6),
+      series_number: "#{gen_num_str(4)} #{gen_num_str(6)}",
       issued_by: "ГИБДД, #{address.region.name}, #{address.settlement.name}",
       issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
-      issued_date: Faker::Date.between(20.year.ago, Date.today),
-      valid_to: Faker::Date.between(5.year.ago, 15.year.from_now),
+      issued_date: Faker::Date.between(20.years.ago, Date.today),
+      valid_to: Faker::Date.between(5.years.ago, 15.years.from_now),
       # note:
     }
   end
@@ -443,13 +463,32 @@ if Rails.env.development?
 
   # Заполнить справочник пользователей
   print ' • справочник пользователей'
-  seeds = clients.map do |client|
+  # пустышка
+  print '.'
+  seeds = []
+  code = 'unknown'
+  if User.find_by(code: code).blank?
+    seeds << {
+      code: code,
+      name: code,
+      active: false,
+      role: code,
+      email: "#{code}@#{code}",
+      password: code,
+      image: nil,
+      note: 'Unknown user with fake email and password'
+    }
+  end
+  # пароль = имейл
+  seeds += clients.map do |client|
     print '.'
     username = Faker::Internet.username
+    email = Faker::Internet.safe_email(username)
     {
       code: username,
       name: username,
-      email: Faker::Internet.safe_email(username),
+      email: email,
+      password: email,
       image: Faker::Avatar.image,
       client: client,
       note: Faker::Lorem.sentence
@@ -462,10 +501,12 @@ if Rails.env.development?
   print ' • справочник брендов'
   seeds = MAX_SEEDS.times.inject([]) do |arr|
     print '.'
-    begin
+    make, code = nil
+    loop do
       make = Faker::Vehicle.make
       code = make[0..2].downcase
-    end while (arr.any? { |h| h[:code] == code })
+      break unless arr.any? { |h| h[:code] == code }
+    end
     arr << {
       code: code,
       name: make,
@@ -525,11 +566,12 @@ if Rails.env.development?
   seeds = models.map do |model|
     rand(1..(trunk_types.size / 2)).times.inject([]) do |arr|
       print '.'
-      type = nil
       # выбираем еще неиспользованный тип
-      begin
+      type = nil
+      loop do
         type = trunk_types.sample
-      end while (arr.any? { |h| h[:trunk_type] == type })
+        break unless arr.any? { |h| h[:trunk_type] == type }
+      end
       trunk = "#{model.name}(#{type.name})"
       arr << {
         code: "#{model.code}-#{type.code}",
@@ -598,7 +640,7 @@ if Rails.env.development?
         rental_rate: rate,
         days_slice: slice,
         rate: rand(80..100).to_f / 100,
-        note: rate_name
+        note: rate_name.capitalize
       }
     end
   end
@@ -617,7 +659,7 @@ if Rails.env.development?
       name: price_name,
       model: model,
       model_class: model.model_class,
-      km_limit: rand(10..30) * 100,
+      km_limit: rand(10..30) * 10,
       km: km,
       hour: day / 20,
       day: day,
@@ -686,7 +728,7 @@ if Rails.env.development?
     model = vehicle.model
     date_from = Faker::Date.forward(10)
     time_from = Faker::Time.between(Time.current, Time.current + 1.day)
-    date_to = Faker::Date.between(date_from, date_from + 30.day)
+    date_to = Faker::Date.between(date_from, date_from + 30.days)
     time_to = Faker::Time.between(Time.current, Time.current + 1.day)
     days_count = (date_to - date_from).to_i
     days_over = rand(0..days_count)
@@ -696,7 +738,7 @@ if Rails.env.development?
     days_slice = rand(2).zero? ? nil : days_slices.sample
     days_range_fee = days_range ? 0 : 0 # заглушка
     days_slice_fee = days_slice ? 0 : 0 # заглушка
-    days_fee =  (date_to - date_from).to_i * rental_plan.rental_price.day # rand(2).zero? ? 0 : 0 # заглушка
+    days_fee = (date_to - date_from).to_i * rental_plan.rental_price.day
     addons_fee = 0
     forfeit_fee = rand(2).zero? ? 0 : 0 # заглушка
     discouts = rand(2).zero? ? 0 : 0 # заглушка

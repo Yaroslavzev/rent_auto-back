@@ -24,8 +24,19 @@ module RentAuto
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
+    # Default locale
+    config.i18n.default_locale = :ru
+
     # Initialize modules from lib
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
+    # The safest solution in API-only application is not to rely on Rails session at all and disable it.
+    config.middleware.delete ActionDispatch::Session::CookieStore
+
+    # Locales
+    config.i18n.available_locales = %i[en ru]
+    config.i18n.default_locale = :ru
+    # config.time_zone = 'Moscow'
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

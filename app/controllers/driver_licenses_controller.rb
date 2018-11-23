@@ -1,5 +1,6 @@
 # app/controllers/driver_licenses_controller.rb
 class DriverLicensesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_driver_license, only: %i[show update destroy]
 
   # GET /driver_licenses
@@ -48,7 +49,7 @@ class DriverLicensesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def driver_license_params
-    params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :series, :number,
+    params.require(:driver_license).permit(:code, :name, :active, :verified, :country_id, :series_number,
                                            :category, :issued_by, :issued_code, :issued_date, :valid_to, :note)
   end
 end

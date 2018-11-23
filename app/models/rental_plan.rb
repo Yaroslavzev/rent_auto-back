@@ -5,4 +5,6 @@ class RentalPlan < ApplicationRecord
   belongs_to :rental_type
   belongs_to :rental_rate
   belongs_to :rental_price
+
+  has_many :orders, dependent: :nullify
 end

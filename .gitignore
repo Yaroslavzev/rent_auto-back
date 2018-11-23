@@ -4,7 +4,10 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-# Автоматически генерируется командой `rails db:migrate`
+# `rails routes > routes.txt` (в репе не нужен)
+/routes.txt
+
+# Generates by `rails db:migrate` (в репе не нужен)
 /*.erd.svg
 
 # Ignore .env file

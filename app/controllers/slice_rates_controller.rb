@@ -1,6 +1,6 @@
 # app/serializers/slice_rate_serializer.rb
 class SliceRatesController < ApplicationController
-  before_action :set_slice_rate, only: [:show, :update, :destroy]
+  before_action :set_slice_rate, only: %i[show update destroy]
 
   # GET /slice_rates
   def index
@@ -40,13 +40,14 @@ class SliceRatesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_slice_rate
-      @slice_rate = SliceRate.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def slice_rate_params
-      params.require(:slice_rate).permit(:code, :name, :active, :rental_rate_id, :days_slice_id, :rate, :note)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_slice_rate
+    @slice_rate = SliceRate.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def slice_rate_params
+    params.require(:slice_rate).permit(:code, :name, :active, :rental_rate_id, :days_slice_id, :rate, :note)
+  end
 end
