@@ -7,7 +7,7 @@ class User < ApplicationRecord
   #        :token_authenticatable
 
   devise :database_authenticatable, :registerable, :recoverable, :rememberable,
-         :validatable, :token_authenticatable
+         :validatable, :trackable, :token_authenticatable
 
   belongs_to :client, optional: true
 
