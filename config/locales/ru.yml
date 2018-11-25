@@ -271,5 +271,5 @@ ru:
   mailer:
     subjects:
       request:
-        new: "Новый заказ с сайта rent-auto.biz.tm"
-        got-it: "Ваш заказ на сайте rent-auto.biz.tm"
+        new: "Новый заказ с сайта %{site}"
+        got-it: "Ваш заказ на сайте %{site}"
