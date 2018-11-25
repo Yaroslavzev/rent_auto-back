@@ -15,4 +15,8 @@ Rails.application.configure do
     authentication: ENV['SMTP_AUTH']
   }
   config.action_mailer.default_options = { from: ENV['MAIL_FROM'] }
+
+  # наименование проекта, используется, как минимум, в почте. Может быть просто адресом сайта.
+  # Пример: config.site_name = 'Тачка96'
+  config.site_name = 'Rent Auto'
 end
