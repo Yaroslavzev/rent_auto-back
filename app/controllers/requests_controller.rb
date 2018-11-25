@@ -1,5 +1,8 @@
 # Контроллер заявок (запросов) на аренду
 class RequestsController < ApplicationController
+
+  before_action :authenticate_user!, :except => [:create]
+
   # POST /requests
   # POST /requests.json
   def create
