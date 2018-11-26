@@ -427,7 +427,7 @@ if Rails.env.development?
       issued_by: "ГИБДД, #{address.region.name}, #{address.settlement.name}",
       issued_code: "#{gen_num_str(3)}-#{gen_num_str(3)}",
       issued_date: Faker::Date.between(20.years.ago, Date.today),
-      valid_to: Faker::Date.between(5.years.ago, 15.years.from_now),
+      valid_to: Faker::Date.between(5.years.ago, 15.years.from_now)
       # note:
     }
   end
@@ -476,6 +476,7 @@ if Rails.env.development?
       email: "#{code}@#{code}",
       password: "#{code}123",
       image: nil,
+      client: nil,
       note: 'Unknown user with fake email and password'
     }
   end

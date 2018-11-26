@@ -17,7 +17,7 @@ module Auth
     def create
       user = warden.authenticate!(auth_options)
       token = Tiddle.create_and_return_token(user, request, expires_in: 3.days)
-      render json: { message: t('devise.sessions.signed_in'), authentication_token: token }
+      render json: { email: user.email, authentication_token: token, message: t('devise.sessions.signed_in') }
     end
 
     # DELETE /resource/sign_out
