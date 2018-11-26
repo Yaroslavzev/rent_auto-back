@@ -7,4 +7,6 @@ class Model < ApplicationRecord
 
   has_one :rental_price, dependent: :nullify
   has_many :formats, -> { select '"formats".*' }, as: :formatable, primary_key: :table_name
+
+  # has_many_attached :images
 end

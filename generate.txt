@@ -65,3 +65,10 @@ rails generate devise:install -p
 rails generate devise User -p
 rails generate devise:controllers users -p
 rails g model AuthenticationToken body:string:index user:references last_used_at:datetime expires_in:integer ip_address:string user_agent:string -p
+
+rails g pundit:install
+rails g pundit:policy user
+...
+
+# rental calculator
+rails g scaffold_controller rental -p

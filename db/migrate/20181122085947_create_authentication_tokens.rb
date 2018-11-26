@@ -11,6 +11,6 @@ class CreateAuthenticationTokens < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
-    add_index :authentication_tokens, :body
+    add_index :authentication_tokens, :body, unique: true
   end
 end

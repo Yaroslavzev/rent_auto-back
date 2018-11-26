@@ -1,6 +1,7 @@
 # config/routes.rb
 Rails.application.routes.draw do
   devise_for :users, path: 'auth', controllers: { sessions: 'auth/sessions' }, defaults: { format: :json }
+  match 'rentals_calc', to: 'rentals#calc', via: [:get, :post]
   resources :rent_values, only: [:index]
   resources :formats
   resources :slice_rates

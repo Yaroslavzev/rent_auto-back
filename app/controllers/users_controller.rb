@@ -1,6 +1,5 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-  # has_secure_password
   before_action :authenticate_user!
   before_action :set_user, only: %i[show update destroy]
 
@@ -50,6 +49,6 @@ class UsersController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def user_params
-    params.require(:user).permit(:code, :name, :active, :verified, :password, :role, :email, :image, :client_id, :note)
+    params.require(:user).permit(:code, :name, :active, :verified, :role, :email, :image, :client_id, :note)
   end
 end

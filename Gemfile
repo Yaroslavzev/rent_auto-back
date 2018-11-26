@@ -23,11 +23,15 @@ gem 'money-rails'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
+
 # ActiveModel::Serializers allows you to generate your JSON in an object-oriented and convention-driven manner.
 gem 'active_model_serializers' # , github: "rails-api/active_model_serializers"
 
 # Use ActiveModel has_secure_password
 gem 'bcrypt' # , '~> 3.1.7'
+
+# An authentication library compatible with all Rack-based frameworks
+gem 'warden' # , '~> 1.2', '>= 1.2.8'
 
 # Flexible authentication solution for Rails with Warden
 gem 'devise' # , '~> 4.5'
@@ -41,6 +45,9 @@ gem 'tiddle' # , '~> 1.3'
 
 # A pure ruby implementation of the RFC 7519 OAuth JSON Web Token (JWT) standard.
 # gem 'jwt' # , '~> 2.1'
+
+# Object oriented authorization for Rails applications
+gem 'pundit' # , '~> 2.0'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

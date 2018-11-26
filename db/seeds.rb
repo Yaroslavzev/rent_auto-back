@@ -56,7 +56,7 @@ FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<volume>.1f %<style
 def gen_code(name, vowel = false, *others)
   code_size = 3 # 3х букв для кода достаточно(?)
   code = ''
-  words = name.downcase.split(%r{[\s/-]+/})
+  words = name.downcase.split(%r{[\s/-]+})
   if words.size > 1
     code = words.inject('') { |s, w| s += w[0] }
     code = code.insert(code_size / 2, '/') if code.size < code_size
@@ -474,7 +474,7 @@ if Rails.env.development?
       active: false,
       role: code,
       email: "#{code}@#{code}",
-      password: code,
+      password: "#{code}123",
       image: nil,
       note: 'Unknown user with fake email and password'
     }
