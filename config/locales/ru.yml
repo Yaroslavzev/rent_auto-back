@@ -267,3 +267,9 @@ ru:
       long: "%d %B %Y, %H:%M"
       short: "%d %b, %H:%M"
     pm: вечера
+
+  mailer:
+    subjects:
+      request:
+        new: "Новый заказ с сайта %{site}"
+        got-it: "Ваш заказ на сайте %{site}"

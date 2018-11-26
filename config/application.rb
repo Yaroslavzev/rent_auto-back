@@ -44,5 +44,10 @@ module RentAuto
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # OB: Настройка использования config/locales (рекомендация IS к pull-req #5)
+    config.i18n.default_locale = :ru
+    config.time_zone = 'Moscow'
+    config.i18n.available_locales = [:ru, :en]
   end
 end
