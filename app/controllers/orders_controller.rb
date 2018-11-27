@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
   def order_params
     params.require(:order).permit(:code, :name, :active, :status, :vehicle_id, :model_id, :client_id, :issue_spot_id,
                                   :return_spot_id, :date_from, :time_from, :date_to, :time_to, :days_count, :days_over,
-                                  :rental_plan_id, :pay_type_id, :weekend_fee, :workweek_fee, :days_fee, :addons_fee,
+                                  :pay_type_id, :rental_type_id, :weekend_fee, :workweek_fee, :days_fee, :addons_fee,
                                   :forfeit_fee, :discouts, :total_fee, :total_paid, :paid_full, :note)
   end
 end

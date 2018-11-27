@@ -48,6 +48,6 @@ class RangeRatesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def range_rate_params
-    params.require(:range_rate).permit(:code, :name, :active, :rental_rate_id, :days_range_id, :rate, :note)
+    params.require(:range_rate).permit(:code, :name, :active, :model_class_id, :rental_type_id, :days_range_id, :rate, :note)
   end
 end
