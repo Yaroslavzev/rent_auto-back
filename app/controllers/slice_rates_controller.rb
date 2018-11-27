@@ -48,6 +48,6 @@ class SliceRatesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def slice_rate_params
-    params.require(:slice_rate).permit(:code, :name, :active, :rental_rate_id, :days_slice_id, :rate, :note)
+    params.require(:slice_rate).permit(:code, :name, :active, :model_class_id, :rental_type_id, :days_slice_id, :rate, :note)
   end
 end
