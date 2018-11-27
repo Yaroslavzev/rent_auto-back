@@ -208,9 +208,9 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
     t.string "name", comment: "название модели"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "model_class_id", comment: "класс модели"
     t.bigint "brand_id", comment: "марка модели"
     t.bigint "manufacture_id", comment: "производитель модели"
+    t.bigint "model_class_id", comment: "класс модели"
     t.bigint "body_type_id", comment: "тип кузова"
     t.integer "door_count", comment: "кол-во дверей"
     t.integer "seat_count", comment: "кол-во посадочных мест"
@@ -250,7 +250,7 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "name", comment: "можно использовать для пометок (необязательное поле)"
     t.boolean "active", default: true, comment: "актуальность"
     t.string "status", default: "created", comment: "состояние заказа"
-    t.bigint "vehicle_id", comment: "конкретный автомобиль (может не быть)"
+    t.bigint "vehicle_id", comment: "прикрепленный автомобиль (может не быть)"
     t.bigint "model_id", comment: "модель (если есть конкретный автомобиль то модель берем оттуда)"
     t.bigint "client_id", comment: "клиент"
     t.bigint "issue_spot_id", comment: "точка выдачи"
@@ -262,7 +262,7 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.integer "days_count", comment: "кол-во дней аренды (которые не попали в другие тарифы?)"
     t.integer "days_over", comment: "кол-во просроченных дней"
     t.bigint "pay_type_id", comment: "форма оплаты"
-    t.bigint "rental_plan_id", comment: "тарифный план"
+    t.bigint "rental_type_id", comment: "тарифный план"
     t.bigint "days_range_id", comment: "тариф диапазона дней (nil если не используется)"
     t.bigint "days_slice_id", comment: "тариф среза дней (nil если не используется)"
     t.decimal "days_range_fee", comment: "плата по тарифу диапазона дней"
@@ -283,7 +283,7 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.index ["issue_spot_id"], name: "index_orders_on_issue_spot_id"
     t.index ["model_id"], name: "index_orders_on_model_id"
     t.index ["pay_type_id"], name: "index_orders_on_pay_type_id"
-    t.index ["rental_plan_id"], name: "index_orders_on_rental_plan_id"
+    t.index ["rental_type_id"], name: "index_orders_on_rental_type_id"
     t.index ["return_spot_id"], name: "index_orders_on_return_spot_id"
     t.index ["vehicle_id"], name: "index_orders_on_vehicle_id"
   end
@@ -323,14 +323,16 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
     t.string "name", comment: "название диапазона дней"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "rental_rate_id", comment: "тариф коэффициентов"
+    t.bigint "model_class_id", comment: "класс модели автомобиля"
+    t.bigint "rental_type_id", comment: "тарифный план"
     t.bigint "days_range_id", comment: "диапазон дней"
     t.float "rate", comment: "коэффициент"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["days_range_id"], name: "index_range_rates_on_days_range_id"
-    t.index ["rental_rate_id"], name: "index_range_rates_on_rental_rate_id"
+    t.index ["model_class_id"], name: "index_range_rates_on_model_class_id"
+    t.index ["rental_type_id"], name: "index_range_rates_on_rental_type_id"
   end
 
   create_table "regions", comment: "Справочник регионов (республика/край/область/округ)", force: :cascade do |t|
@@ -344,67 +346,32 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.index ["country_id"], name: "index_regions_on_country_id"
   end
 
-  create_table "rental_plans", comment: "Справочник тарифных планов (сводная таблица)", force: :cascade do |t|
+  create_table "rental_types", comment: "Справочник тарифных планов", force: :cascade do |t|
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
-    t.string "name", comment: "название тарифного плана, примерно: <марка> <модель> (<класс>)(<тип тарифа>)"
+    t.string "name", comment: "название тарифного плана (зима, лето, ...)"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "model_id", comment: "модель"
-    t.bigint "model_class_id", comment: "класс модели"
-    t.bigint "rental_type_id", comment: "тип тарифа"
-    t.bigint "rental_rate_id", comment: "коэффициенты тарифа"
-    t.bigint "rental_price_id", comment: "цены тарифа"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["model_class_id"], name: "index_rental_plans_on_model_class_id"
-    t.index ["model_id"], name: "index_rental_plans_on_model_id"
-    t.index ["rental_price_id"], name: "index_rental_plans_on_rental_price_id"
-    t.index ["rental_rate_id"], name: "index_rental_plans_on_rental_rate_id"
-    t.index ["rental_type_id"], name: "index_rental_plans_on_rental_type_id"
   end
 
-  create_table "rental_prices", comment: "Справчник базовых цен для моделей (классов?)", force: :cascade do |t|
+  create_table "rentals", comment: "Справчник тарифов для моделей автомобилей", force: :cascade do |t|
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
-    t.string "name", comment: "название базовых цен"
+    t.string "name", comment: "название тарифа"
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_id", comment: "модель"
-    t.bigint "model_class_id", comment: "класс модели"
-    t.decimal "km_limit", comment: "лимит километров(?)"
-    t.decimal "km", comment: "стоимость километра"
-    t.decimal "hour", comment: "стоимость часа"
-    t.decimal "day", comment: "стоимость дня"
-    t.decimal "forfeit", comment: "штраф (за каждый просроченный день?)"
+    t.bigint "rental_type_id", comment: "тарифный план"
+    t.integer "km_limit", comment: "лимит пробега"
+    t.decimal "km_cost", comment: "стоимость километра (сверх лимита?)"
+    t.decimal "hour_cost", comment: "стоимость часа"
+    t.decimal "day_cost", comment: "стоимость суток"
+    t.decimal "forfeit", comment: "штраф за просроченный день"
     t.decimal "earnest", comment: "залог"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["model_class_id"], name: "index_rental_prices_on_model_class_id"
-    t.index ["model_id"], name: "index_rental_prices_on_model_id"
-  end
-
-  create_table "rental_rates", comment: "Справочник коэффициентов тарифов", force: :cascade do |t|
-    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
-    t.string "name", comment: "название (для других справочников)"
-    t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "model_class_id", comment: "класс модели"
-    t.bigint "rental_type_id", comment: "тип тарифа"
-    t.float "km", comment: "коэффициент км"
-    t.float "hour", comment: "коэффициент часа"
-    t.float "day", comment: "коэффициент дня"
-    t.text "note", comment: "заметки"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["model_class_id"], name: "index_rental_rates_on_model_class_id"
-    t.index ["rental_type_id"], name: "index_rental_rates_on_rental_type_id"
-  end
-
-  create_table "rental_types", comment: "Справочник типов тарифных планов", force: :cascade do |t|
-    t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
-    t.string "name", comment: "название типа тарифного плана (зима, лето, ...)"
-    t.boolean "active", default: true, comment: "актуальность"
-    t.text "note", comment: "заметки"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["model_id"], name: "index_rentals_on_model_id"
+    t.index ["rental_type_id"], name: "index_rentals_on_rental_type_id"
   end
 
   create_table "settlements", comment: "Справочник населенных пунктов (город/деревня/село)", force: :cascade do |t|
@@ -428,14 +395,16 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
     t.string "name", comment: "название среза дней"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "rental_rate_id", comment: "тариф коэффициентов"
+    t.bigint "model_class_id", comment: "класс модели автомобиля"
+    t.bigint "rental_type_id", comment: "тарифный план"
     t.bigint "days_slice_id", comment: "срез дней"
     t.float "rate", comment: "коэффициент"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["days_slice_id"], name: "index_slice_rates_on_days_slice_id"
-    t.index ["rental_rate_id"], name: "index_slice_rates_on_rental_rate_id"
+    t.index ["model_class_id"], name: "index_slice_rates_on_model_class_id"
+    t.index ["rental_type_id"], name: "index_slice_rates_on_rental_type_id"
   end
 
   create_table "spots", comment: "Справочник точек выдачи/возврата", force: :cascade do |t|
@@ -552,30 +521,25 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "orders", "days_slices"
   add_foreign_key "orders", "models"
   add_foreign_key "orders", "pay_types"
-  add_foreign_key "orders", "rental_plans"
+  add_foreign_key "orders", "rental_types"
   add_foreign_key "orders", "spots", column: "issue_spot_id"
   add_foreign_key "orders", "spots", column: "return_spot_id"
   add_foreign_key "orders", "vehicles"
   add_foreign_key "passports", "addresses"
   add_foreign_key "passports", "countries"
   add_foreign_key "range_rates", "days_ranges"
-  add_foreign_key "range_rates", "rental_rates"
+  add_foreign_key "range_rates", "model_classes"
+  add_foreign_key "range_rates", "rental_types"
   add_foreign_key "regions", "countries"
-  add_foreign_key "rental_plans", "model_classes"
-  add_foreign_key "rental_plans", "models"
-  add_foreign_key "rental_plans", "rental_prices"
-  add_foreign_key "rental_plans", "rental_rates"
-  add_foreign_key "rental_plans", "rental_types"
-  add_foreign_key "rental_prices", "model_classes"
-  add_foreign_key "rental_prices", "models"
-  add_foreign_key "rental_rates", "model_classes"
-  add_foreign_key "rental_rates", "rental_types"
+  add_foreign_key "rentals", "models"
+  add_foreign_key "rentals", "rental_types"
   add_foreign_key "settlements", "countries"
   add_foreign_key "settlements", "districts"
   add_foreign_key "settlements", "regions"
   add_foreign_key "settlements", "statuses"
   add_foreign_key "slice_rates", "days_slices"
-  add_foreign_key "slice_rates", "rental_rates"
+  add_foreign_key "slice_rates", "model_classes"
+  add_foreign_key "slice_rates", "rental_types"
   add_foreign_key "spots", "addresses"
   add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"

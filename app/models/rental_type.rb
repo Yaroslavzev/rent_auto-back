@@ -1,5 +1,9 @@
 # app/models/rental_type.rb
 class RentalType < ApplicationRecord
-  has_many :rental_rates, dependent: :restrict_with_exception
-  has_many :rental_plans, dependent: :nullify
+  has_many :rentals, dependent: :destroy
+
+  has_many :range_rates, dependent: :destroy
+  has_many :slice_rates, dependent: :destroy
+
+  has_many :orders, dependent: :nullify
 end

@@ -6,5 +6,5 @@ class Client < ApplicationRecord
 
   has_one :user, dependent: :nullify
 
-  has_many :formats, -> { select '"formats".*' }, as: :formatable, primary_key: :table_name
+  has_many :formats, -> { select 'formats.*' }, as: :formatable, primary_key: :table_name
 end
