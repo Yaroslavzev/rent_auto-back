@@ -72,3 +72,5 @@ rails g pundit:policy user
 
 # rental calculator
 rails g scaffold_controller rental -p
+
+rails g scaffold rental code:string:unique name:string model:references rental_type:references km_limit:integer km_cost:decimal hour_cost:decimal day_cost:decimal forfeit:decimal earnest:decimal note:text -p

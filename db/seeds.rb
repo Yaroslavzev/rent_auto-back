@@ -257,10 +257,9 @@ if Rails.env.development?
   # Удалить сгенерированные записи
   OrderAddon.destroy_all
   Order.destroy_all
-  RentalPlan.destroy_all
-  RentalPrice.destroy_all
+  Rental.destroy_all
   RangeRate.destroy_all
-  RentalRate.destroy_all
+  SliceRate.destroy_all
 
   Vehicle.destroy_all
   Trunk.destroy_all
@@ -587,43 +586,23 @@ if Rails.env.development?
   trunks = Trunk.create! seeds.flatten
   puts
 
-  # Заполнить справочник коэффициентов тарифных планов
-  print ' • справочник коэффициентов тарифных планов'
-  seeds = model_classes.map do |klass|
-    rental_types.map do |type|
-      print '.'
-      rate_name = "#{klass.name}(#{type.name})"
-      {
-        code: "#{klass.code}-#{type.code}",
-        name: rate_name,
-        model_class: klass,
-        rental_type: type,
-        km: rand(5..15).to_f / 10,
-        hour: rand(5..15).to_f / 10,
-        day: rand(5..15).to_f / 10,
-        # workweek: rand(5..15).to_f / 10,
-        # weekend: rand(5..15).to_f / 10,
-        note: rate_name.capitalize
-      }
-    end
-  end
-  rental_rates = RentalRate.create! seeds.flatten
-  puts
-
   # Заполнить справочник коэффициентов по диапазонам дней
   print ' • справочник коэффициентов по диапазонам дней'
-  seeds = rental_rates.map do |rate|
-    days_ranges.map do |range|
-      print '.'
-      rate_name = "#{rate.name}(#{range.name})"
-      {
-        code: "#{rate.code}-#{range.code}",
-        name: rate_name,
-        rental_rate: rate,
-        days_range: range,
-        rate: rand(80..100).to_f / 100,
-        note: rate_name
-      }
+  seeds = model_classes.map do |klass|
+    rental_types.map do |type|
+      days_ranges.map do |range|
+        print '.'
+        rate_name = "#{range.name} (#{klass.name}-#{type.name})"
+        {
+          code: "#{range.code}-#{klass.code}-#{type.code}",
+          name: rate_name,
+          model_class: klass,
+          rental_type: type,
+          days_range: range,
+          rate: rand(80..100).to_f / 100,
+          note: rate_name
+        }
+      end
     end
   end
   range_rates = RangeRate.create! seeds.flatten
@@ -631,69 +610,51 @@ if Rails.env.development?
 
   # Заполнить справочник коэффициентов по срезам дней
   print ' • справочник коэффициентов по срезам дней'
-  seeds = rental_rates.map do |rate|
-    days_slices.map do |slice|
-      print '.'
-      rate_name = "#{rate.name}(#{slice.name})"
-      {
-        code: "#{rate.code}-#{slice.code}",
-        name: rate_name,
-        rental_rate: rate,
-        days_slice: slice,
-        rate: rand(80..100).to_f / 100,
-        note: rate_name.capitalize
-      }
+  seeds = model_classes.map do |klass|
+    rental_types.map do |type|
+      days_slices.map do |slice|
+        print '.'
+        rate_name = "#{slice.name} (#{klass.name}-#{type.name})"
+        {
+          code: "#{slice.code}-#{klass.code}-#{type.code}",
+          name: rate_name,
+          model_class: klass,
+          rental_type: type,
+          days_slice: slice,
+          rate: rand(80..100).to_f / 100,
+          note: rate_name.capitalize
+        }
+      end
     end
   end
   slice_rates = SliceRate.create! seeds.flatten
   puts
 
-  # Заполнить справочник базовых цен для моделей (классов?)
-  print ' • справочник базовых цен для моделей (классов?)'
+  # Заполнить справочник тарифов для моделей
+  print ' • справочник тарифов для моделей'
   seeds = models.map do |model|
-    price_name = "#{model.name}(#{model.model_class.name})"
-    km = rand(50..100) / 10
-    day = rand(10..20) * 100
-    print '.'
-    {
-      code: "#{model.code}-#{model.model_class.code}",
-      name: price_name,
-      model: model,
-      model_class: model.model_class,
-      km_limit: rand(10..30) * 10,
-      km: km,
-      hour: day / 20,
-      day: day,
-      forfeit: day * 1.5,
-      earnest: day * 3,
-      note: price_name
-    }
-  end
-  rental_prices = RentalPrice.create! seeds
-  puts
-
-  # Заполнить справочник тарифных планов
-  print ' • справочник тарифных планов'
-  seeds = models.map do |model|
-    model_class = model.model_class
-    price = rental_prices.select { |h| h.model == model }.first # по идеи должен быть хотябы один
-    rates = rental_rates.select { |h| h.model_class == model_class } # а этих должно быть много
-    rates.map do |rate|
+    rental_types.map do |type|
+      price_name = "#{model.name} (#{model.model_class.name}-#{type.name})"
+      km = rand(50..100) / 10
+      day = rand(10..20) * 100
       print '.'
-      rental_type = rate.rental_type
       {
-        code: "#{price.code}-#{gen_code(rental_type.name)}",
-        name: "#{model.brand.name} #{price.name}(#{rental_type.name})",
+        code: "#{model.code}-#{model.model_class.code}-#{type.code}",
+        name: price_name,
         model: model,
-        model_class: model_class,
-        rental_type: rental_type,
-        rental_rate: rate,
-        rental_price: price,
-        note: "#{model.brand.name} #{price.name}(#{rental_type.name})"
+        model_class: model.model_class,
+        rental_type: type,
+        km_limit: rand(10..30) * 10,
+        km_cost: km,
+        hour_cost: day / 20,
+        day_cost: day,
+        forfeit: day * 1.5,
+        earnest: day * 3,
+        note: price_name
       }
     end
   end
-  rental_plans = RentalPlan.create! seeds.flatten
+  rentals = Rental.create! seeds.flatten
   puts
 
   # Заполнить справочник автомобилей
@@ -734,12 +695,12 @@ if Rails.env.development?
     days_count = (date_to - date_from).to_i
     days_over = rand(0..days_count)
     pay_type = pay_types.sample
-    rental_plan = rental_plans.select { |p| p.model == model }.sample
+    rental_type = rental_types.sample
     days_range = rand(2).zero? ? nil : days_ranges.sample
     days_slice = rand(2).zero? ? nil : days_slices.sample
     days_range_fee = days_range ? 0 : 0 # заглушка
     days_slice_fee = days_slice ? 0 : 0 # заглушка
-    days_fee = (date_to - date_from).to_i * rental_plan.rental_price.day
+    days_fee = (date_to - date_from).to_i * model.rentals.select { |r| r.rental_type == rental_type }.first.day_cost
     addons_fee = 0
     forfeit_fee = rand(2).zero? ? 0 : 0 # заглушка
     discouts = rand(2).zero? ? 0 : 0 # заглушка
@@ -758,7 +719,7 @@ if Rails.env.development?
       days_count: days_count,
       days_over: days_over,
       pay_type: pay_type,
-      rental_plan: rental_plan,
+      rental_type: rental_type,
       days_range: days_range,
       days_slice: days_slice,
       days_range_fee: days_range_fee,

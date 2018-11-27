@@ -9,6 +9,6 @@ class ModelSerializer < ActiveModel::Serializer
   has_one :manufacture
   has_one :body_type
 
-  has_one :rental_price
+  has_one :rentals
   has_many :formats
 end

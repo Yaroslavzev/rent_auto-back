@@ -1,14 +1,53 @@
 # app/controllers/rentals_controller.rb
 class RentalsController < ApplicationController
-  before_action :authenticate_user!, except: %i[calc]
-  before_action :set_rental_params
-  attr_accessor :range_fees # , :model, :range
+  before_action :authenticate_user!, except: %i[index show calc]
+  before_action :set_rental, only: %i[show update destroy]
+  before_action :set_rental_calc, only: %i[calc]
+  attr_accessor :range_costs # , :model, :range
 
   DAYEND_SECS = Time.parse('23:59:59').seconds_since_midnight.seconds # конец суток в секундах (полные сутки - 1 сек)
   WEEK_DAYS = 7.days # дней в неделе
 
   RangeCost = Struct.new(:date_from, :time_from, :date_to, :time_to, :cost_type, :cost_id, :cost)
 
+  # GET /rentals
+  def index
+    @rentals = Rental.all
+
+    render json: @rentals
+  end
+
+  # GET /rentals/1
+  def show
+    render json: @rental
+  end
+
+  # POST /rentals
+  def create
+    @rental = Rental.new(rental_params)
+
+    if @rental.save
+      render json: @rental, status: :created, location: @rental
+    else
+      render json: @rental.errors, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH/PUT /rentals/1
+  def update
+    if @rental.update(rental_params)
+      render json: @rental
+    else
+      render json: @rental.errors, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /rentals/1
+  def destroy
+    @rental.destroy
+  end
+
+  # GET|POST /rental/calc - калькулятор
   def calc
     if @model && @range
       @ranges_costs = calc_start
@@ -20,6 +59,43 @@ class RentalsController < ApplicationController
 
   private
 
+  # Use callbacks to share common setup or constraints between actions.
+  def set_rental
+    @rental = Rental.find(params[:id])
+  end
+
+  def set_rental_calc
+    # найти валидный параметр модели и загружаем его в @model
+    @model = Model.find(calc_params[:model][:id]) unless calc_params[:model].nil? ||
+                                                         !calc_params[:model].is_a?(Hash) ||
+                                                         calc_params[:model][:id].nil?
+    @model ||= Model.find(calc_params[:model_id]) unless calc_params[:model_id].nil?
+    @model ||= Model.find_by(code: calc_params[:model_code])
+
+    # для простоты пока берем тип тарифа “основной”
+    @rental_type ||= RentalType.find_by(code: 'осн')
+
+    # выбрать тариф
+    @rental = @model.rentals.find_by(rental_type: @rental_type)
+
+    # преорбразовать входной промежуток времени в формат удобный для вычислений
+    @range = parse_datetime(rental_params[:range])
+
+    Rails.logger.info '#' * 80
+    Rails.logger.info @range.inspect
+    Rails.logger.info '#' * 80
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def rental_params
+    params.require(:rental).permit(:code, :name, :model_id, :rental_type_id, :km_limit, :km_cost, :hour_cost, :day_cost, :forfeit, :earnest, :note)
+  end
+
+  def calc_params
+    params.fetch(:rental, {}).permit(:model, :model_id, :model_code, range: [:date_from, :time_from, :date_to, :time_to])
+  end
+
+  # тут будет логика вычисления последовательни вычислений
   def calc_start
     calc_wdays(@range)
   end
@@ -32,13 +108,8 @@ class RentalsController < ApplicationController
     rng_dt_to = rng[:date_to].to_datetime
     rng_dt_to += rng[:time_to].nil? ? DAYEND_SECS : rng[:time_to].seconds_since_midnight.seconds
 
-    # для простоты пока берем тип тарифа “основной”
-    klass = @model.model_class
-    type = RentalType.find_by(code: 'осн')
-    rate = RentalRate.find_by(model_class: klass, rental_type: type)
-
     # пробегаемся по списку слайсов дней недели
-    week_slices = rate.slice_rates.select { |s| s.days_slice.week }
+    week_slices = @rental.slice_rates.select { |s| s.days_slice.week }
     ranges = []
     week_slices.each do |slc|
       days_slice = slc.days_slice
@@ -61,7 +132,7 @@ class RentalsController < ApplicationController
         ranges << RangeCost.new(rng[:date_from], rng[:time_from], slc_dt_from.to_date, slc_dt_from.to_time,
                              nil, nil, nil)
         ranges << RangeCost.new(slc_dt_from.to_date, slc_dt_from.to_time, slc_dt_to.to_date, slc_dt_to.to_time,
-                             slc.class.table_name, slc.id, calc_cost(@model, type, slc))
+                             slc.class.table_name, slc.id, calc_cost(@rental, slc))
         ranges << RangeCost.new(slc_dt_to.to_date, slc_dt_to.to_time, rng[:date_to], rng[:time_to],
                              nil, nil, nil)
         break # одного достаточно пока
@@ -71,9 +142,8 @@ class RentalsController < ApplicationController
   end
 
   # подсчет: базовая цена * все коэффициенты (cut_rate - RangeRate или SliceRate, если nil, то не учитывается)
-  def calc_cost(model, rental_type, cut_rate = nil)
-    rental_rate = RentalRate.find_by(rental_type: rental_type, model_class: model.model_class)
-    cost = model.rental_price.day * rental_rate.day
+  def calc_cost(rental, cut_rate = nil)
+    cost = rental.day_cost
     cost *= cut_rate.rate unless cut_rate.nil?
   end
 
@@ -94,6 +164,7 @@ class RentalsController < ApplicationController
     hst
   end
 
+  # рендерить строковые значения даты и времени
   def render_datetime(str)
     hst = {}
     str.each do |key, val|
@@ -108,26 +179,5 @@ class RentalsController < ApplicationController
       end
     end
     hst
-  end
-
-  def set_rental_params
-    # найти валидный параметр модели и загружаем его в @model
-    @model = Model.find(rental_params[:model][:id]) unless rental_params[:model].nil? ||
-                                                           !rental_params[:model].is_a?(Hash) ||
-                                                           rental_params[:model][:id].nil?
-    @model ||= Model.find(rental_params[:model_id]) unless rental_params[:model_id].nil?
-    @model ||= Model.find_by(code: rental_params[:model_code])
-
-    # преорбразовать входной промежуток времени в формат удобный для вычислений
-    @range = parse_datetime(rental_params[:range])
-
-    Rails.logger.info '#' * 80
-    Rails.logger.info @range.inspect
-    Rails.logger.info '#' * 80
-  end
-
-  # Only allow a trusted parameter "white list" through.
-  def rental_params
-    params.fetch(:rental, {}).permit(:model, :model_id, :model_code, range: [:date_from, :time_from, :date_to, :time_to])
   end
 end
