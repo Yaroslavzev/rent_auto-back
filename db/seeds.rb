@@ -642,7 +642,7 @@ if Rails.env.development?
         code: "#{model.code}-#{model.model_class.code}-#{type.code}",
         name: price_name,
         model: model,
-        model_class: model.model_class,
+        # model_class: model.model_class,
         rental_type: type,
         km_limit: rand(10..30) * 10,
         km_cost: km,

@@ -76,23 +76,28 @@ class RentalsController < ApplicationController
     @rental_type ||= RentalType.find_by(code: 'осн')
 
     # выбрать тариф
-    @rental = @model.rentals.find_by(rental_type: @rental_type)
+    @rental = @model.rentals.find_by(rental_type: @rental_type) unless @model.nil?
 
     # преорбразовать входной промежуток времени в формат удобный для вычислений
-    @range = parse_datetime(rental_params[:range])
+    Rails.logger.info '#' * 80
+    Rails.logger.info calc_params.inspect
+    Rails.logger.info '#' * 80
 
-    Rails.logger.info '#' * 80
-    Rails.logger.info @range.inspect
-    Rails.logger.info '#' * 80
+    @range = parse_datetime(calc_params[:range]) unless calc_params[:range].nil?
+
+    # Rails.logger.info '#' * 80
+    # Rails.logger.info @range.inspect
+    # Rails.logger.info '#' * 80
   end
 
   # Only allow a trusted parameter "white list" through.
   def rental_params
-    params.require(:rental).permit(:code, :name, :model_id, :rental_type_id, :km_limit, :km_cost, :hour_cost, :day_cost, :forfeit, :earnest, :note)
+    params.require(:rental).permit(:code, :name, :model_id, :rental_type_id, :km_limit, :km_cost, :hour_cost,
+                                   :day_cost, :forfeit, :earnest, :note)
   end
 
   def calc_params
-    params.fetch(:rental, {}).permit(:model, :model_id, :model_code, range: [:date_from, :time_from, :date_to, :time_to])
+    params.fetch(:rental, {}).permit({ model: :id }, :model_id, :model_code, { range: [:date_from, :time_from, :date_to, :time_to] })
   end
 
   # тут будет логика вычисления последовательни вычислений

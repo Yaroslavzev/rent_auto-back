@@ -360,7 +360,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "name", comment: "название тарифа"
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_id", comment: "модель"
-    t.bigint "model_class_id", comment: "класс модели"
     t.bigint "rental_type_id", comment: "тарифный план"
     t.integer "km_limit", comment: "лимит пробега"
     t.decimal "km_cost", comment: "стоимость километра (сверх лимита?)"
@@ -371,7 +370,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["model_class_id"], name: "index_rentals_on_model_class_id"
     t.index ["model_id"], name: "index_rentals_on_model_id"
     t.index ["rental_type_id"], name: "index_rentals_on_rental_type_id"
   end
@@ -533,7 +531,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "range_rates", "model_classes"
   add_foreign_key "range_rates", "rental_types"
   add_foreign_key "regions", "countries"
-  add_foreign_key "rentals", "model_classes"
   add_foreign_key "rentals", "models"
   add_foreign_key "rentals", "rental_types"
   add_foreign_key "settlements", "countries"

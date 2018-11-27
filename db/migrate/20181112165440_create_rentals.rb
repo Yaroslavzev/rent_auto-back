@@ -6,7 +6,6 @@ class CreateRentals < ActiveRecord::Migration[5.2]
       t.string :name, comment: 'название тарифа'
       t.boolean :active, default: true, comment: 'актуальность'
       t.references :model, foreign_key: true, comment: 'модель'
-      t.references :model_class, foreign_key: true, comment: 'класс модели'
       t.references :rental_type, foreign_key: true, comment: 'тарифный план'
       t.integer :km_limit, comment: 'лимит пробега'
       t.decimal :km_cost, comment: 'стоимость километра (сверх лимита?)'
