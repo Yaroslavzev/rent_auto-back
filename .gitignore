@@ -33,3 +33,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore yaroslavzev's files
+/test_calc.rb
+/test.rb

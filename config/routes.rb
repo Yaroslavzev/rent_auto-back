@@ -39,6 +39,7 @@ Rails.application.routes.draw do
   resources :countries
   resources :manufacturers
   resources :brands
+  resources :info_models
 
   post '/requests', to: 'requests#create'
 
