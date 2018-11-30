@@ -1,24 +1,24 @@
-Получение: <%= DateTime.iso8601(@p.begin_time).strftime("%d.%m.%Y, %H:%M") %>
-Возврат: <%= DateTime.iso8601(@p.end_time).strftime("%d.%m.%Y, %H:%M") %>
+Получение: <%= @p.begin_time.strftime("%d.%m.%Y, %H:%M") unless @p.begin_time.nil? %>
+Возврат: <%= @p.end_time.strftime("%d.%m.%Y, %H:%M") unless @p.end_time.nil? %>
 Модель: <%= @p.model.full_name %>
 
 Фамилия: <%= @p.last_name %>
 Имя: <%= @p.first_name %>
 Отчество: <%= @p.patronymic %>
-Дата рождения: <%= DateTime.iso8601(@p.birthdate).strftime("%d.%m.%Y") %>
+Дата рождения: <%= @p.birthdate.strftime("%d.%m.%Y") unless @p.birthdate.nil? %>
 
 e-mail: <%= @p.email %>
 телефон: <%= @p.phone %>
 
 номер паспорта: <%= @p.doc_number %>
 кем выдан: <%= @p.doc_issued_by %>
-дата выдачи: <%= DateTime.iso8601(@p.doc_issued_date).strftime("%d.%m.%Y") %>
+дата выдачи: <%= @p.doc_issued_date.strftime("%d.%m.%Y") unless @p.doc_issued_date.nil? %>
 регистрация: <%= @p.doc_registration %>
 
 номер ВУ: <%= @p.lic_number %>
-дата выдачи ВУ: <%= DateTime.iso8601(@p.lic_date).strftime("%d.%m.%Y") %>
+дата выдачи ВУ: <%= @p.lic_date.strftime("%d.%m.%Y") unless @p.lic_date.nil? %>
 кем выдано ВУ: <%= @p.lic_issued_by %>
-срок действия ВУ: <%= DateTime.iso8601(@p.lic_valid_to).strftime("%d.%m.%Y") %>
+срок действия ВУ: <%= @p.lic_valid_to.strftime("%d.%m.%Y") unless @p.lic_valid_to.nil? %>
 примечение к заказу:
 <%= @p.note %>
 
