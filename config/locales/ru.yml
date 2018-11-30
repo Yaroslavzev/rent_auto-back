@@ -271,5 +271,5 @@ ru:
   mailer:
     subjects:
       request:
-        new: "Новый заказ с сайта %{site}"
+        new: "Новый заказ с сайта %{site} (%{host})"
         got-it: "Ваш заказ на сайте %{site}"
