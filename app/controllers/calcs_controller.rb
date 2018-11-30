@@ -32,22 +32,14 @@ class CalcsController < ApplicationController
     @model ||= Model.find(calc_params[:model_id]) unless calc_params[:model_id].nil?
     @model ||= Model.find_by(code: calc_params[:model_code])
 
-    # для простоты пока берем тип тарифа “основной”
-    @rental_type ||= RentalType.find_by(code: 'осн')
+    # для простоты пока берем самый первый тарифный план, он же “основной” (seed)
+    @rental_type ||= RentalType.first
 
     # выбрать тариф
     @rental = @model.rentals.find_by(rental_type: @rental_type) unless @model.nil?
 
     # преорбразовать входной промежуток времени в формат удобный для вычислений
-    Rails.logger.info '#' * 80
-    Rails.logger.info calc_params.inspect
-    Rails.logger.info '#' * 80
-
     @range = parse_datetime(calc_params[:range]) unless calc_params[:range].nil?
-
-    # Rails.logger.info '#' * 80
-    # Rails.logger.info @range.inspect
-    # Rails.logger.info '#' * 80
   end
 
   # Only allow a trusted parameter "white list" through.
@@ -61,42 +53,45 @@ class CalcsController < ApplicationController
   end
 
   # калькулятор дней недели
-  def calc_wdays(rng)
+  def calc_wdays(range)
+    ranges = []
+    rng = {}
     # преобразуем в формат datetime (нужно ли?)
-    rng_dt_from = rng[:date_from].to_datetime
-    rng_dt_from += rng[:time_from].seconds_since_midnight.seconds unless rng[:time_from].nil?
+    rng[:dt_from] = range[:date_from].to_datetime
+    rng[:dt_from] += range[:time_from].seconds_since_midnight.seconds unless range[:time_from].nil?
 
-    rng_dt_to = rng[:date_to].to_datetime
-    rng_dt_to += rng[:time_to].nil? ? DAYEND_SECS : rng[:time_to].seconds_since_midnight.seconds
+    rng[:dt_to] = range[:date_to].to_datetime
+    rng[:dt_to] += range[:time_to].nil? ? DAYEND_SECS : range[:time_to].seconds_since_midnight.seconds
 
     # пробегаемся по списку слайсов дней недели
-    week_slices = @rental.slice_rates.select { |s| s.days_slice.week }
-    ranges = []
-    week_slices.each do |slc|
-      days_slice = slc.days_slice
+    @rental.slice_rates.select { |s| s.days_slice.week }.each do |slice|
+      wdays = slice.days_slice
+      slc = {}
 
-      # находим реальные даты среза для диапазоны дней, после начальной даты диапазона
-      slc_dt_from = (rng_dt_from.to_date + days_slice.day_from - rng_dt_from.wday).to_datetime
+      # находим реальные даты среза для промежутка дней, после начальной даты промежутка
+      slc[:dt_from] = (rng[:dt_from].to_date + wdays.day_from - rng[:dt_from].wday).to_datetime
+
       # если начальный день недели диапазона больше или равен и время больше чем в слайсе, то прибавляем неделю
-      slс_dt_from += WEEK_DAYS if rng_dt_from.wday > days_slice.day_from ||
-                                  rng_dt_from.wday == days_slice.day_from &&
-                                  rng_dt_from.to_time > days_slice.time_from
-      slc_dt_from += days_slice.time_from.seconds_since_midnight.seconds
+      if rng[:dt_from].wday > wdays.day_from || rng[:dt_from].wday == wdays.day_from && rng[:dt_from].to_time > wdays.time_from
+        slc[:dt_from] += WEEK_DAYS
+      end
+      slc[:dt_from] += wdays.time_from.seconds_since_midnight.seconds unless wdays.time_from.nil?
 
-      slc_dt_to = (slc_dt_from.to_date + days_slice.day_to - days_slice.day_from).to_datetime
+      slc[:dt_to] = (slc[:dt_from].to_date + wdays.day_to - wdays.day_from).to_datetime
       # опять же добавляем неделю, если дни недели в срезе приходятся на разные недели
-      slc_dt_to += WEEK_DAYS if days_slice.day_to < days_slice.day_from
-      slc_dt_to += days_slice.time_to.seconds_since_midnight.seconds
+      slc[:dt_to] += WEEK_DAYS if wdays.day_to < wdays.day_from
+      slc[:dt_to] += wdays.time_to.nil? ? DAYEND_SECS : wdays.time_to.seconds_since_midnight.seconds
 
-      if rng_dt_from <= slc_dt_from && slc_dt_to <= rng_dt_to
-        # бинго, разбиваем наш диапазон на несколько
-        ranges << RangeCost.new(rng[:date_from], rng[:time_from], slc_dt_from.to_date, slc_dt_from.to_time,
-                             nil, nil, nil)
-        ranges << RangeCost.new(slc_dt_from.to_date, slc_dt_from.to_time, slc_dt_to.to_date, slc_dt_to.to_time,
-                             slc.class.table_name, slc.id, calc_cost(@rental, slc))
-        ranges << RangeCost.new(slc_dt_to.to_date, slc_dt_to.to_time, rng[:date_to], rng[:time_to],
-                             nil, nil, nil)
-        break # одного достаточно пока
+      # попал ли срез в промежуток дней
+      if rng[:dt_from] <= slc[:dt_from] && slc[:dt_to] <= rng[:dt_to]
+        # бинго, разбиваем наш промежуток на несколько
+        ranges << RangeCost.new(range[:date_from], range[:time_from], slc[:dt_from].to_date, slc[:dt_from].to_time,
+                                nil, nil, nil)
+        ranges << RangeCost.new(slc[:dt_from].to_date, slc[:dt_from].to_time, slc[:dt_to].to_date, slc[:dt_to].to_time,
+                                slice.class.table_name, slice.id, calc_cost(@rental, slice))
+        ranges << RangeCost.new(slc[:dt_to].to_date, slc[:dt_to].to_time, range[:date_to], range[:time_to],
+                                nil, nil, nil)
+        break # одного достаточно пока (хотя и должен быть один)
       end
     end
     ranges
@@ -104,6 +99,11 @@ class CalcsController < ApplicationController
 
   # подсчет: базовая цена * все коэффициенты (cut_rate - RangeRate или SliceRate, если nil, то не учитывается)
   def calc_cost(rental, cut_rate = nil)
+    Rails.logger.info '#' * 80
+    Rails.logger.info rental.day_cost
+    Rails.logger.info cut_rate.rate
+    Rails.logger.info '#' * 80
+
     cost = rental.day_cost
     cost *= cut_rate.rate unless cut_rate.nil?
   end
@@ -112,11 +112,11 @@ class CalcsController < ApplicationController
   def parse_datetime(str)
     hst = {}
     str.each_pair do |key, val|
-      if key.match? /^dt_/
+      if  /^dt_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = DateTime.parse(val)
-      elsif key.match? /^date_/
+      elsif /^date_/.match?(key)  && val.is_a?(String)
         hst[key.to_sym] = Date.parse(val)
-      elsif key.match? /^time_/
+      elsif /^time_/.match?(key)  && val.is_a?(String)
         hst[key.to_sym] = Time.parse(val)
       else
         hst[key.to_sym] = val
@@ -132,11 +132,11 @@ class CalcsController < ApplicationController
       if val.nil?
         hst[key.to_s] = nil
       else
-        if key.to_s.match? /^dt_/
+        if /^dt_/.match?(key.to_s)  && val.is_a?(DateTime)
           hst[key.to_s] = val.to_datetime.to_s
-        elsif key.to_s.match? /^date_/
+        elsif /^date_/.match?(key.to_s)  && val.is_a?(Date)
           hst[key.to_s] = val.to_date.to_s
-        elsif key.to_s.match? /^time_/
+        elsif /^time_/.to_s.match?(key.to_s)  && val.is_a?(Time)
           hst[key.to_s] = val.to_time.to_s
         else
           hst[key.to_s] = val.to_s
