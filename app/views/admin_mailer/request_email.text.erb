@@ -1,6 +1,10 @@
 Получение: <%= @p.begin_time.strftime("%d.%m.%Y, %H:%M") unless @p.begin_time.nil? %>
 Возврат: <%= @p.end_time.strftime("%d.%m.%Y, %H:%M") unless @p.end_time.nil? %>
 Модель: <%= @p.model.full_name %>
+Дополнения:
+<% @p.additions.each do |aas| %>
+  • <%= (aas.instance_of? String) ? aas : aas.name %>
+<% end %>
 
 Фамилия: <%= @p.last_name %>
 Имя: <%= @p.first_name %>
