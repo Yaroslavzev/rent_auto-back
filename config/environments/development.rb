@@ -51,7 +51,10 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  # для реальной отсылки почты надо закомментить letter_opener и раскомментить smtp
-  config.action_mailer.delivery_method = :letter_opener
-  # config.action_mailer.delivery_method = :smtp
+  # если в окружении задан SMTP_SERVER, то отправляем через него, иначе открываем в браузере
+  config.action_mailer.delivery_method = ENV['SMTP_SERVER'].present? ? :smtp : :letter_opener
+
+  # раскомментировать для принудительного открытия почты через letter_opener
+  # config.action_mailer.delivery_method = :letter_opener
+
 end
