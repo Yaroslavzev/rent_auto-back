@@ -12,7 +12,7 @@ class RequestsController < ApplicationController
 
     rp.additions = [] unless rp.additions?
     # TODO: после 01.11.18 тут вообще не будет от фронта строк, всегда хэш. Template тоже упростить.
-    rp.additions.map! { |aas| (aas.instance_of? String) ? aas : Hashie::Mash.new(aas) }
+    rp.additions.map! { |aas| aas.instance_of?(String) ? aas : Hashie::Mash.new(aas) }
 
     %i[begin_time end_time birthdate doc_issued_date lic_date lic_valid_to].each do |t|
       rp[t] = Time.iso8601(rp[t]) if rp[t]

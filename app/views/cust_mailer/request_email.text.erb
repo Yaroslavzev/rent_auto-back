@@ -1,7 +1,7 @@
 Уважаемый(-ая) <%= @p.first_name %> <%= @p.last_name %>,
 
 Ваш запрос на аренду автомобиля получен.
-Вы выбрали автомобиль <%= @p.model.full_name %> с <%= l(@p.begin_time, format: :long) unless @p.begin_time.nil? %> по <%= l(@p.end_time, format: :long) unless @p.end_time.nil? %>.
+Вы выбрали автомобиль <%= @p.model.full_name %> с <%= l(@p.begin_time, format: :long) if @p.begin_time %> по <%= l(@p.end_time, format: :long) if @p.end_time %>.
 Просим Вас обратить внимание, что данное письмо не является подтверждением заказа. В ближайшее время с Вами свяжется наш специалист и завершит оформление заказа.
 
 С любыми вопросами Вы можете обращаться по телефону 8 800 или пишите на info@.ru.
