@@ -522,11 +522,6 @@ if Rails.env.development?
   seeds = FULL_NAME_MODELS.inject([]) do |arr, brand|
     print '.'
     make, code = nil
-    #loop do
-    #  make = Faker::Vehicle.make
-    #  code = make[0..2].downcase
-    #  break unless arr.any? { |h| h[:code] == code }
-    #end
     arr << {
       code: code,
       name: brand.split(/\s+/)[0],
