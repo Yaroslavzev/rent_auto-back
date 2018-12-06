@@ -112,11 +112,11 @@ class CalcsController < ApplicationController
   def parse_datetime(str)
     hst = {}
     str.each_pair do |key, val|
-      if  /^dt_/.match?(key) && val.is_a?(String)
+      if /^dt_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = DateTime.parse(val)
-      elsif /^date_/.match?(key)  && val.is_a?(String)
+      elsif /^date_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = Date.parse(val)
-      elsif /^time_/.match?(key)  && val.is_a?(String)
+      elsif /^time_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = Time.parse(val)
       else
         hst[key.to_sym] = val

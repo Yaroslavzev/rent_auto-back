@@ -3,29 +3,35 @@ module Auth
   # Auth::SessionsController
   class SessionsController < Devise::SessionsController
     delegate :t, to: I18n
+    before_action :authenticate_user!, only: %i[check destroy]
     # before_action :configure_sign_in_params, only: [:create]
 
-    # GET /resource/sign_in
+    # GET /auth/sign_in
     # def new
     #   super
     # end
 
-    # POST /resource/sign_in
-    # def create
-    #   super
-    # end
+    # POST /auth/sign_in
     def create
       user = warden.authenticate!(auth_options)
+      Tiddle.expire_token(user, request) if request.headers['X-USER-EMAIL'] && request.headers['X-USER-TOKEN']
+      Tiddle.purge_old_tokens(user)
       token = Tiddle.create_and_return_token(user, request, expires_in: 3.days)
-      render json: { email: user.email, authentication_token: token, message: t('devise.sessions.signed_in') }
+      render json: { user: user.as_json, authentication_token: token, message: t('devise.sessions.signed_in') }
     end
 
-    # DELETE /resource/sign_out
-    # def destroy
-    #   super
-    # end
+    # GET /auth/check
+    # для проверки валидности аутентификационных данных из headers (X-USER-EMAIL и X-USER-TOKEN)
+    # возвращает пользователя, которому принадлежат эти аутентификационные данные
+    def check
+      user = warden.authenticate!(auth_options)
+      render json: { user: user.as_json, message: t('devise.sessions.signed_in') }
+    end
+
+    # DELETE /auth/sign_out
     def destroy
       Tiddle.expire_token(current_user, request) if current_user
+      Tiddle.purge_old_tokens(current_user) if current_user
       render json: { message: t('devise.sessions.signed_out') }
     end
 

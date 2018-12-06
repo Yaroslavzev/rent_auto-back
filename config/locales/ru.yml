@@ -273,3 +273,8 @@ ru:
       request:
         new: "Новый заказ с сайта %{site} (%{host})"
         got-it: "Ваш заказ на сайте %{site}"
+  devise:
+    failure:
+      user:
+        invalid_token: "Недействительный токен."
+        invalid_auth: "Неверные данные аутентификации."
