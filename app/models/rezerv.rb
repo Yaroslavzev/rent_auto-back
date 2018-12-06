@@ -1,4 +1,4 @@
-# Модель заявки (request) в БД обмена Pysoft
+# Модель заявки (request) в БД обмена PSoft
 class Rezerv < ActiveRecord::Base  
-  establish_connection PYSOFT_DB
+  establish_connection PSOFT_DB
 end
