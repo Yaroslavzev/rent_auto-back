@@ -60,7 +60,7 @@ DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00
 
 FORMATS_KEYS = %i[formatable_type formatable_id key format args].freeze
 # rubocop:disable LineLength
-FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<volume>.1f %<style>s (%<class>s класс)',
+FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<class>s %<volume>.1f %<style>s ',
             '{ brand: $.brand.name, model: $.name, volume: $.engine_volume, style: $.style, class: $.model_class.name }'],
            ['Client', nil, 'full_name', '%<last>s %<first>s %<middle>s',
             '{ first: $.first_name, middle: $.middle_name, last: $.last_name }']].freeze
@@ -145,7 +145,7 @@ seeds = FULL_NAME_MODELS.inject([]) do |arr, trans|
 
   arr << {
     code: const,
-    name: trans.split(/\s+/)[3],
+    name: trans.split(/\s+/)[2],
     note: const
   }
 end
