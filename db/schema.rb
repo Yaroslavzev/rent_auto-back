@@ -223,6 +223,7 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "specs", comment: "стандартные характеристики (массив строк)", array: true
     t.string "options", comment: "прочее оснащение (массив строк)", array: true
     t.text "note", comment: "заметки"
+    t.string "link", comment: "ссылка на модель"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["body_type_id"], name: "index_models_on_body_type_id"

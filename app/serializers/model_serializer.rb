@@ -2,7 +2,7 @@
 class ModelSerializer < ActiveModel::Serializer
   include FormatableSerializer
   attributes :id, :code, :name, :active, :door_count, :seat_count, :style, :transmission,
-             :drive_type, :fuel_type, :engine, :engine_volume, :specs, :options, :note
+             :drive_type, :fuel_type, :engine, :engine_volume, :specs, :options, :note, :link
 
   has_one :model_class
   has_one :brand

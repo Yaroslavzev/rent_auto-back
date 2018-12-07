@@ -572,7 +572,8 @@ if Rails.env.development?
       engine_volume: rand(10..50).to_f / 10,
       specs: Faker::Vehicle.standard_specs,
       options: Faker::Vehicle.car_options,
-      note: DESCR_OF_MODELS[id]
+      note: DESCR_OF_MODELS[id],
+      link: "https://api.rent-auto.biz.tm/images/model_#{id+1}.jpg"
     }
   end
   models = Model.create! seeds

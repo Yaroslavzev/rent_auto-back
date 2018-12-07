@@ -30,7 +30,7 @@ rails g scaffold manufacture code:string name:string brand:references country:re
 rails g scaffold body_type code:string name:string note:text -p
 
 rails g scaffold model_class code:string name:string note:text -p
-rails g scaffold model code:string name:string brand:references manufacture:references body_type:references note:text -p
+rails g scaffold model code:string name:string brand:references manufacture:references body_type:references note:text link:string -p
 
 rails g scaffold trunk_type code:string name:string note:text -p
 rails g scaffold trunk code:string name:string trunk_type:references model:references note:text -p
