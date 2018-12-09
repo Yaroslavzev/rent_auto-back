@@ -1,10 +1,11 @@
 Получение: <%= @p.begin_time.strftime("%d.%m.%Y, %H:%M") if @p.begin_time %>
 Возврат: <%= @p.end_time.strftime("%d.%m.%Y, %H:%M") if @p.end_time %>
-Модель: <%= @p.model.full_name %>
+Модель: <%= @p.full_name %>
 Дополнения:
-<% @p.additions.each do |aas| %>
-  • <%= (aas.instance_of? String) ? aas : aas.name %>
+<% @p.aas.each do |aas| %>
+  • <%= aas %>
 <% end %>
+Рассчитанная цена: <%= @p.price %>
 
 Фамилия: <%= @p.last_name %>
 Имя: <%= @p.first_name %>
