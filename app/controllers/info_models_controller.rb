@@ -25,6 +25,6 @@ class InfoModelsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def model_params
-    params.require(:model).permit(:code, :name, :active, :brand_id, :manufacture_id, :body_type_id, :note)
+    params.require(:model).permit(:code, :name, :active, :brand_id, :manufacture_id, :body_type_id, :note, :link)
   end
 end

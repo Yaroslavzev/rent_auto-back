@@ -20,6 +20,7 @@ class CreateModels < ActiveRecord::Migration[5.2]
       t.string :specs, array: true, comment: 'стандартные характеристики (массив строк)'
       t.string :options, array: true, comment: 'прочее оснащение (массив строк)'
       t.text :note, comment: 'заметки'
+      t.string :link, comment: 'ссылка на модель'
 
       t.timestamps
     end

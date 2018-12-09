@@ -4,15 +4,12 @@
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum; this matches the default thread size of Active Record.
 #
-threads_min = ENV.fetch('RAILS_MIN_THREADS') { 1 }
-threads_max = ENV.fetch('RAILS_MAX_THREADS') { 4 }
+threads_min = ENV.fetch('RAILS_MIN_THREADS') { 0 }
+threads_max = ENV.fetch('RAILS_MAX_THREADS') { 5 }
 threads threads_min, threads_max
 
 # Run as daemon?
 run_as_daemon = ENV.fetch('DAEMON') { false }
-
-# Bind port?
-bind_port = ENV.fetch('PORT') { false }
 
 # Specifies the `environment` that Puma will run in.
 #
@@ -23,14 +20,14 @@ stdout_redirect "#{Rails.root}/log/puma.stdout.log", "#{Rails.root}/log/puma.std
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 #
-port ENV.fetch('PORT') { 3000 } if bind_port
+port ENV.fetch('PORT') { 3000 }
 
 # Unix socket bind
-bind        "unix://#{Rails.root}/tmp/sockets/puma.socket"
+bind "unix://#{Rails.root}/tmp/sockets/puma.socket"
 
 # Set master PID and state locations
-pidfile     "#{Rails.root}/tmp/pids/puma.pid"
-state_path  "#{Rails.root}/tmp/pids/puma.state"
+pidfile "#{Rails.root}/tmp/pids/puma.pid"
+state_path "#{Rails.root}/tmp/pids/puma.state"
 
 activate_control_app
 

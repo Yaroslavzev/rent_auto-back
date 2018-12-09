@@ -26,11 +26,12 @@ class CalcsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_calc
     # найти валидный параметр модели и загружаем его в @model
-    @model = Model.find(calc_params[:model][:id]) unless calc_params[:model].nil? ||
-                                                         !calc_params[:model].is_a?(Hash) ||
-                                                         calc_params[:model][:id].nil?
-    @model ||= Model.find(calc_params[:model_id]) unless calc_params[:model_id].nil?
-    @model ||= Model.find_by(code: calc_params[:model_code])
+    @model = Model.find(calc_params[:model][:id]) if calc_params[:model] && calc_params[:model][:id]
+    @model ||= Model.find_by(code: calc_params[:model][:code]) if calc_params[:model] && calc_params[:model][:code]
+    @model ||= Model.find(calc_params[:model_id]) if calc_params[:model_id]
+    @model ||= Model.find_by(code: calc_params[:model_code]) if calc_params[:model_code]
+
+    # Rails.logger.info @model.as_json
 
     # для простоты пока берем самый первый тарифный план, он же “основной” (seed)
     @rental_type ||= RentalType.first
@@ -44,7 +45,7 @@ class CalcsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def calc_params
-    params.fetch(:calc, {}).permit({ model: :id }, :model_id, :model_code, range: [:date_from, :time_from, :date_to, :time_to])
+    params.fetch(:calc, {}).permit({ model: [:id, :code] }, :model_id, :model_code, range: [:date_from, :time_from, :date_to, :time_to])
   end
 
   # тут будет логика вычисления последовательни вычислений
@@ -112,11 +113,11 @@ class CalcsController < ApplicationController
   def parse_datetime(str)
     hst = {}
     str.each_pair do |key, val|
-      if  /^dt_/.match?(key) && val.is_a?(String)
+      if /^dt_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = DateTime.parse(val)
-      elsif /^date_/.match?(key)  && val.is_a?(String)
+      elsif /^date_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = Date.parse(val)
-      elsif /^time_/.match?(key)  && val.is_a?(String)
+      elsif /^time_/.match?(key) && val.is_a?(String)
         hst[key.to_sym] = Time.parse(val)
       else
         hst[key.to_sym] = val

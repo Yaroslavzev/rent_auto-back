@@ -8,10 +8,30 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 require 'faker'
+require_relative 'additions_seeds.rb'
 Faker::Config.locale = 'ru'
 Money.locale_backend = :i18n
 
-MAX_SEEDS = 10
+
+
+BODY_TYPES = %w[автобус внедорожник кабриолет кроссовер купе лимузин лифтбэк микроавтобус минивэн пикап
+                родстер седан стретч тарга универсал фургон хэтчбек].freeze
+
+FULL_NAME_MODELS = ["LADA Granta седан акпп",
+"LADA Granta седан мкпп",
+"LADA Granta лифтбек мкпп",
+"LADA Vesta седан мкпп",
+"LADA XRAY хэтчбэк мкпп",
+"Volkswagen Multivan минивэн акпп",
+"Volkswagen Polo седан мкпп",
+"Peugeot 301 седан мкпп",
+"KIA Rio седан акпп",
+"Nissan Almera седан акпп",
+"Škoda Fabia хэтчбэк мкпп",
+"Škoda Rapid хэтчбэк акпп"]
+
+MAX_SEEDS = FULL_NAME_MODELS.size
+
 
 LOCALITY_STATUSES = %w[аул город деревня железно-дорожная\ станция населенный\ пункт поселок
                        поселок\ городского\ типа село слобода станица].freeze
@@ -40,7 +60,7 @@ DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00
 
 FORMATS_KEYS = %i[formatable_type formatable_id key format args].freeze
 # rubocop:disable LineLength
-FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<volume>.1f %<style>s (%<class>s класс)',
+FORMATS = [['Model', nil, 'full_name', '%<brand>s %<model>s %<class>s %<volume>.1f %<style>s ',
             '{ brand: $.brand.name, model: $.name, volume: $.engine_volume, style: $.style, class: $.model_class.name }'],
            ['Client', nil, 'full_name', '%<last>s %<first>s %<middle>s',
             '{ first: $.first_name, middle: $.middle_name, last: $.last_name }']].freeze
@@ -117,21 +137,21 @@ end
 statuses = seeds.blank? ? Status.all : Status.create!(seeds)
 puts
 
-# Заполнить справочник классов моделей автомобилей
+
 print ' • справочник классов моделей автомобилей'
-seeds = MODEL_CLASSES.inject([]) do |arr, klass|
+seeds = FULL_NAME_MODELS.inject([]) do |arr, trans|
   print '.'
-  code = gen_code(klass)
-  next if ModelClass.find_by(code: code).present?
+  const = gen_code(trans)
 
   arr << {
-    code: code,
-    name: klass,
-    note: klass.capitalize
+    code: const,
+    name: trans.split(/\s+/)[2],
+    note: const
   }
 end
 model_classes = seeds.blank? ? ModelClass.all : ModelClass.create!(seeds)
 puts
+
 
 # Заполнить справочник дополнительных услуг и снаряжения
 print ' • справочник дополнительных услуг/снаряжения'
@@ -499,18 +519,13 @@ if Rails.env.development?
 
   # Заполнить справочник брендов
   print ' • справочник брендов'
-  seeds = MAX_SEEDS.times.inject([]) do |arr|
+  seeds = FULL_NAME_MODELS.inject([]) do |arr, brand|
     print '.'
     make, code = nil
-    loop do
-      make = Faker::Vehicle.make
-      code = make[0..2].downcase
-      break unless arr.any? { |h| h[:code] == code }
-    end
     arr << {
       code: code,
-      name: make,
-      note: Faker::Company.catch_phrase
+      name: brand.split(/\s+/)[0],
+      note: code
     }
   end
   brands = Brand.create! seeds
@@ -518,9 +533,10 @@ if Rails.env.development?
 
   # Заполнить справочник производителей
   print ' • справочник производителей'
-  seeds = MAX_SEEDS.times.map do
+  seeds = FULL_NAME_MODELS.size.times.map do
     print '.'
     manufacture = Faker::Vehicle.manufacture
+    const = nil
     {
       code: manufacture[0..2].downcase + rand(0..9).to_s,
       name: manufacture,
@@ -534,20 +550,21 @@ if Rails.env.development?
 
   # Заполнить справочник моделей автомобилей
   print ' • справочник моделей автомобилей'
-  seeds = MAX_SEEDS.times.map do
+  seeds = MAX_SEEDS.times.map do |id|
     print '.'
     model = Faker::Vehicle.model
     brand = brands.sample
+
     {
       code: "#{brand.code}-#{model[0..2].downcase}",
-      name: model,
-      brand: brand,
-      model_class: model_classes.sample,
+      name: FULL_NAME_MODELS[id].split(/\s+/)[1],
+      brand: brands[id],
+      model_class: model_classes[id],
       manufacture: manufactures.sample,
       body_type: body_types.sample,
       door_count: rand(2..7),
       seat_count: rand(2..7),
-      style: Faker::Vehicle.style,
+      style: FULL_NAME_MODELS[id].split(/\s+/)[3],
       transmission: Faker::Vehicle.transmission,
       drive_type: Faker::Vehicle.drive_type,
       fuel_type: Faker::Vehicle.fuel_type,
@@ -555,7 +572,8 @@ if Rails.env.development?
       engine_volume: rand(10..50).to_f / 10,
       specs: Faker::Vehicle.standard_specs,
       options: Faker::Vehicle.car_options,
-      note: Faker::Company.catch_phrase
+      note: DESCR_OF_MODELS[id],
+      link: "https://api.rent-auto.biz.tm/images/model_#{id+1}.jpg"
     }
   end
   models = Model.create! seeds
