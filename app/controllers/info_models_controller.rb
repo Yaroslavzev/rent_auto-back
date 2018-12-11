@@ -14,7 +14,14 @@ class InfoModelsController < ApplicationController
     render json: @info_model
   end
 
-
+  # PATCH/PUT /manufactures/1
+  def update
+    if @manufacture.update(manufacture_params)
+      render json: @info_model
+    else
+      render json: @info_model.errors, status: :unprocessable_entity
+    end
+  end
 
   private
 
