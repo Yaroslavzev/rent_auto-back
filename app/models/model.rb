@@ -8,6 +8,7 @@ class Model < ApplicationRecord
   has_many :rentals, dependent: :destroy
   has_many :formats, -> { select 'formats.*' }, as: :formatable, primary_key: :table_name
 
+
   def range_rates
      Model.find(id).rentals.find_by(rental_type: 1).range_rates
   end
@@ -17,7 +18,8 @@ class Model < ApplicationRecord
   end
 
   def rental
-    Rental.find_by(rental_type: 1)
+
+    Rental.find_by(model: id)
   end
   # has_many_attached :images
 end
