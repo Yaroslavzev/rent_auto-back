@@ -18,11 +18,11 @@ class ModelsController < ApplicationController
   # POST /models
   def create
     model_params
-    @model = Model.new(@model_JSON)
-    @rental = @model.rentals.new(@rental_JSON)
+    @model = Model.new(@model_JSON.except(:id))
+    @rental = @model.rentals.new(@rental_JSON.except(:id))
     @rental.rental_type = RentalType.find(1)
-    @model.model_class = ModelClass.new(@model_class_JSON)
-    @model.brand = Brand.new(@brand_JSON)
+    @model.model_class = ModelClass.new(@model_class_JSON.except(:id))
+    @model.brand = Brand.new(@brand_JSON.except(:id))
     @model.manufacture = Manufacture.new(code: "не используется", name:"не используется", note:"не используется" )
     @model.body_type = BodyType.new(code: "не используется", name:"не используется", note:"не используется" )
 
@@ -59,10 +59,10 @@ class ModelsController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def model_params
 
-    @model_JSON = params[:model].permit(:name, :style, :engine_volume, :link, :note)
-    @brand_JSON = params[:brand].permit(:name)
-    @rental_JSON = params[:rentals][0].permit(:day_cost)
-    @model_class_JSON = params[:model_class].permit(:code, :active, :note,:name)
+    @model_JSON = params[:model].permit(:id, :name, :style, :engine_volume, :link, :note)
+    @brand_JSON = params[:brand].permit(:id, :name)
+    @rental_JSON = params[:rentals][0].permit(:id, :day_cost)
+    @model_class_JSON = params[:model_class].permit(:id, :code, :active, :note,:name)
 
 
   end

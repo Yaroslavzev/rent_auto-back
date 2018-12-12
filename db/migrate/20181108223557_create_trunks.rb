@@ -5,7 +5,7 @@ class CreateTrunks < ActiveRecord::Migration[5.2]
       t.string :code, comment: 'короткое название/аббревиатура/ключевое слово'
       t.string :name, comment: 'название багажника'
       t.boolean :active, default: true, comment: 'актуальность'
-      t.references :model, foreign_key: true, comment: 'модель автомобиля'
+      #t.references :model, foreign_key: true, comment: 'модель автомобиля'
       t.references :trunk_type, foreign_key: true, comment: 'тип банажника'
       t.decimal :price, default: nil, comment: 'цена (необязательна)'
       t.text :note, comment: 'заметки'

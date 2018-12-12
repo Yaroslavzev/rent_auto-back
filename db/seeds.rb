@@ -594,7 +594,7 @@ if Rails.env.development?
       arr << {
         code: "#{model.code}-#{type.code}",
         name: trunk,
-        model: model,
+        #model: model,
         trunk_type: type,
         price: nil,
         note: trunk
@@ -683,7 +683,7 @@ if Rails.env.development?
     {
       code: "#{model.code}-#{vin}",
       name: "#{model.name}(#{vin})",
-      model: model,
+      #model: model,
       garage_no: vin,
       state_no: vin,
       vin: vin,
@@ -692,7 +692,7 @@ if Rails.env.development?
       color: Faker::Vehicle.color,
       specs: Faker::Vehicle.standard_specs,
       options: Faker::Vehicle.car_options,
-      trunk: trunks.select { |t| t.model == model }.sample,
+      #trunk: vin, #trunks.select { |t| t.model == model }.sample,
       note: Faker::Company.catch_phrase
     }
   end
@@ -703,8 +703,8 @@ if Rails.env.development?
   print ' • справочник заказов'
   seeds = MAX_SEEDS.times.map do
     print '.'
-    vehicle = vehicles.sample
-    model = vehicle.model
+    #vehicle = vehicles.sample
+    #model = vehicle.model
     date_from = Faker::Date.forward(10)
     time_from = Faker::Time.between(Time.current, Time.current + 1.day)
     date_to = Faker::Date.between(date_from, date_from + 30.days)
@@ -717,15 +717,15 @@ if Rails.env.development?
     days_slice = rand(2).zero? ? nil : days_slices.sample
     days_range_fee = days_range ? 0 : 0 # заглушка
     days_slice_fee = days_slice ? 0 : 0 # заглушка
-    days_fee = (date_to - date_from).to_i * model.rentals.select { |r| r.rental_type == rental_type }.first.day_cost
+    days_fee = (date_to - date_from).to_i #* model.rentals.select { |r| r.rental_type == rental_type }.first.day_cost
     addons_fee = 0
     forfeit_fee = rand(2).zero? ? 0 : 0 # заглушка
     discouts = rand(2).zero? ? 0 : 0 # заглушка
     total_fee = days_range_fee + days_slice_fee + days_fee + addons_fee + forfeit_fee - discouts
     total_paid = rand(2).zero? ? 0 : 0 # заглушка
     {
-      vehicle: vehicle,
-      model: vehicle.model,
+      #vehicle: vehicle,
+      #model: vehicle.model,
       client: clients.sample,
       issue_spot: spots.sample,
       return_spot: spots.sample,
