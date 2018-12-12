@@ -251,8 +251,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "name", comment: "можно использовать для пометок (необязательное поле)"
     t.boolean "active", default: true, comment: "актуальность"
     t.string "status", default: "created", comment: "состояние заказа"
-    t.bigint "vehicle_id", comment: "прикрепленный автомобиль (может не быть)"
-    t.bigint "model_id", comment: "модель (если есть конкретный автомобиль то модель берем оттуда)"
     t.bigint "client_id", comment: "клиент"
     t.bigint "issue_spot_id", comment: "точка выдачи"
     t.bigint "return_spot_id", comment: "точка возврата"
@@ -282,11 +280,9 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.index ["days_range_id"], name: "index_orders_on_days_range_id"
     t.index ["days_slice_id"], name: "index_orders_on_days_slice_id"
     t.index ["issue_spot_id"], name: "index_orders_on_issue_spot_id"
-    t.index ["model_id"], name: "index_orders_on_model_id"
     t.index ["pay_type_id"], name: "index_orders_on_pay_type_id"
     t.index ["rental_type_id"], name: "index_orders_on_rental_type_id"
     t.index ["return_spot_id"], name: "index_orders_on_return_spot_id"
-    t.index ["vehicle_id"], name: "index_orders_on_vehicle_id"
   end
 
   create_table "passports", comment: "Справочник паспортов", force: :cascade do |t|
@@ -441,13 +437,11 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
     t.string "name", comment: "название багажника"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "model_id", comment: "модель автомобиля"
     t.bigint "trunk_type_id", comment: "тип банажника"
     t.decimal "price", comment: "цена (необязательна)"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["model_id"], name: "index_trunks_on_model_id"
     t.index ["trunk_type_id"], name: "index_trunks_on_trunk_type_id"
   end
 
@@ -491,12 +485,10 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "color", comment: "цвет"
     t.string "specs", comment: "стандартные характеристики (массив строк)", array: true
     t.string "options", comment: "прочее оснащение (массив строк)", array: true
-    t.bigint "trunk_id", comment: "багажник"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["model_id"], name: "index_vehicles_on_model_id"
-    t.index ["trunk_id"], name: "index_vehicles_on_trunk_id"
   end
 
   add_foreign_key "addresses", "countries"
@@ -520,12 +512,10 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "orders", "clients"
   add_foreign_key "orders", "days_ranges"
   add_foreign_key "orders", "days_slices"
-  add_foreign_key "orders", "models"
   add_foreign_key "orders", "pay_types"
   add_foreign_key "orders", "rental_types"
   add_foreign_key "orders", "spots", column: "issue_spot_id"
   add_foreign_key "orders", "spots", column: "return_spot_id"
-  add_foreign_key "orders", "vehicles"
   add_foreign_key "passports", "addresses"
   add_foreign_key "passports", "countries"
   add_foreign_key "range_rates", "days_ranges"
@@ -542,9 +532,7 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "slice_rates", "model_classes"
   add_foreign_key "slice_rates", "rental_types"
   add_foreign_key "spots", "addresses"
-  add_foreign_key "trunks", "models"
   add_foreign_key "trunks", "trunk_types"
   add_foreign_key "users", "clients"
   add_foreign_key "vehicles", "models"
-  add_foreign_key "vehicles", "trunks"
 end

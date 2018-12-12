@@ -14,7 +14,7 @@ class CreateVehicles < ActiveRecord::Migration[5.2]
       t.string :color, comment: 'цвет'
       t.string :specs, array: true, comment: 'стандартные характеристики (массив строк)'
       t.string :options, array: true, comment: 'прочее оснащение (массив строк)'
-      t.references :trunk, foreign_key: true, comment: 'багажник'
+      #t.references :trunk, foreign_key: true, comment: 'багажник'
       t.text :note, comment: 'заметки'
 
       t.timestamps
