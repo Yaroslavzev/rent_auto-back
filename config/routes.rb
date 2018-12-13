@@ -2,7 +2,7 @@
 Rails.application.routes.draw do
   devise_for :users, path: '/auth', controllers: { sessions: 'auth/sessions' }, defaults: { format: :json }
   devise_scope :user do
-    get '/auth/check', to: 'auth/sessions#check', defaults: { format: :json }
+    get '/auth/check_in', to: 'auth/sessions#check_in', defaults: { format: :json }
   end
   match '/calcs/cost', to: 'calcs#cost', via: [:get, :post]
   resources :rentals
