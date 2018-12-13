@@ -17,25 +17,23 @@ class InfoModelsController < ApplicationController
   # PATCH/PUT /info_models/1
   def update
     info_model_params
-    block_of_trues = []
-
-    @slice_rates_JSON.each do |slice|
+    true_slice = @slice_rates_JSON.each do |slice|
       @info_model.slice_rates.map do |object_for_upd|
         if slice["id"] == object_for_upd["id"]
-          block_of_trues << object_for_upd.update(slice.except(:id))
+          object_for_upd.update(slice.except(:id))
         end
       end
     end
 
-    @range_rates_JSON.each do |range|
+    true_range = @range_rates_JSON.each do |range|
       @info_model.range_rates.map do |object_for_upd|
         if range["id"] == object_for_upd["id"]
-          block_of_trues << object_for_upd.update(range.except(:id))
+          object_for_upd.update(range.except(:id))
         end
       end
     end
 
-    if block_of_trues.all?
+    if true_slice.all? && true_range.all?
       render json: @info_model
     else
       render json: @info_model.errors, status: :unprocessable_entity

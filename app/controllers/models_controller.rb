@@ -47,7 +47,10 @@ class ModelsController < ApplicationController
   # DELETE /models/1
   def destroy
     if @model.destroy
-      render json: 'Все хорошо!', status: :no_content
+      render json: {
+      status: 200,
+      message: "Successfully deleted"
+    }.to_json
     else
       render json: @model.errors, status: :unprocessable_entity
 end
