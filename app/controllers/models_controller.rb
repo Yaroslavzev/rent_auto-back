@@ -22,7 +22,7 @@ class ModelsController < ApplicationController
     @rental = @model.rentals.new(@rental_JSON.except(:id))
     @rental.rental_type = RentalType.find(1)
     @model.model_class = ModelClass.new(@model_class_JSON.except(:id))
-    @model.brand = Brand.new(@brand_JSON.except(:id))
+    @model.brand = Brand.find_by(:name) || Brand.new(@brand_JSON.except(:id)) #Если бренд есть, то тогда ссылаемя на него, если бренда нет, то создаем новый
     @model.manufacture = Manufacture.new(code: "не используется", name:"не используется", note:"не используется" )
     @model.body_type = BodyType.new(code: "не используется", name:"не используется", note:"не используется" )
 
@@ -46,7 +46,15 @@ class ModelsController < ApplicationController
 
   # DELETE /models/1
   def destroy
-    @model.destroy
+    if @model.destroy
+      render json: {
+      status: 200,
+      message: "Successfully deleted"
+    }.to_json
+    else
+      render json: @model.errors, status: :unprocessable_entity
+end
+
   end
 
   private
@@ -58,12 +66,9 @@ class ModelsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def model_params
-
     @model_JSON = params[:model].permit(:id, :name, :style, :engine_volume, :link, :note)
     @brand_JSON = params[:brand].permit(:id, :name)
     @rental_JSON = params[:rentals][0].permit(:id, :day_cost)
     @model_class_JSON = params[:model_class].permit(:id, :code, :active, :note,:name)
-
-
   end
 end

@@ -20,10 +20,10 @@ module Auth
       render json: { user: user.as_json, authentication_token: token, message: t('devise.sessions.signed_in') }
     end
 
-    # GET /auth/check
+    # GET /auth/check_in
     # для проверки валидности аутентификационных данных из headers (X-USER-EMAIL и X-USER-TOKEN)
     # возвращает пользователя, которому принадлежат эти аутентификационные данные
-    def check
+    def check_in
       user = warden.authenticate!(auth_options)
       render json: { user: user.as_json, message: t('devise.sessions.signed_in') }
     end
