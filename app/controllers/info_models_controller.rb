@@ -14,9 +14,28 @@ class InfoModelsController < ApplicationController
     render json: @info_model
   end
 
-  # PATCH/PUT /manufactures/1
+  # PATCH/PUT /info_models/1
   def update
-    if @manufacture.update(manufacture_params)
+    info_model_params
+    block_of_trues = []
+
+    @slice_rates_JSON.each do |slice|
+      @info_model.slice_rates.map do |object_for_upd|
+        if slice["id"] == object_for_upd["id"]
+          block_of_trues << object_for_upd.update(slice.except(:id))
+        end
+      end
+    end
+
+    @range_rates_JSON.each do |range|
+      @info_model.range_rates.map do |object_for_upd|
+        if range["id"] == object_for_upd["id"]
+          block_of_trues << object_for_upd.update(range.except(:id))
+        end
+      end
+    end
+
+    if block_of_trues.all?
       render json: @info_model
     else
       render json: @info_model.errors, status: :unprocessable_entity
@@ -31,7 +50,14 @@ class InfoModelsController < ApplicationController
   end
 
   # Only allow a trusted parameter "white list" through.
-  def model_params
-    params.require(:model).permit(:code, :name, :active, :brand_id, :manufacture_id, :body_type_id, :note, :link)
+  def info_model_params
+
+    @model_JSON = params.require(:info_model).permit(:id, :name, :style, :engine_volume, :link, :note)
+    @range_rates_JSON = params[:range_rates].map do |rates|
+      rates.permit(:id,:code,:active, :model_class_id, :rental_type_id,:days_range_id, :rate, :note  )
+    end
+    @slice_rates_JSON = params[:slice_rates].map do |slice|
+      slice.permit(:id,:code,:active, :model_class_id, :rental_type_id,:days_slice_id, :rate, :note  )
+    end
   end
 end
