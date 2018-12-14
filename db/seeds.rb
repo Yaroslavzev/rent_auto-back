@@ -519,7 +519,7 @@ if Rails.env.development?
 
   # Заполнить справочник брендов
   print ' • справочник брендов'
-  brand = FULL_NAME_MODELS[0].split(/\s+/)[0]
+  brand = FULL_NAME_MODELS.first.split(/\s+/)[0]
   seeds = FULL_NAME_MODELS.map.with_index do |_full_name, index|
     print '.'
     if !(FULL_NAME_MODELS[index-1].nil?) && FULL_NAME_MODELS[index].split(/\s+/)[0] != FULL_NAME_MODELS[index-1].split(/\s+/)[0]
