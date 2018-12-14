@@ -519,16 +519,20 @@ if Rails.env.development?
 
   # Заполнить справочник брендов
   print ' • справочник брендов'
-  seeds = FULL_NAME_MODELS.inject([]) do |arr, brand|
+  brand = FULL_NAME_MODELS[0].split(/\s+/)[0]
+  seeds = FULL_NAME_MODELS.map.with_index do |_full_name, index|
     print '.'
-    make, code = nil
-    arr << {
-      code: code,
-      name: brand.split(/\s+/)[0],
-      note: code
-    }
+    if !(FULL_NAME_MODELS[index-1].nil?) && FULL_NAME_MODELS[index].split(/\s+/)[0] != FULL_NAME_MODELS[index-1].split(/\s+/)[0]
+      brand = FULL_NAME_MODELS[index].split(/\s+/)[0]
+      make, code = nil
+      {
+        code: brand[0..2],
+        name: brand,
+        note: code
+       }
+    end
   end
-  brands = Brand.create! seeds
+  brands = Brand.create! seeds.compact
   puts
 
   # Заполнить справочник производителей
@@ -550,15 +554,16 @@ if Rails.env.development?
 
   # Заполнить справочник моделей автомобилей
   print ' • справочник моделей автомобилей'
+  brand = brands[0]
+  idd = 0
   seeds = MAX_SEEDS.times.map do |id|
     print '.'
     model = Faker::Vehicle.model
-    brand = brands.sample
 
     {
       code: "#{brand.code}-#{model[0..2].downcase}",
       name: FULL_NAME_MODELS[id].split(/\s+/)[1],
-      brand: brands[id],
+      brand: Brand.find_by(name: FULL_NAME_MODELS[id].split(/\s+/)[0]),
       model_class: model_classes[id],
       manufacture: manufactures.sample,
       body_type: body_types.sample,
@@ -575,6 +580,7 @@ if Rails.env.development?
       note: DESCR_OF_MODELS[id],
       link: "https://api.rent-auto.biz.tm/images/model_#{id+1}.jpg"
     }
+
   end
   models = Model.create! seeds
   puts
