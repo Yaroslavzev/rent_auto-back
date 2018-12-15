@@ -12,7 +12,7 @@ class RequestsController < ApplicationController
     errors = {}
 
     model_name(rp, errors)
-    aas_names(rp, errors)
+    aas_names(rp)
 
     if errors.empty?
       export(rp) if PSOFT_DB
@@ -60,24 +60,26 @@ class RequestsController < ApplicationController
   end
 
   # Заполняет названия дополнений
-  def aas_names(req, errors)
-    req.additions.to_a.each do |a|
-      req.aas << Addition.find(a).name
-    rescue ActiveRecord::RecordNotFound
-      errors[:additions] = I18n.t('errors.messages.invalid')
-    end
+  def aas_names(req)
+    req.aas = Addition.where(id: req.additions).pluck(:name)
   end
 
   # Создаёт заявку во внешней БД
   def export(req)
-    rez = Rezerv.new(dt_b: req.begin_time, dt_e: req.end_time, model: req.full_name,
-                     cli_lname: req.last_name, cli_name: req.first_name, cli_sname: req.patronymic,
-                     cli_email: req.email, cli_phone: req.phone, cli_bdate: I18n.l(req.birthdate.to_date),
-                     pasp_num: req.doc_number, pasp_vyd: req.doc_issued_by, pasp_street: req.doc_registration,
-                     pasp_date: I18n.l(req.doc_issued_date.to_date),
-                     vod_num: req.lic_number, vod_vyd: req.lic_issued_by, vod_date: I18n.l(req.lic_date.to_date))
-    (1..8).each { |i| rez.send("dop#{i}=", req.aas[i]) }
+    # Внешняя БД поддерживает хранение только 8 дополнений
+    rez = Rezerv.new(req2rez(req))
+    (1..Rezerv::MAX_DOPS).each { |i| rez.send("dop#{i}=", req.aas[i]) }
     req.id = rez.id if rez.save
+  end
+
+  # создаёт хэш с параметрами модели Rezerv из параметров запроса request
+  def req2rez(req)
+    { dt_b: req.begin_time, dt_e: req.end_time, model: req.full_name,
+      cli_lname: req.last_name, cli_name: req.first_name, cli_sname: req.patronymic,
+      cli_email: req.email, cli_phone: req.phone, cli_bdate: I18n.l(req.birthdate.to_date),
+      pasp_num: req.doc_number, pasp_vyd: req.doc_issued_by, pasp_street: req.doc_registration,
+      pasp_date: I18n.l(req.doc_issued_date.to_date),
+      vod_num: req.lic_number, vod_vyd: req.lic_issued_by, vod_date: I18n.l(req.lic_date.to_date) }
   end
 
   # Отправляет заявку по почте администратору и клиенту
