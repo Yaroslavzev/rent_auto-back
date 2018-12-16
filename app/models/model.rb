@@ -21,5 +21,14 @@ class Model < ApplicationRecord
 
     Rental.find_by(model: id)
   end
+
+  def range_rates_own
+    self.rentals.find_by(rental_type: 1).range_rates
+  end
+
+  def slice_rates_own #как лучше назвать метод, чтобы не было конфликтов с ActiveRecord?
+   self.rentals.find_by(rental_type: 1).slice_rates
+  end
+  
   # has_many_attached :images
 end
