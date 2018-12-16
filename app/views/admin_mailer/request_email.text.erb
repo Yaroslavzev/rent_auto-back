@@ -1,3 +1,4 @@
+Номер заявки: <%= @p.id %>
 Получение: <%= @p.begin_time.strftime("%d.%m.%Y, %H:%M") if @p.begin_time %>
 Возврат: <%= @p.end_time.strftime("%d.%m.%Y, %H:%M") if @p.end_time %>
 Модель: <%= @p.full_name %>

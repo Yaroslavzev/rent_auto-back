@@ -1,6 +1,7 @@
 default: &default
   adapter: mysql2
   encoding: utf8
+  database: <%= ENV['DATABASE_PS_NAME'] %>
   port:     <%= ENV.fetch('DATABASE_PS_PORT', 3306) %>
   username: <%= ENV['DATABASE_PS_USERNAME'] %>
   password: <%= ENV['DATABASE_PS_PASSWORD'] %>
@@ -10,14 +11,11 @@ default: &default
 development:
   <<: *default
   host: <%= ENV.fetch('DATABASE_PS_HOST', 'localhost') %>
-  database: <%= ENV.fetch('DATABASE_PS_NAME', 'prokat') %>
 
 test:
   <<: *default
   host: <%= ENV.fetch('DATABASE_PS_HOST', 'localhost') %>
-  database: <%= ENV.fetch('DATABASE_PS_NAME', 'prokat') %>
 
 production:
   <<: *default
   host: <%= ENV['DATABASE_PS_HOST'] %>
-  database: <%= ENV['DATABASE_PS_NAME'] %>
