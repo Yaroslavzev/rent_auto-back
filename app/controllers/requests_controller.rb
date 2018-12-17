@@ -32,17 +32,20 @@ class RequestsController < ApplicationController
                                         :doc_registration, :lic_number, :lic_date, :lic_issued_by, :lic_valid_to,
                                         :license_category, :note, :price, additions: []))
 
-    %i[begin_time end_time birthdate doc_issued_date lic_date lic_valid_to].each do |t|
-      rp[t] = Time.iso8601(rp[t]) if rp[t]
-    rescue ArgumentError # если параметр не является валидной датой, то вообще обнуляем его
-      rp[t] = nil
-    end
+    %i[begin_time end_time].each { |t| rp[t] = convert_param(rp[t], Time) }
+    %i[birthdate doc_issued_date lic_date lic_valid_to].each { |t| rp[t] = convert_param(rp[t], Date) }
 
     # если в запросе вообще не было поля additions, то сделаем его пустым массивом
     rp.additions = [] unless rp.additions?
-    rp.aas = []
 
     rp
+  end
+
+  # конвертирует значение value в значение класса cls (Date, Time, DateTime) через метод iso8601
+  def convert_param(value, cls)
+    cls.iso8601(value)
+  rescue ArgumentError # если параметр не является валидной датой, то вообще обнуляем его
+    nil
   end
 
   # Заполняет имя модели авто по id
@@ -76,10 +79,10 @@ class RequestsController < ApplicationController
   def req2rez(req)
     { dt_b: req.begin_time, dt_e: req.end_time, model: req.full_name,
       cli_lname: req.last_name, cli_name: req.first_name, cli_sname: req.patronymic,
-      cli_email: req.email, cli_phone: req.phone, cli_bdate: I18n.l(req.birthdate.to_date),
+      cli_email: req.email, cli_phone: req.phone, cli_bdate: req.birthdate && I18n.l(req.birthdate),
       pasp_num: req.doc_number, pasp_vyd: req.doc_issued_by, pasp_street: req.doc_registration,
-      pasp_date: I18n.l(req.doc_issued_date.to_date),
-      vod_num: req.lic_number, vod_vyd: req.lic_issued_by, vod_date: I18n.l(req.lic_date.to_date) }
+      pasp_date: req.doc_issued_date && I18n.l(req.doc_issued_date),
+      vod_num: req.lic_number, vod_vyd: req.lic_issued_by, vod_date: req.lic_date && I18n.l(req.lic_date) }
   end
 
   # Отправляет заявку по почте администратору и клиенту
