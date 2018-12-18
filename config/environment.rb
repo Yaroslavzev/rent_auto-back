@@ -19,4 +19,7 @@ Rails.application.configure do
   # наименование проекта, используется, как минимум, в почте. Может быть просто адресом сайта.
   # Пример: config.site_name = 'Тачка96'
   config.site_name = 'Rent Auto'
+
+  # Шаблон для динамической генерации полного имени модели авто
+  config.model_full = '<%= brand %> <%= model %> <%= volume %> <%= style %> (<%= cls %> класс)'
 end
