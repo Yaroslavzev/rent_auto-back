@@ -14,7 +14,7 @@ class RequestsController < ApplicationController
     model_name(rp, errors)
     aas_names(rp)
 
-    if errors.empty?
+    if NewGoogleRecaptcha.human?(req_params[:recaptcha_token]) && errors.empty? 
       export(rp) if PSOFT_DB
       mail(rp)
       render json: { message: format(I18n.t('request.status.ok'), id: rp.id || ' -') }
@@ -30,7 +30,7 @@ class RequestsController < ApplicationController
     rp = Hashie::Mash.new(params.permit(:begin_time, :end_time, :model, :last_name, :first_name, :patronymic,
                                         :birthdate, :email, :phone, :doc_number, :doc_issued_by, :doc_issued_date,
                                         :doc_registration, :lic_number, :lic_date, :lic_issued_by, :lic_valid_to,
-                                        :license_category, :note, :price, additions: []))
+                                        :license_category, :note, :price, :recaptcha_token, additions: []))
 
     %i[begin_time end_time].each { |t| rp[t] = convert_param(rp[t], Time) }
     %i[birthdate doc_issued_date lic_date lic_valid_to].each { |t| rp[t] = convert_param(rp[t], Date) }
