@@ -1,7 +1,5 @@
 # Контроллер заявок (запросов) на аренду
 class RequestsController < ApplicationController
-  FULL_NAME = Rails.configuration.model_full
-
   before_action :authenticate_user!, except: [:create]
 
   # POST /requests
@@ -52,12 +50,7 @@ class RequestsController < ApplicationController
 
   # Заполняет имя модели авто по id
   def model_name(req, errors)
-    m = Model.find(req.model)
-    # TODO: это временное решение. Во-первых, функционал дублируется с модулем FormatableSerializer -
-    # - надо делать виртуальный аттрибут в модели; во-вторых, отсутствие гибкости
-    # (невозможно свободно задавать full_name для отдельной Model).
-    req[:full_name] = ERB.new(FULL_NAME).result_with_hash(brand: m.brand.name, model: m.name, volume: m.engine_volume,
-                                                          style: m.style, cls: m.model_class.name)
+    req[:full_name] = Model.find(req.model).full_name
   rescue ActiveRecord::RecordNotFound
     errors[:model] = I18n.t('errors.messages.invalid')
   end
@@ -69,7 +62,6 @@ class RequestsController < ApplicationController
 
   # Создаёт заявку во внешней БД
   def export(req)
-    # Внешняя БД поддерживает хранение только 8 дополнений
     rez = Rezerv.new(req2rez(req))
     (1..Rezerv::MAX_DOPS).each { |i| rez.send("dop#{i}=", req.aas[i]) }
     req.id = rez.id if rez.save
