@@ -42,9 +42,9 @@ module CalculatorOfRent
     DAYS_OF_SECOND_RANGE = 20
 
     def model_cost
-      @rates = Model.find(@model).rentals.find_by(rental_type: 1).range_rates.map {|object| object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]}
+      @rates = Model.find(@model).rentals.find_by(rental_type: 1).range_rates.map {|object| (object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]).to_i}
 
-      @rates += Model.find(@model).rentals.find_by(rental_type: 1).slice_rates.map {|object| object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]}
+      @rates += Model.find(@model).rentals.find_by(rental_type: 1).slice_rates.map {|object| (object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]).to_i}
     end
 
     def work_days_of_week?
