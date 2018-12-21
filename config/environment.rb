@@ -21,5 +21,8 @@ Rails.application.configure do
   config.site_name = 'Rent Auto'
 
   # Шаблон для динамической генерации полного имени модели авто
-  config.model_full = '<%= brand %> <%= model %> <%= volume %> <%= style %> (<%= cls %> класс)'
+  # Это правильный шаблон, но он не соответствует нынешней админке и заполнению баз. Поправить там и вернуть
+  # config.model_full = '<%= brand %> <%= model %> <%= body %> <%= volume %> <%= style %> (<%= cls %> класс)'
+  # Шаблон, отражающий статус-кво
+  config.model_full = '<%= brand %> <%= model %> <%= cls %> <%= volume %> <%= style %>'
 end
