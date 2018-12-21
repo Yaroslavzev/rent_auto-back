@@ -54,9 +54,7 @@ DAYS_RANGES = [[1, 6], [7, 20], [21, nil]].freeze
 
 DAYS_SLICE_KEYS = %i[name week mon_from day_from time_from mon_to day_to time_to].freeze
 DAYS_SLICES = [['выходные дни', true, nil, 5, '17:00', nil, 1, '10:00'],
-               ['рабочие дни', true, nil, 1, '10:00', nil, 5, '17:00'],
-               ['новый год', false, 12, 31, '17:00', 1, 10, '10:00'],
-               ['майские праздники', false, 4, 30, '17:00', 5, 10, '10:10']].freeze
+               ['рабочие дни', true, nil, 1, '10:00', nil, 5, '17:00']].freeze
 
 FORMATS_KEYS = %i[formatable_type formatable_id key format args].freeze
 # rubocop:disable LineLength
@@ -542,10 +540,10 @@ if Rails.env.development?
     manufacture = Faker::Vehicle.manufacture
     const = nil
     {
-      code: manufacture[0..2].downcase + rand(0..9).to_s,
-      name: manufacture,
-      brand: brands.sample,
-      country: countries.sample,
+      code: rand(0..9).to_s,
+      name: Faker::Company.catch_phrase,
+      brand: Faker::Company.catch_phrase,
+      country: Faker::Company.catch_phrase,
       note: Faker::Company.catch_phrase
     }
   end

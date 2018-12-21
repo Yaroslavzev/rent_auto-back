@@ -186,13 +186,11 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.string "code", comment: "короткое название/аббревиатура/ключевое слово"
     t.string "name", comment: "название производителя"
     t.boolean "active", default: true, comment: "актуальность"
-    t.bigint "brand_id", comment: "марка"
-    t.bigint "country_id", comment: "страна производителя"
+    t.string "brand"
+    t.string "country"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["brand_id"], name: "index_manufactures_on_brand_id"
-    t.index ["country_id"], name: "index_manufactures_on_country_id"
   end
 
   create_table "model_classes", comment: "Справочник классов моделей автомобилей", force: :cascade do |t|
@@ -322,12 +320,11 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_class_id", comment: "класс модели автомобиля"
     t.bigint "rental_type_id", comment: "тарифный план"
-    t.bigint "days_range_id", comment: "диапазон дней"
+    t.string "days_range"
     t.float "rate", comment: "коэффициент"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["days_range_id"], name: "index_range_rates_on_days_range_id"
     t.index ["model_class_id"], name: "index_range_rates_on_model_class_id"
     t.index ["rental_type_id"], name: "index_range_rates_on_rental_type_id"
   end
@@ -394,12 +391,11 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
     t.boolean "active", default: true, comment: "актуальность"
     t.bigint "model_class_id", comment: "класс модели автомобиля"
     t.bigint "rental_type_id", comment: "тарифный план"
-    t.bigint "days_slice_id", comment: "срез дней"
+    t.string "days_slice"
     t.float "rate", comment: "коэффициент"
     t.text "note", comment: "заметки"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["days_slice_id"], name: "index_slice_rates_on_days_slice_id"
     t.index ["model_class_id"], name: "index_slice_rates_on_model_class_id"
     t.index ["rental_type_id"], name: "index_slice_rates_on_rental_type_id"
   end
@@ -502,8 +498,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "districts", "countries"
   add_foreign_key "districts", "regions"
   add_foreign_key "driver_licenses", "countries"
-  add_foreign_key "manufactures", "brands"
-  add_foreign_key "manufactures", "countries"
   add_foreign_key "models", "body_types"
   add_foreign_key "models", "brands"
   add_foreign_key "models", "manufactures"
@@ -518,7 +512,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "orders", "spots", column: "return_spot_id"
   add_foreign_key "passports", "addresses"
   add_foreign_key "passports", "countries"
-  add_foreign_key "range_rates", "days_ranges"
   add_foreign_key "range_rates", "model_classes"
   add_foreign_key "range_rates", "rental_types"
   add_foreign_key "regions", "countries"
@@ -528,7 +521,6 @@ ActiveRecord::Schema.define(version: 2018_11_22_085947) do
   add_foreign_key "settlements", "districts"
   add_foreign_key "settlements", "regions"
   add_foreign_key "settlements", "statuses"
-  add_foreign_key "slice_rates", "days_slices"
   add_foreign_key "slice_rates", "model_classes"
   add_foreign_key "slice_rates", "rental_types"
   add_foreign_key "spots", "addresses"
