@@ -10,24 +10,26 @@ module CalculatorOfRent
 
     def logic_calculator
       model_cost
-      @rent_days = ((@end_time - @start_time) / 1.day).to_i + 1
+      @rent_days = ((@end_time - @start_time)/ 1.day).to_f.ceil
 
-      @cost = if @rent_days <= 6
+
+      @cost = if @rent_days <= DAYS_OF_FIRST_RANGE
+                #puts work_days_of_week?
                 if work_days_of_week?
                   if @rent_days === NUMBER_OF_WORK_DAYS_OF_WEEK + 1
-                    @costworkday + @cost1
+                    @rates[4] + @rates[0]
                   else
-                    @costworkday
-                          end
+                    @rates[4]
+                  end
                 elsif weekend_of_week?
-                  (@rent_days - NUMBER_OF_WEEKEND_DAYS) * @cost1 + @costweekend
+                  (@rent_days - NUMBER_OF_WEEKEND_DAYS) * @rates[0] + @rates[3]
                 else
-                  @rent_days * @cost1
+                  @rent_days * @rates[0]
                         end
-              elsif @rent_days <= 20
-                @rent_days * @cost2
+              elsif @rent_days <= DAYS_OF_SECOND_RANGE
+                @rent_days * @rates[1]
               else
-                @rent_days * @cost3
+                @rent_days * @rates[2]
               end
     end
 
@@ -36,12 +38,13 @@ module CalculatorOfRent
     NUMBER_OF_WORK_DAYS_OF_WEEK = 5
     NUMBER_OF_WEEKEND_DAYS = 2
 
+    DAYS_OF_FIRST_RANGE = 6
+    DAYS_OF_SECOND_RANGE = 20
+
     def model_cost
-      @cost1 = 1000
-      @cost2 = 900
-      @cost3 = 800
-      @costworkday = 4500
-      @costweekend = 1800
+      @rates = Model.find(@model).rentals.find_by(rental_type: 1).range_rates.map {|object| object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]}
+
+      @rates += Model.find(@model).rentals.find_by(rental_type: 1).slice_rates.map {|object| object.attributes["rate"] * Rental.find_by(model_id: @model).attributes["day_cost"]}
     end
 
     def work_days_of_week?
