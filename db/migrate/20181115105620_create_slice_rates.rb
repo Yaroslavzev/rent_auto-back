@@ -7,7 +7,7 @@ class CreateSliceRates < ActiveRecord::Migration[5.2]
       t.boolean :active, default: true, comment: 'актуальность'
       t.references :model_class, foreign_key: true, comment: 'класс модели автомобиля'
       t.references :rental_type, foreign_key: true, comment: 'тарифный план'
-      t.references :days_slice, foreign_key: true, comment: 'срез дней'
+      t.string :days_slice#, foreign_key: true, comment: 'срез дней'
       t.float :rate, comment: 'коэффициент'
       t.text :note, comment: 'заметки'
 

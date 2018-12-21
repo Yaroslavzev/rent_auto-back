@@ -2,5 +2,5 @@
 class SliceRate < ApplicationRecord
   belongs_to :model_class
   belongs_to :rental_type
-  belongs_to :days_slice
+  #belongs_to :days_slice
 end
