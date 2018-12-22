@@ -12,9 +12,10 @@ class RequestsController < ApplicationController
     errors = {}
 
     model_name(rp, errors)
-    aas_names(rp)
+    aas_names(rp, errors)
+    check_human(rp, errors)
 
-    if NewGoogleRecaptcha.human?(req_params[:recaptcha_token]) && errors.empty? 
+    if errors.empty?
       export(rp) if PSOFT_DB
       mail(rp)
       render json: { message: format(I18n.t('request.status.ok'), id: rp.id || ' -') }
@@ -56,8 +57,15 @@ class RequestsController < ApplicationController
   end
 
   # Заполняет названия дополнений
-  def aas_names(req)
+  def aas_names(req, _errors)
     req.aas = Addition.where(id: req.additions).pluck(:name)
+  end
+
+  # Проводит проверку Google Recaptcha
+  def check_human(req, errors)
+    return unless ENV['SITE_KEY']
+
+    errors[:recaptcha_token] = I18n.t('errors.messages.invalid') unless NewGoogleRecaptcha.human?(req[:recaptcha_token])
   end
 
   # Создаёт заявку во внешней БД
@@ -69,7 +77,7 @@ class RequestsController < ApplicationController
 
   # создаёт хэш с параметрами модели Rezerv из параметров запроса request
   def req2rez(req)
-    { dt_b: req.begin_time, dt_e: req.end_time, model: req.full_name,
+    { dt_b: req.begin_time, dt_e: req.end_time, model: req.full_name, days_sum: req.price&.to_f,
       cli_lname: req.last_name, cli_name: req.first_name, cli_sname: req.patronymic,
       cli_email: req.email, cli_phone: req.phone, cli_bdate: req.birthdate && I18n.l(req.birthdate),
       pasp_num: req.doc_number, pasp_vyd: req.doc_issued_by, pasp_street: req.doc_registration,
