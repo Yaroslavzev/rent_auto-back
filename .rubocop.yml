@@ -1,0 +1,67 @@
+Rails:
+  Enabled: true
+
+AllCops:
+  TargetRubyVersion: 2.5.3
+  Exclude:
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'spec/**/*'
+
+# Сам знаю что не используются :)
+Lint/UselessAssignment:
+  Exclude:
+    - 'db/**/*'
+
+# не пойму что ему не нравится
+Lint/NextWithoutAccumulator:
+  Exclude:
+    - 'db/seeds.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/**/*'
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+# 80 маловато
+Metrics/LineLength:
+  Max: 120
+
+# Сам знаю что не используются :)
+Lint/UselessAssignment:
+  Exclude:
+    - 'db/**/*'
+
+Performance/TimesMap:
+  Exclude:
+    - 'db/**/*'
+
+Rails/FilePath:
+  Exclude:
+    - 'config/puma.rb'
+
+# Не нужен logger в тасках
+Rails/Output:
+  Exclude:
+    - 'db/seeds.rb'
+
+# С чего это вдруг только ascii
+Style/AsciiComments:
+  Enabled: false
+
+# Пока незачем
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Сгенерированно как есть
+Style/NumericLiterals:
+  Exclude:
+    - 'db/schema.rb'
+
+inherit_from: .rubocop_todo.yml

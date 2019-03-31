@@ -1,0 +1,22 @@
+attributes:
+  - foreign_key
+  - inheritance
+  - content
+disconnected: false
+filename: rent-auto.erd
+filetype: svg
+indirect: true
+inheritance: true
+markup: true
+notation: bachman
+orientation: vertical
+polymorphism: true
+sort: true
+warn: false
+title: true
+exclude: "ApplicationRecord"
+only: null
+only_recursion_depth: null
+prepend_primary: true
+cluster: false
+splines: spline

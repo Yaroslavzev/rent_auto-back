@@ -1,0 +1,31 @@
+Номер заявки: <%= @p.id %>
+Получение: <%= @p.begin_time.strftime("%d.%m.%Y, %H:%M") if @p.begin_time %>
+Возврат: <%= @p.end_time.strftime("%d.%m.%Y, %H:%M") if @p.end_time %>
+Модель: <%= @p.full_name %>
+Дополнения:
+<% @p.aas.each do |aas| %>
+  • <%= aas %>
+<% end %>
+Рассчитанная цена: <%= @p.price %>
+
+Фамилия: <%= @p.last_name %>
+Имя: <%= @p.first_name %>
+Отчество: <%= @p.patronymic %>
+Дата рождения: <%= @p.birthdate.strftime("%d.%m.%Y") if @p.birthdate %>
+
+e-mail: <%= @p.email %>
+телефон: <%= @p.phone %>
+
+номер паспорта: <%= @p.doc_number %>
+кем выдан: <%= @p.doc_issued_by %>
+дата выдачи: <%= @p.doc_issued_date.strftime("%d.%m.%Y") if @p.doc_issued_date %>
+регистрация: <%= @p.doc_registration %>
+
+номер ВУ: <%= @p.lic_number %>
+дата выдачи ВУ: <%= @p.lic_date.strftime("%d.%m.%Y") if @p.lic_date %>
+кем выдано ВУ: <%= @p.lic_issued_by %>
+срок действия ВУ: <%= @p.lic_valid_to.strftime("%d.%m.%Y") if @p.lic_valid_to %>
+примечание к заказу:
+<%= @p.note %>
+
+--

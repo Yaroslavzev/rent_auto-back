@@ -1,0 +1,79 @@
+# options:  --no-stylesheets --no-scaffold-stylesheet --no-javascripts
+
+# Address Format Information:
+#   Name of the street, number of the house and flat
+#   Name of the settlement (town, village and other)
+#   Name of the district
+#   Name of the republic, territory, region, autonomous district(region)
+#   Postcode
+#   Name of the country (for international items)
+# (умолтался искать более-менее унифицированный формат)
+rails g scaffold status code:string name:string active:boolean note:text -p
+rails g scaffold country code:string name:string active:boolean note:text -p
+rails g scaffold region code:string name:string active:boolean country:references note:text -p
+rails g scaffold district code:string name:string active:boolean region:references country:references note:text -p
+rails g scaffold settlement code:string name:string active:boolean status:references district:references region:references country:references note:text -p
+rails g scaffold address code:string name:string active:boolean country:references region:references district:references settlement:references postcode:string street:string house:string flat:string address1:string address2:string note:text -p
+
+rails g scaffold spot code:string name:string active:boolean address:references note:text -p
+
+rails g scaffold passport code:string name:string active:boolean verified:boolean country:references serial:string number:string issued_by:string issued_code:string issued_date:date valid_to:date address:references note:text -p
+rails g scaffold driver_license code:string name:string active:boolean verified:boolean country:references serial:string number:string category:string issued_by:string issued_code:string issued_date:date valid_to:date note:text -p
+
+rails g scaffold client code:string name:string active:boolean verified:boolean first_name:string middle_name:string last_name:string gender:string birthday:date phone:string:array address:references passport:references driver_license:references note:text -p
+
+rails g scaffold user code:string name:string active:boolean verified:boolean encrypted_password:string role:string email:string image:string client:references note:text -p
+
+rails g scaffold brand code:string name:string note:text -p
+rails g scaffold manufacture code:string name:string brand:references country:references note:text -p
+
+rails g scaffold body_type code:string name:string note:text -p
+
+rails g scaffold model_class code:string name:string note:text -p
+rails g scaffold model code:string name:string brand:references manufacture:references body_type:references note:text link:string -p
+
+rails g scaffold trunk_type code:string name:string note:text -p
+rails g scaffold trunk code:string name:string trunk_type:references model:references note:text -p
+
+rails g scaffold rental_type code:string name:string note:text -p
+rails g scaffold rental_rate code:string name:string model:references rental_type:references workweek_rate:float  weekend_rate:float hour_rate:float note:text -p
+
+rails g scaffold days_range code:string name:string active:boolean days_from:integer days_to:integer note:text -p
+rails g scaffold range_rate code:string name:string active:boolean rental_rate:references days_range:references rate:float note:text -p
+
+rails g scaffold days_slice code:string name:string active:boolean week:boolean day_from:integer time_from:time day_to:integer time_to:time note:text -p
+rails g scaffold slice_rate code:string name:string active:boolean rental_rate:references days_slice:references rate:float note:text -p
+
+rails g scaffold rental_price code:string name:string model:references model_class:references day_price:money forfeit_price:money earnest:money km_price:money km_limit_price:money weekend_price:money workweek_price:money workday_price:money note:text -p
+
+rails g scaffold rental_plan code:string name:string model:references model_class:references rental_type:references rental_rate:references rental_price:references note:text -p
+
+rails g scaffold vehicle code:string name:string model:references garage_no:string state_no:string vin:string release:date mileage:integer color:string specs:string:array options:string:array trunk:references note:text -p
+
+rails g scaffold addition code:string name:string active:boolean service:boolean price:decimal note:text -p
+
+rails g scaffold pay_type code:string name:string active:boolean tax:float rebate:float discount:float note:text -p
+
+rails g scaffold order code:string name:string active:boolean status:string vehicle:references model:references client:references issue_spot:references:spot return_spot:references:spot date_from:date time_from:time date_to:date time_to:time days_count:integer days_over:integer rental_plan:references pay_type:references weekend_fee:decimal workweek_fee:decimal days_fee:decimal addons_fee:decimal forfeit_fee:decimal discouts:decimal total_fee:decimal total_paid:decimal paid_full:boolean note:text -p
+
+rails g scaffold order_addon code:string name:string active:boolean order:references addition:references price:decimal note:text -p
+
+rails g scaffold format formatable:polymorphic key:string format:string args:string -p
+
+# auth
+rails generate devise:install -p
+rails generate devise User -p
+rails generate devise:controllers users -p
+rails g model AuthenticationToken body:string:index user:references last_used_at:datetime expires_in:integer ip_address:string user_agent:string -p
+
+rails g pundit:install
+rails g pundit:policy user
+...
+
+# rental calculator
+rails g scaffold_controller calc -p
+
+rails g scaffold rental code:string:unique name:string model:references rental_type:references km_limit:integer km_cost:decimal hour_cost:decimal day_cost:decimal forfeit:decimal earnest:decimal note:text -p
+
+#reCaptcha
+rails generate new_google_recaptcha initializer
