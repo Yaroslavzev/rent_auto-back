@@ -576,7 +576,7 @@ if Rails.env.development?
       specs: Faker::Vehicle.standard_specs,
       options: Faker::Vehicle.car_options,
       note: DESCR_OF_MODELS[id],
-      link: "https://api.rent-auto.biz.tm/images/model_#{id+1}.jpg"
+      link: "https://api.rentauto,xyz/images/model_#{id+1}.jpg"
     }
 
   end
