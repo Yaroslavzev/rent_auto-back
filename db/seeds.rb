@@ -271,7 +271,7 @@ pay_types = seeds.blank? ? PayType.all : PayType.create!(seeds)
 puts
 
 # Заполнить данные для окружения разработки
-if Rails.env.development?
+if Rails.env.development? || Rails.env.production?
   # Удалить сгенерированные записи
   OrderAddon.destroy_all
   Order.destroy_all
@@ -576,7 +576,7 @@ if Rails.env.development?
       specs: Faker::Vehicle.standard_specs,
       options: Faker::Vehicle.car_options,
       note: DESCR_OF_MODELS[id],
-      link: "https://api.rentauto,xyz/images/model_#{id+1}.jpg"
+      link: "https://api.rentauto.xyz/images/model_#{id+1}.jpg"
     }
 
   end

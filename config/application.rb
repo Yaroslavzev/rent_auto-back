@@ -25,7 +25,7 @@ module RentAuto
     config.load_defaults 5.2
 
     # Initialize modules from lib
-    config.autoload_paths += Dir["#{config.root}/lib/**/"]
+    config.eager_load_paths << Rails.root.join('lib')
 
     # The safest solution in API-only application is not to rely on Rails session at all and disable it.
     config.middleware.delete ActionDispatch::Session::CookieStore
